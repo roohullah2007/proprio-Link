@@ -1,0 +1,257 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Property;
+use App\Models\User;
+use App\Models\PropertyImage;
+
+class PropertySeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // Create a test user if none exists
+        $user = User::first();
+        if (!$user) {
+            $user = User::factory()->create([
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'test@example.com',
+                'role' => 'agent'
+            ]);
+        }
+
+        // Sample property data
+        $properties = [
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '123 Avenue des Champs-Élysées, 75008 Paris',
+                'pays' => 'France',
+                'ville' => 'Paris',
+                'prix' => 850000.00,
+                'superficie_m2' => 120,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Magnifique appartement au cœur de Paris avec vue sur les Champs-Élysées. Entièrement rénové avec des finitions de qualité. Proche de toutes commodités.',
+                'nombre_pieces' => 4,
+                'nombre_chambres' => 2,
+                'nombre_salles_bain' => 2,
+                'etage' => 3,
+                'annee_construction' => 1950,
+                'etat_propriete' => Property::ETAT_EXCELLENT,
+                'type_chauffage' => Property::CHAUFFAGE_GAZ,
+                'dpe_classe_energie' => Property::DPE_C,
+                'dpe_classe_ges' => Property::DPE_C,
+                'amenities' => ['parking', 'ascenseur', 'balcon', 'cuisine_equipee'],
+                'meuble' => false,
+                'charges_mensuelles' => 250.00,
+                'informations_complementaires' => 'Immeuble haussmannien, gardien, cave incluse',
+                'contacts_souhaites' => 10,
+                'contacts_restants' => 8,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '45 Rue de la République, 69002 Lyon',
+                'pays' => 'France',
+                'ville' => 'Lyon',
+                'prix' => 420000.00,
+                'superficie_m2' => 85,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Appartement moderne dans le centre de Lyon avec terrasse et vue dégagée. Idéal pour un couple ou une petite famille.',
+                'nombre_pieces' => 3,
+                'nombre_chambres' => 2,
+                'nombre_salles_bain' => 1,
+                'etage' => 5,
+                'annee_construction' => 2015,
+                'etat_propriete' => Property::ETAT_NEUF,
+                'type_chauffage' => Property::CHAUFFAGE_ELECTRIQUE,
+                'dpe_classe_energie' => Property::DPE_B,
+                'dpe_classe_ges' => Property::DPE_A,
+                'amenities' => ['terrasse', 'ascenseur', 'parking', 'double_vitrage'],
+                'meuble' => true,
+                'charges_mensuelles' => 180.00,
+                'informations_complementaires' => 'Résidence sécurisée, proche métro',
+                'contacts_souhaites' => 15,
+                'contacts_restants' => 12,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '78 Boulevard de la Mer, 06400 Cannes',
+                'pays' => 'France',
+                'ville' => 'Cannes',
+                'prix' => 1200000.00,
+                'superficie_m2' => 150,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Appartement de prestige face à la mer à Cannes. Vue panoramique exceptionnelle sur la baie. Finitions luxueuses.',
+                'nombre_pieces' => 5,
+                'nombre_chambres' => 3,
+                'nombre_salles_bain' => 2,
+                'etage' => 7,
+                'annee_construction' => 2010,
+                'etat_propriete' => Property::ETAT_EXCELLENT,
+                'type_chauffage' => Property::CHAUFFAGE_POMPE_CHALEUR,
+                'dpe_classe_energie' => Property::DPE_B,
+                'dpe_classe_ges' => Property::DPE_B,
+                'amenities' => ['vue_mer', 'terrasse', 'parking', 'piscine', 'ascenseur', 'climatisation'],
+                'meuble' => false,
+                'charges_mensuelles' => 400.00,
+                'informations_complementaires' => 'Résidence de standing, concierge 24h/24',
+                'contacts_souhaites' => 20,
+                'contacts_restants' => 15,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '12 Rue du Château, 33000 Bordeaux',
+                'pays' => 'France',
+                'ville' => 'Bordeaux',
+                'prix' => 650000.00,
+                'superficie_m2' => 200,
+                'type_propriete' => 'MAISON',
+                'description' => 'Belle maison bourgeoise avec jardin dans le centre historique de Bordeaux. Caractère authentique préservé.',
+                'nombre_pieces' => 6,
+                'nombre_chambres' => 4,
+                'nombre_salles_bain' => 2,
+                'etage' => 0,
+                'annee_construction' => 1920,
+                'etat_propriete' => Property::ETAT_BON,
+                'type_chauffage' => Property::CHAUFFAGE_GAZ,
+                'dpe_classe_energie' => Property::DPE_D,
+                'dpe_classe_ges' => Property::DPE_D,
+                'amenities' => ['jardin', 'cheminee', 'parking', 'cave'],
+                'meuble' => false,
+                'charges_mensuelles' => 0.00,
+                'informations_complementaires' => 'Maison de maître, proche tram',
+                'contacts_souhaites' => 12,
+                'contacts_restants' => 10,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '567 Avenue de la Plage, 34000 Montpellier',
+                'pays' => 'France',
+                'ville' => 'Montpellier',
+                'prix' => 380000.00,
+                'superficie_m2' => 75,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Appartement récent avec balcon proche de la plage. Idéal investissement locatif ou résidence secondaire.',
+                'nombre_pieces' => 3,
+                'nombre_chambres' => 2,
+                'nombre_salles_bain' => 1,
+                'etage' => 2,
+                'annee_construction' => 2018,
+                'etat_propriete' => Property::ETAT_NEUF,
+                'type_chauffage' => Property::CHAUFFAGE_ELECTRIQUE,
+                'dpe_classe_energie' => Property::DPE_A,
+                'dpe_classe_ges' => Property::DPE_A,
+                'amenities' => ['balcon', 'proche_plage', 'ascenseur', 'parking'],
+                'meuble' => true,
+                'charges_mensuelles' => 120.00,
+                'informations_complementaires' => 'Résidence neuve, proche tramway',
+                'contacts_souhaites' => 8,
+                'contacts_restants' => 6,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '89 Route des Vignes, 21200 Beaune',
+                'pays' => 'France',
+                'ville' => 'Beaune',
+                'prix' => 750000.00,
+                'superficie_m2' => 300,
+                'type_propriete' => 'MAISON',
+                'description' => 'Maison vigneronne authentique avec cave à vin et vue sur les vignobles. Parfait pour les amateurs de vin.',
+                'nombre_pieces' => 8,
+                'nombre_chambres' => 5,
+                'nombre_salles_bain' => 3,
+                'etage' => 0,
+                'annee_construction' => 1850,
+                'etat_propriete' => Property::ETAT_A_RENOVER,
+                'type_chauffage' => Property::CHAUFFAGE_FIOUL,
+                'dpe_classe_energie' => Property::DPE_E,
+                'dpe_classe_ges' => Property::DPE_E,
+                'amenities' => ['jardin', 'cave', 'cheminee', 'vue_montagne'],
+                'meuble' => false,
+                'charges_mensuelles' => 0.00,
+                'informations_complementaires' => 'Propriété viticole, cave voûtée, potentiel exceptionnel',
+                'contacts_souhaites' => 15,
+                'contacts_restants' => 13,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '234 Rue du Commerce, 59000 Lille',
+                'pays' => 'France',
+                'ville' => 'Lille',
+                'prix' => 290000.00,
+                'superficie_m2' => 95,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Appartement spacieux dans quartier commerçant de Lille. Idéal pour premier achat ou investissement.',
+                'nombre_pieces' => 4,
+                'nombre_chambres' => 3,
+                'nombre_salles_bain' => 1,
+                'etage' => 1,
+                'annee_construction' => 1980,
+                'etat_propriete' => Property::ETAT_BON,
+                'type_chauffage' => Property::CHAUFFAGE_GAZ,
+                'dpe_classe_energie' => Property::DPE_C,
+                'dpe_classe_ges' => Property::DPE_C,
+                'amenities' => ['balcon', 'proche_commerces', 'proche_transports'],
+                'meuble' => false,
+                'charges_mensuelles' => 150.00,
+                'informations_complementaires' => 'Centre-ville, proche métro et commerces',
+                'contacts_souhaites' => 10,
+                'contacts_restants' => 7,
+                'statut' => Property::STATUT_PUBLIE,
+            ],
+            [
+                'proprietaire_id' => $user->id,
+                'adresse_complete' => '156 Boulevard des Alpes, 38000 Grenoble',
+                'pays' => 'France',
+                'ville' => 'Grenoble',
+                'prix' => 495000.00,
+                'superficie_m2' => 110,
+                'type_propriete' => 'APPARTEMENT',
+                'description' => 'Appartement moderne avec vue imprenable sur les montagnes. Parfait pour les amoureux de la nature.',
+                'nombre_pieces' => 4,
+                'nombre_chambres' => 3,
+                'nombre_salles_bain' => 2,
+                'etage' => 6,
+                'annee_construction' => 2012,
+                'etat_propriete' => Property::ETAT_EXCELLENT,
+                'type_chauffage' => Property::CHAUFFAGE_POMPE_CHALEUR,
+                'dpe_classe_energie' => Property::DPE_B,
+                'dpe_classe_ges' => Property::DPE_B,
+                'amenities' => ['vue_montagne', 'balcon', 'ascenseur', 'parking', 'ski_proche'],
+                'meuble' => false,
+                'charges_mensuelles' => 200.00,
+                'informations_complementaires' => 'Proche télécabines, accès direct aux pistes de ski',
+                'contacts_souhaites' => 12,
+                'contacts_restants' => 9,
+                'statut' => Property::STATUT_PUBLIE,
+            ]
+        ];
+
+        foreach ($properties as $propertyData) {
+            $property = Property::create($propertyData);
+            
+            // Create sample images for each property
+            $imageCount = rand(1, 3);
+            for ($i = 1; $i <= $imageCount; $i++) {
+                PropertyImage::create([
+                    'property_id' => $property->id,
+                    'chemin_fichier' => "properties/sample/property-{$property->id}-image-{$i}.jpg",
+                    'nom_fichier' => "property-{$property->id}-image-{$i}.jpg",
+                    'ordre_affichage' => $i,
+                ]);
+            }
+        }
+
+        $this->command->info('Created ' . count($properties) . ' test properties with images!');
+    }
+}

@@ -1,0 +1,58 @@
+<?php
+/**
+ * Quick Laravel Status Check
+ * Run this from Laravel directory: php quick-status-check.php
+ */
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$app = require_once __DIR__ . '/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+echo "🔍 Propio Laravel Status Check\n";
+echo "===============================\n\n";
+
+try {
+    // Test database connection
+    DB::connection()->getPdo();
+    echo "✅ Database: Connected\n";
+    
+    // Count properties
+    $propertyCount = \App\Models\Property::count();
+    $publishedCount = \App\Models\Property::where('statut', 'PUBLIE')->count();
+    echo "📊 Properties: {$propertyCount} total, {$publishedCount} published\n";
+    
+    // Test property types
+    $propertyTypes = \App\Models\Property::select('type_propriete')
+        ->where('statut', 'PUBLIE')
+        ->distinct()
+        ->pluck('type_propriete')
+        ->filter()
+        ->values()
+        ->toArray();
+    echo "🏠 Property Types: " . implode(', ', $propertyTypes) . "\n";
+    
+    // Test API route
+    echo "🌐 Testing API Route...\n";
+    $controller = new \App\Http\Controllers\Api\WordPressController();
+    $request = new \Illuminate\Http\Request(['per_page' => 3]);
+    $response = $controller->searchProperties($request);
+    $data = json_decode($response->getContent(), true);
+    
+    if ($data && $data['success']) {
+        $count = count($data['data']);
+        echo "✅ API: Returns {$count} properties\n";
+    } else {
+        echo "❌ API: Error in response\n";
+    }
+    
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+}
+
+echo "\n💡 Next Steps:\n";
+echo "1. If properties = 0: Run 'php artisan db:seed --class=PropertySeeder'\n";
+echo "2. Start server: 'php artisan serve'\n";
+echo "3. Test API: http://localhost:8000/api/wordpress/properties\n";
+echo "4. Configure WordPress plugin settings\n";

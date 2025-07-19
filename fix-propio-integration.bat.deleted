@@ -1,0 +1,53 @@
+@echo off
+REM Propio Integration Fix Script for Windows
+REM Run this from the Laravel app directory: E:\Proprio-Link\webapp\laravel-react-app
+
+echo 🔧 Starting Propio Integration Fix...
+
+REM Step 1: Check Laravel installation
+echo 📡 Step 1: Checking Laravel installation...
+php artisan --version
+if %errorlevel% neq 0 (
+    echo ❌ Laravel not found or PHP not in PATH
+    pause
+    exit /b 1
+)
+
+REM Step 2: Run migrations
+echo 🗃️ Step 2: Running database migrations...
+php artisan migrate --force
+
+REM Step 3: Check for properties
+echo 🏠 Step 3: Checking for existing properties...
+php artisan tinker --execute="echo 'Properties: ' . App\Models\Property::count();"
+
+REM Step 4: Create test properties
+echo 📥 Step 4: Creating test properties...
+php artisan db:seed --class=PropertySeeder --force
+
+REM Step 5: Clear caches
+echo 🧹 Step 5: Clearing caches...
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan config:cache
+
+REM Step 6: Start server (optional)
+echo 🖥️ Step 6: Server setup...
+echo To start Laravel server, run: php artisan serve
+echo Default URL will be: http://localhost:8000
+
+REM Step 7: Test API
+echo 🌐 Step 7: Testing API (if server is running)...
+curl -s "http://localhost:8000/api/wordpress/property-types" || echo "Server not running or curl not available"
+
+echo.
+echo 🎉 Fix script completed!
+echo.
+echo 💡 Next steps:
+echo 1. Start Laravel server: php artisan serve
+echo 2. Access debug page: http://localhost/wordpress-2/wp-content/plugins/propio-integration/debug-comprehensive.php?debug=propio
+echo 3. Check WordPress plugin is active in WP Admin
+echo 4. Configure plugin settings in WordPress Admin → Settings → Propio Integration
+echo.
+pause

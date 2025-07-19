@@ -1,0 +1,70 @@
+import React from 'react';
+import { usePage } from '@inertiajs/react';
+
+export default function TranslationDebugger() {
+    const { props } = usePage();
+    const { locale, translations } = props;
+
+    // Always show in development, or if ?debug=1 is in URL
+    const shouldShow = process.env.NODE_ENV === 'development' || 
+                      new URLSearchParams(window.location.search).get('debug') === '1';
+
+    if (!shouldShow) {
+        return null;
+    }
+
+    // Test specific admin translations that should work
+    const testKeys = [
+        'Tableau de bord admin',
+        'Propriétés en attente', 
+        'Propriétés publiées',
+        'Propriétés rejetées',
+        'Utilisateurs totaux',
+        'Voir tout',
+        'Actions rapides',
+        'Modérer les propriétés'
+    ];
+
+    const results = testKeys.map(key => ({
+        key,
+        value: translations[key],
+        found: !!translations[key]
+    }));
+
+    const missing = results.filter(r => !r.found);
+
+    return (
+        <div className="fixed top-4 right-4 bg-black bg-opacity-90 text-white p-4 rounded-lg max-w-sm z-50 text-xs">
+            <div className="font-bold mb-2 text-yellow-300">Translation Debug</div>
+            <div><strong>Locale:</strong> {locale}</div>
+            <div><strong>Total:</strong> {Object.keys(translations || {}).length}</div>
+            
+            {missing.length > 0 && (
+                <div className="mt-2 p-2 bg-red-900 rounded">
+                    <div className="text-red-300 font-bold">Missing ({missing.length}):</div>
+                    {missing.slice(0, 3).map(item => (
+                        <div key={item.key} className="text-red-200 truncate">
+                            {item.key}
+                        </div>
+                    ))}
+                    {missing.length > 3 && <div className="text-red-200">+ {missing.length - 3} more</div>}
+                </div>
+            )}
+
+            <details className="mt-2">
+                <summary className="cursor-pointer text-blue-300">Test Results</summary>
+                <div className="mt-1 max-h-32 overflow-y-auto">
+                    {results.map(item => (
+                        <div key={item.key} className={`text-xs ${item.found ? 'text-green-300' : 'text-red-300'}`}>
+                            {item.found ? '✓' : '✗'} {item.key.slice(0, 20)}...
+                        </div>
+                    ))}
+                </div>
+            </details>
+
+            <div className="mt-2 text-gray-300">
+                Add ?debug=1 to URL to show
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Propio Storage Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #dc3545; margin-bottom: 20px; }
+        .btn { background: #007bff; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px; font-size: 16px; }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; }
+        .success { color: #28a745; background: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .info { color: #055160; background: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .test-image { margin: 20px 0; }
+        .test-image img { max-width: 200px; border: 2px solid #ddd; border-radius: 5px; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Propio Storage Fix Tool</h1>
+        <p>This tool will fix the image display issues by creating the missing storage symlink.</p>
+        
+        <div id="status" class="info">
+            Click "Fix Storage" to create the storage symlink and enable image display.
+        </div>
+
+        <div style="margin: 20px 0;">
+            <button class="btn" onclick="fixStorage()">Fix Storage Symlink</button>
+            <button class="btn btn-warning" onclick="testStorage()">Test Storage</button>
+            <button class="btn btn-success" onclick="goToAdmin()">Go to Storage Admin</button>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="test-image">
+            <h3>Test Image Display:</h3>
+            <p>This should show a property image if storage is working:</p>
+            <img id="testImg" src="/storage/properties/0197e13b-ce3b-7145-bfaf-c560693ff1ec/0ef00a5f-44a4-4bc1-93fa-f88a7f64b6db.jpg" 
+                 alt="Test Image" 
+                 onload="imageLoaded()" 
+                 onerror="imageFailed()" />
+            <div id="imageStatus"></div>
+        </div>
+
+        <div class="code">
+            <h4>Manual Fix Instructions:</h4>
+            <p>If the automatic fix doesn't work, run this in Command Prompt as Administrator:</p>
+            <code>
+                cd "E:\Proprio-Link\webapp\laravel-react-app"<br>
+                php artisan storage:link
+            </code>
+        </div>
+    </div>
+
+    <script>
+        async function fixStorage() {
+            const status = document.getElementById('status');
+            const result = document.getElementById('result');
+            
+            status.innerHTML = '<div class="info">🔄 Creating storage symlink...</div>';
+            result.innerHTML = '';
+            
+            try {
+                const response = await fetch('/fix-storage-link');
+                const data = await response.json();
+                
+                if (data.success) {
+                    status.innerHTML = '<div class="success">✅ Storage symlink created successfully!</div>';
+                    result.innerHTML = `
+                        <div class="success">
+                            <h4>Success!</h4>
+                            <p>${data.message}</p>
+                            <p><strong>Refresh the property edit page to see images!</strong></p>
+                        </div>
+                    `;
+                    
+                    // Test the image again
+                    setTimeout(() => {
+                        const testImg = document.getElementById('testImg');
+                        testImg.src = testImg.src + '?' + new Date().getTime(); // Force reload
+                    }, 1000);
+                } else {
+                    status.innerHTML = '<div class="error">❌ Failed to create storage symlink</div>';
+                    result.innerHTML = `
+                        <div class="error">
+                            <h4>Error:</h4>
+                            <p>${data.message}</p>
+                            <p>${data.error || ''}</p>
+                            <p><strong>Try running the manual fix commands below.</strong></p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="error">❌ Network error</div>';
+                result.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testStorage() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="info">🔍 Testing storage access...</div>';
+            
+            try {
+                const response = await fetch('/test-storage');
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <div class="info">
+                        <h4>Storage Test Results:</h4>
+                        <p><strong>Symlink exists:</strong> ${data.symlink_exists ? '✅ Yes' : '❌ No'}</p>
+                        <p><strong>Symlink target:</strong> ${data.symlink_target || 'None'}</p>
+                        <p><strong>Storage path:</strong> ${data.storage_path}</p>
+                        <p><strong>Public path:</strong> ${data.public_path}</p>
+                        <p><strong>Properties found:</strong> ${data.properties.length}</p>
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `<div class="error">Test failed: ${error.message}</div>`;
+            }
+        }
+
+        function goToAdmin() {
+            window.open('/storage-admin', '_blank');
+        }
+
+        function imageLoaded() {
+            document.getElementById('imageStatus').innerHTML = '<div class="success">✅ Image loaded successfully! Storage is working.</div>';
+        }
+
+        function imageFailed() {
+            document.getElementById('imageStatus').innerHTML = '<div class="error">❌ Image failed to load. Storage symlink is missing.</div>';
+        }
+
+        // Test on page load
+        window.onload = function() {
+            setTimeout(() => {
+                const img = document.getElementById('testImg');
+                if (!img.complete || img.naturalHeight === 0) {
+                    imageFailed();
+                }
+            }, 2000);
+        };
+    </script>
+</body>
+</html>

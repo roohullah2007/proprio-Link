@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Propio Logo Favicon -->
+  <rect width="32" height="32" rx="6" fill="#065033"/>
+  
+  <!-- House/Property Icon -->
+  <path d="M7 14L16 6L25 14V25C25 25.5523 24.5523 26 24 26H8C7.44772 26 7 25.5523 7 25V14Z" 
+        stroke="white" 
+        stroke-width="2" 
+        fill="none" 
+        stroke-linejoin="round"/>
+  
+  <!-- Door -->
+  <path d="M14 26V20H18V26" 
+        stroke="white" 
+        stroke-width="2" 
+        fill="none" 
+        stroke-linejoin="round"/>
+  
+  <!-- Window -->
+  <rect x="10" y="16" width="3" height="3" 
+        stroke="white" 
+        stroke-width="1.5" 
+        fill="none"/>
+  
+  <!-- Window -->
+  <rect x="19" y="16" width="3" height="3" 
+        stroke="white" 
+        stroke-width="1.5" 
+        fill="none"/>
+  
+  <!-- P for Propio -->
+  <text x="2" y="30" 
+        font-family="Arial, sans-serif" 
+        font-size="8" 
+        font-weight="bold" 
+        fill="white">P</text>
+</svg>

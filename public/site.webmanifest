@@ -1,0 +1,26 @@
+{
+    "name": "Propio - Real Estate Platform",
+    "short_name": "Propio",
+    "description": "Professional real estate platform for agents and property owners",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F5F9FA",
+    "theme_color": "#065033",
+    "icons": [
+        {
+            "src": "/assets/Logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/Logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

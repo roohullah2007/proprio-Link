@@ -1,0 +1,94 @@
+/* Propio Light Theme */
+.propio-theme-light {
+    --propio-primary: #4A90E2;
+    --propio-primary-hover: #357ABD;
+    --propio-secondary: #F8F9FA;
+    --propio-border: #E1E5E9;
+    --propio-text: #2C3E50;
+    --propio-text-light: #7F8C8D;
+    --propio-background: #FFFFFF;
+    --propio-shadow: rgba(74, 144, 226, 0.1);
+}
+
+.propio-theme-light .propio-property-card {
+    background: var(--propio-background);
+    border: 1px solid var(--propio-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--propio-shadow);
+}
+
+.propio-theme-light .propio-property-card:hover {
+    box-shadow: 0 6px 20px var(--propio-shadow);
+    transform: translateY(-3px);
+}
+
+.propio-theme-light .propio-property-price {
+    background: var(--propio-primary);
+    color: white;
+    border-radius: 6px;
+}
+
+.propio-theme-light .propio-property-title {
+    color: var(--propio-text);
+    font-weight: 600;
+}
+
+.propio-theme-light .propio-property-location {
+    color: var(--propio-text-light);
+}
+
+.propio-theme-light .propio-property-link {
+    background: var(--propio-primary);
+    color: white;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.propio-theme-light .propio-property-link:hover {
+    background: var(--propio-primary-hover);
+}
+
+.propio-theme-light .propio-search-button {
+    background: var(--propio-primary);
+    color: white;
+    border-radius: 6px;
+}
+
+.propio-theme-light .propio-search-button:hover {
+    background: var(--propio-primary-hover);
+}
+
+.propio-theme-light .propio-search-form,
+.propio-theme-light .propio-advanced-search-form {
+    background: var(--propio-secondary);
+    border: 1px solid var(--propio-border);
+    border-radius: 12px;
+}
+
+.propio-theme-light .propio-search-input,
+.propio-theme-light .propio-filter-input,
+.propio-theme-light .propio-filter-select {
+    border: 1px solid var(--propio-border);
+    background: var(--propio-background);
+    color: var(--propio-text);
+    border-radius: 6px;
+}
+
+.propio-theme-light .propio-search-input:focus,
+.propio-theme-light .propio-filter-input:focus,
+.propio-theme-light .propio-filter-select:focus {
+    border-color: var(--propio-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.propio-theme-light .propio-carousel-prev,
+.propio-theme-light .propio-carousel-next {
+    background: var(--propio-primary);
+    color: white;
+}
+
+.propio-theme-light .propio-carousel-prev:hover,
+.propio-theme-light .propio-carousel-next:hover {
+    background: var(--propio-primary-hover);
+}

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Propio Integration Fix Script
+# Run this from the Laravel app directory: E:\Proprio-Link\webapp\laravel-react-app
+
+echo "🔧 Starting Propio Integration Fix..."
+
+# Step 1: Check if Laravel server is running
+echo "📡 Step 1: Checking Laravel server status..."
+php artisan route:list | grep -i wordpress > /dev/null
+if [ $? -eq 0 ]; then
+    echo "✅ Laravel routes found"
+else
+    echo "❌ Laravel routes not found - starting server..."
+    echo "Please run: php artisan serve"
+fi
+
+# Step 2: Check database connection
+echo "📊 Step 2: Checking database connection..."
+php artisan tinker --execute="try { DB::connection()->getPdo(); echo 'Database connected'; } catch(Exception \$e) { echo 'Database error: ' . \$e->getMessage(); }"
+
+# Step 3: Run migrations
+echo "🗃️ Step 3: Running database migrations..."
+php artisan migrate --force
+
+# Step 4: Check if properties exist
+echo "🏠 Step 4: Checking for existing properties..."
+PROPERTY_COUNT=$(php artisan tinker --execute="echo App\Models\Property::count();")
+echo "Found $PROPERTY_COUNT properties"
+
+if [ "$PROPERTY_COUNT" -eq "0" ]; then
+    echo "📥 No properties found, running seeder..."
+    php artisan db:seed --class=PropertySeeder --force
+    echo "✅ Test properties created"
+fi
+
+# Step 5: Clear caches
+echo "🧹 Step 5: Clearing caches..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+
+# Step 6: Test API endpoints
+echo "🌐 Step 6: Testing API endpoints..."
+echo "Testing WordPress API..."
+curl -s "http://localhost:8000/api/wordpress/property-types" | head -100
+
+echo ""
+echo "🎉 Fix script completed!"
+echo "💡 Next steps:"
+echo "1. Access debug page: http://localhost/wordpress-2/wp-content/plugins/propio-integration/debug-comprehensive.php?debug=propio"
+echo "2. Check WordPress plugin is active in WP Admin"
+echo "3. Configure plugin settings in WordPress Admin → Settings → Propio Integration"

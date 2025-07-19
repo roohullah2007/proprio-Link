@@ -1,0 +1,20 @@
+                                        <div>
+                                            <label className="block text-sm font-medium text-[#6C6C6C] font-inter mb-1">
+                                                {__('Phone')}
+                                            </label>
+                                            <p className="text-[#000] font-inter">{user.telephone || '-'}</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-sm font-medium text-[#6C6C6C] font-inter mb-1">
+                                                {__('User Type')}
+                                            </label>
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${getBadgeColor(user.type_utilisateur)}`}>
+                                                {user.type_utilisateur === 'AGENT' && <Icons.Shield className="w-4 h-4 mr-1" />}
+                                                {user.type_utilisateur === 'PROPRIETAIRE' && <Icons.Home className="w-4 h-4 mr-1" />}
+                                                {user.type_utilisateur === 'ADMIN' && <Icons.Shield className="w-4 h-4 mr-1" />}
+                                                {user.type_utilisateur === 'AGENT' ? 'Agent' : 
+                                                 user.type_utilisateur === 'PROPRIETAIRE' ? 'Property Owner' : 
+                                                 user.type_utilisateur === 'ADMIN' ? 'Administrator' : user.type_utilisateur}
+                                            </span>
+                                        </div>
