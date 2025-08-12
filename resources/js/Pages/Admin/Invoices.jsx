@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
+import { formatDate } from '@/Utils/dateUtils';
 
 const Icons = {
     DocumentText: ({ className }) => (
@@ -108,13 +109,6 @@ export default function Invoices({ auth, invoices, stats, filters, error }) {
         }).format(amount);
     };
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('fr-FR', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
     const handleSearch = (e) => {
         e.preventDefault();

@@ -92,8 +92,10 @@ export default function Settings({ auth, settings }) {
         // Platform Settings
         platform_name: settings.platform_name || 'Propio',
         platform_url: settings.platform_url || '',
-        admin_email: settings.admin_email || '',
         default_language: settings.default_language || 'fr',
+        
+        // Admin Notification Settings
+        admin_notification_emails: settings.admin_notification_emails || [''],
         
         // Website Settings
         website_url: settings.website_url || 'https://yourdomain.com',
@@ -230,9 +232,27 @@ export default function Settings({ auth, settings }) {
         setData('allowed_image_types', currentTypes);
     };
 
+    // Admin notification emails management
+    const addNotificationEmail = () => {
+        const newEmails = [...data.admin_notification_emails, ''];
+        setData('admin_notification_emails', newEmails);
+    };
+
+    const removeNotificationEmail = (index) => {
+        const newEmails = data.admin_notification_emails.filter((_, i) => i !== index);
+        setData('admin_notification_emails', newEmails.length > 0 ? newEmails : ['']);
+    };
+
+    const updateNotificationEmail = (index, value) => {
+        const newEmails = [...data.admin_notification_emails];
+        newEmails[index] = value;
+        setData('admin_notification_emails', newEmails);
+    };
+
     const tabs = [
         { id: 'payment', label: __('Payment Settings'), icon: Icons.CreditCard },
         { id: 'email', label: __('Email Settings'), icon: Icons.Mail },
+        { id: 'notifications', label: __('Admin Notifications'), icon: Icons.Mail },
         { id: 'platform', label: __('Platform Settings'), icon: Icons.Globe },
         { id: 'website', label: __('Website Settings'), icon: Icons.Globe },
         { id: 'files', label: __('File Settings'), icon: Icons.Upload },
@@ -643,6 +663,96 @@ export default function Settings({ auth, settings }) {
                                         </div>
                                     )}
 
+                                    {/* Admin Notifications */}
+                                    {activeTab === 'notifications' && (
+                                        <div className="space-y-6">
+                                            <div className="border-b border-[#EAEAEA] pb-4">
+                                                <h3 className="text-lg font-semibold text-[#696969] font-inter mb-2">
+                                                    {__('Admin Notification Emails')}
+                                                </h3>
+                                                <p className="text-sm text-[#6C6C6C] font-inter">
+                                                    {__('Configure email addresses that will receive admin notifications (new users, property submissions, etc.).')}
+                                                </p>
+                                            </div>
+
+                                            {data.admin_notification_emails.length === 1 && data.admin_notification_emails[0] === '' && (
+                                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                    <div className="flex items-center">
+                                                        <svg className="w-5 h-5 text-yellow-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.734 0L4.08 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                                        </svg>
+                                                        <div>
+                                                            <h4 className="text-sm font-medium text-yellow-800 font-inter">
+                                                                {__('No Admin Notification Emails Configured')}
+                                                            </h4>
+                                                            <p className="mt-1 text-sm text-yellow-700 font-inter">
+                                                                {__('Please add at least one email address to receive admin notifications. Without this, you will not receive important system notifications.')}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="space-y-4">
+                                                {data.admin_notification_emails.map((email, index) => (
+                                                    <div key={index} className="flex items-center space-x-3">
+                                                        <div className="flex-1">
+                                                            <input
+                                                                type="email"
+                                                                value={email}
+                                                                onChange={(e) => updateNotificationEmail(index, e.target.value)}
+                                                                placeholder={__('admin@yourdomain.com')}
+                                                                className="w-full px-4 py-3 border border-[#EAEAEA] rounded-lg text-[#000] font-inter placeholder-[#6C6C6C] focus:outline-none focus:border-[#065033] focus:ring-1 focus:ring-[#065033]"
+                                                            />
+                                                        </div>
+                                                        {data.admin_notification_emails.length > 1 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeNotificationEmail(index)}
+                                                                className="flex items-center justify-center w-10 h-10 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 hover:border-red-300 transition-colors"
+                                                                title={__('Remove email address')}
+                                                            >
+                                                                <Icons.Trash className="w-4 h-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                
+                                                {errors.admin_notification_emails && (
+                                                    <p className="text-red-500 text-sm">{errors.admin_notification_emails}</p>
+                                                )}
+
+                                                <button
+                                                    type="button"
+                                                    onClick={addNotificationEmail}
+                                                    className="flex items-center px-4 py-2 text-sm bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors font-inter"
+                                                >
+                                                    <Icons.Plus className="w-4 h-4 mr-2" />
+                                                    {__('Add Email Address')}
+                                                </button>
+
+                                                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                                    <div className="flex items-start">
+                                                        <svg className="w-5 h-5 text-blue-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <div>
+                                                            <h4 className="text-sm font-medium text-blue-800 font-inter">
+                                                                {__('Important Information')}
+                                                            </h4>
+                                                            <ul className="mt-1 text-sm text-blue-700 font-inter space-y-1">
+                                                                <li>• {__('These addresses will receive notifications for new user registrations')}</li>
+                                                                <li>• {__('Property submission and approval notifications will be sent here')}</li>
+                                                                <li>• {__('Contact purchase notifications will be sent to these addresses')}</li>
+                                                                <li>• {__('System alerts and important updates will be delivered here')}</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Platform Settings */}
                                     {activeTab === 'platform' && (
                                         <div className="space-y-6">
@@ -686,20 +796,6 @@ export default function Settings({ auth, settings }) {
                                                     )}
                                                 </div>
 
-                                                <div>
-                                                    <label className="block text-sm font-medium text-[#696969] font-inter mb-2">
-                                                        {__('Admin Email')}
-                                                    </label>
-                                                    <input
-                                                        type="email"
-                                                        value={data.admin_email}
-                                                        onChange={(e) => setData('admin_email', e.target.value)}
-                                                        className="w-full px-4 py-3 border border-[#EAEAEA] rounded-lg text-[#000] font-inter focus:outline-none focus:border-[#065033] focus:ring-1 focus:ring-[#065033]"
-                                                    />
-                                                    {errors.admin_email && (
-                                                        <p className="text-red-500 text-sm mt-1">{errors.admin_email}</p>
-                                                    )}
-                                                </div>
 
                                                 <div>
                                                     <label className="block text-sm font-medium text-[#696969] font-inter mb-2">

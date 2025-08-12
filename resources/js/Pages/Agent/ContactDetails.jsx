@@ -128,6 +128,44 @@ export default function ContactDetails({ purchase, property, owner }) {
         window.history.back();
     };
 
+    // Function to open Gmail with pre-filled email
+    const openGmailCompose = () => {
+        const subject = encodeURIComponent(__('Property Service Proposal') + ' - ' + property.adresse_complete);
+        const body = encodeURIComponent(`${__('Hello')} ${owner.prenom} ${owner.nom},
+
+${__('I am contacting you regarding your property located at')} ${property.adresse_complete}.
+
+${__('As a real estate agent, I would be delighted to assist you with selling your property.')}
+
+${__('I remain at your disposal for any additional information.')}
+
+${__('Best regards')}`);
+        
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(owner.email)}&su=${subject}&body=${body}`;
+        
+        // Open Gmail in new tab
+        window.open(gmailUrl, '_blank');
+    };
+
+    // Function to handle phone calls with multiple options
+    const handleCallOwner = () => {
+        const phoneNumber = owner.telephone;
+        
+        // For mobile devices, directly use tel: protocol
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            window.open(`tel:${phoneNumber}`, '_self');
+        } else {
+            // For desktop, show confirmation and options
+            if (confirm(`Call ${owner.prenom} ${owner.nom} at ${phoneNumber}?\n\nThis will open your default phone app or dialer.\n\nClick OK to call, or Cancel to copy the number instead.`)) {
+                // Try to open phone app
+                window.open(`tel:${phoneNumber}`, '_blank');
+            } else {
+                // Copy to clipboard as fallback
+                copyToClipboard(phoneNumber, 'phone');
+            }
+        }
+    };
+
     return (
         <AuthenticatedLayout
             usePillNavigation={false}
@@ -155,18 +193,18 @@ export default function ContactDetails({ purchase, property, owner }) {
             <Head title={__('Contact Information')} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-[1200px] px-8">
+                <div className="mx-auto max-w-[1336px] px-8">
                     {/* Success Banner */}
-                    <div className="bg-[#F0F9F4] border border-[#D1F2D9] rounded-lg p-6 mb-8">
+                    <div className="bg-[#EBF4FF] border border-[#BFDBFE] rounded-lg p-6 mb-8">
                         <div className="flex items-center">
-                            <div className="w-12 h-12 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 bg-[#3B82F6] rounded-full flex items-center justify-center mr-4">
                                 <Icons.CheckCircle className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-[#065033] font-inter mb-1">
+                                <h3 className="text-lg font-semibold text-[#1E40AF] font-inter mb-1">
                                     {__('Contact purchased successfully!')}
                                 </h3>
-                                <p className="text-[#065033] font-inter">
+                                <p className="text-[#1E40AF] font-inter">
                                     {__('You can now contact the property owner directly.')}
                                 </p>
                             </div>
@@ -179,7 +217,7 @@ export default function ContactDetails({ purchase, property, owner }) {
                             <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-4 flex items-center">
-                                        <Icons.Home className="w-5 h-5 mr-2 text-[#065033]" />
+                                        <Icons.Home className="w-5 h-5 mr-2 text-[#1E40AF]" />
                                         {__('Property Details')}
                                     </h3>
                                     
@@ -215,47 +253,47 @@ export default function ContactDetails({ purchase, property, owner }) {
 
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                            <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg">
                                                 <div className="flex items-center mb-2">
-                                                    <Icons.MapPin className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.MapPin className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Address')}</span>
                                                 </div>
                                                 <p className="text-[#000] font-inter font-medium">{property.adresse_complete}</p>
                                                 <p className="text-[#6C6C6C] font-inter text-sm">{property.ville}, {property.pays}</p>
                                             </div>
                                             
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                            <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg">
                                                 <div className="flex items-center mb-2">
-                                                    <Icons.Euro className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.Euro className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Price')}</span>
                                                 </div>
-                                                <p className="text-xl font-bold text-[#065033] font-inter">
+                                                <p className="text-xl font-bold text-[#1E40AF] font-inter">
                                                     {formatPrice(property.prix)}
                                                 </p>
                                             </div>
                                         </div>
                                         
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                            <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg text-center">
                                                 <div className="flex items-center justify-center mb-2">
-                                                    <Icons.Home className="w-4 h-4 text-[#6C6C6C] mr-1" />
+                                                    <Icons.Home className="w-4 h-4 text-[#1E40AF] mr-1" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Type')}</span>
                                                 </div>
                                                 <p className="text-[#000] font-inter font-medium">{getPropertyTypeLabel(property.type_propriete)}</p>
                                             </div>
                                             
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                            <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg text-center">
                                                 <div className="flex items-center justify-center mb-2">
-                                                    <Icons.Maximize2 className="w-4 h-4 text-[#6C6C6C] mr-1" />
+                                                    <Icons.Maximize2 className="w-4 h-4 text-[#1E40AF] mr-1" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Surface')}</span>
                                                 </div>
                                                 <p className="text-[#000] font-inter font-medium">{property.superficie_m2} m²</p>
                                             </div>
                                             
                                             {property.nombre_pieces && (
-                                                <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                                <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg text-center">
                                                     <div className="flex items-center justify-center mb-2">
-                                                        <Icons.User className="w-4 h-4 text-[#6C6C6C] mr-1" />
+                                                        <Icons.User className="w-4 h-4 text-[#1E40AF] mr-1" />
                                                         <span className="text-sm font-medium text-[#000] font-inter">{__('Rooms')}</span>
                                                     </div>
                                                     <p className="text-[#000] font-inter font-medium">{property.nombre_pieces}</p>
@@ -268,17 +306,17 @@ export default function ContactDetails({ purchase, property, owner }) {
                         </div>
 
                         {/* Contact Information - Right Column */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden sticky top-8">
+                        <div className="sticky top-24 space-y-6 h-fit">
+                            <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-6 flex items-center">
-                                        <Icons.User className="w-5 h-5 mr-2 text-[#065033]" />
+                                        <Icons.User className="w-5 h-5 mr-2 text-[#1E40AF]" />
                                         {__('Owner Information')}
                                     </h3>
 
                                     {/* Owner Avatar */}
-                                    <div className="flex items-center mb-6 p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-[#065033] to-[#054028] rounded-full flex items-center justify-center mr-4">
+                                    <div className="flex items-center mb-6 p-4 bg-[#EBF4FF] border border-[#BFDBFE] rounded-lg">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-[#1E40AF] to-[#1E3A8A] rounded-full flex items-center justify-center mr-4">
                                             <span className="text-white text-xl font-bold font-inter">
                                                 {owner.prenom?.[0]}{owner.nom?.[0]}
                                             </span>
@@ -296,10 +334,10 @@ export default function ContactDetails({ purchase, property, owner }) {
                                     {/* Contact Details */}
                                     <div className="space-y-4 mb-6">
                                         {/* Email */}
-                                        <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                        <div className="p-4 bg-[#EBF4FF] border border-[#BFDBFE] rounded-lg">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center">
-                                                    <Icons.Mail className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.Mail className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Email')}</span>
                                                 </div>
                                                 <div className="flex space-x-2">
@@ -307,20 +345,20 @@ export default function ContactDetails({ purchase, property, owner }) {
                                                         onClick={() => copyToClipboard(owner.email, 'email')}
                                                         className={`p-1 rounded transition-colors ${
                                                             copiedText === 'email' 
-                                                                ? 'text-[#065033] bg-[#F0F9F4]' 
-                                                                : 'text-[#6C6C6C] hover:text-[#065033] hover:bg-[#F0F9F4]'
+                                                                ? 'text-[#1E40AF] bg-[#EBF4FF]' 
+                                                                : 'text-[#6C6C6C] hover:text-[#1E40AF] hover:bg-[#EBF4FF]'
                                                         }`}
                                                         title={__('Copy')}
                                                     >
                                                         <Icons.Copy className="w-4 h-4" />
                                                     </button>
-                                                    <a
-                                                        href={`mailto:${owner.email}?subject=${encodeURIComponent(__('Property Service Proposal') + ' - ' + property.adresse_complete)}&body=${encodeURIComponent(`${__('Hello')} ${owner.prenom} ${owner.nom},\n\n${__('I am contacting you regarding your property located at')} ${property.adresse_complete}.\n\n${__('As a real estate agent, I would be delighted to assist you with selling your property.')}\n\n${__('I remain at your disposal for any additional information.')}\n\n${__('Best regards')}`)}`}
-                                                        className="p-1 text-[#6C6C6C] hover:text-[#065033] hover:bg-[#F0F9F4] rounded transition-colors"
+                                                    <button
+                                                        onClick={openGmailCompose}
+                                                        className="p-1 text-[#6C6C6C] hover:text-[#1E40AF] hover:bg-[#EBF4FF] rounded transition-colors"
                                                         title={__('Send Email')}
                                                     >
                                                         <Icons.ExternalLink className="w-4 h-4" />
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <p className="text-[#000] font-inter font-medium break-all">
@@ -329,10 +367,10 @@ export default function ContactDetails({ purchase, property, owner }) {
                                         </div>
 
                                         {/* Phone */}
-                                        <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                        <div className="p-4 bg-[#EBF4FF] border border-[#BFDBFE] rounded-lg">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center">
-                                                    <Icons.Phone className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.Phone className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Phone')}</span>
                                                 </div>
                                                 <div className="flex space-x-2">
@@ -340,20 +378,20 @@ export default function ContactDetails({ purchase, property, owner }) {
                                                         onClick={() => copyToClipboard(owner.telephone, 'phone')}
                                                         className={`p-1 rounded transition-colors ${
                                                             copiedText === 'phone' 
-                                                                ? 'text-[#065033] bg-[#F0F9F4]' 
-                                                                : 'text-[#6C6C6C] hover:text-[#065033] hover:bg-[#F0F9F4]'
+                                                                ? 'text-[#1E40AF] bg-[#EBF4FF]' 
+                                                                : 'text-[#6C6C6C] hover:text-[#1E40AF] hover:bg-[#EBF4FF]'
                                                         }`}
                                                         title={__('Copy')}
                                                     >
                                                         <Icons.Copy className="w-4 h-4" />
                                                     </button>
-                                                    <a
-                                                        href={`tel:${owner.telephone}`}
-                                                        className="p-1 text-[#6C6C6C] hover:text-[#065033] hover:bg-[#F0F9F4] rounded transition-colors"
+                                                    <button
+                                                        onClick={handleCallOwner}
+                                                        className="p-1 text-[#6C6C6C] hover:text-[#1E40AF] hover:bg-[#EBF4FF] rounded transition-colors"
                                                         title={__('Call')}
                                                     >
                                                         <Icons.ExternalLink className="w-4 h-4" />
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <p className="text-[#000] font-inter font-medium">
@@ -364,21 +402,21 @@ export default function ContactDetails({ purchase, property, owner }) {
 
                                     {/* Quick Actions */}
                                     <div className="space-y-3 mb-6">
-                                        <a
-                                            href={`mailto:${owner.email}?subject=${encodeURIComponent(__('Property Service Proposal') + ' - ' + property.adresse_complete)}&body=${encodeURIComponent(`${__('Hello')} ${owner.prenom} ${owner.nom},\n\n${__('I am contacting you regarding your property located at')} ${property.adresse_complete}.\n\n${__('As a real estate agent, I would be delighted to assist you with selling your property.')} \n\n${__('I remain at your disposal for any additional information.')}\n\n${__('Best regards')}`)}`}
-                                            className="w-full flex items-center justify-center px-4 py-3 bg-[#065033] hover:bg-[#054028] text-white rounded-lg font-inter font-medium text-sm transition-colors"
+                                        <button
+                                            onClick={openGmailCompose}
+                                            className="w-full flex items-center justify-center px-4 py-3 bg-[#1E40AF] hover:bg-[#1E3A8A] text-white rounded-lg font-inter font-medium text-sm transition-colors cursor-pointer"
                                         >
                                             <Icons.Mail className="w-4 h-4 mr-2" />
                                             {__('Send Email to Owner')}
-                                        </a>
+                                        </button>
                                         
-                                        <a
-                                            href={`tel:${owner.telephone}`}
-                                            className="w-full flex items-center justify-center px-4 py-3 bg-[#F5F9FA] hover:bg-[#EAEAEA] text-[#065033] border border-[#065033] rounded-lg font-inter font-medium text-sm transition-colors"
+                                        <button
+                                            onClick={handleCallOwner}
+                                            className="w-full flex items-center justify-center px-4 py-3 bg-[#EBF4FF] hover:bg-[#BFDBFE] text-[#1E40AF] border border-[#1E40AF] rounded-lg font-inter font-medium text-sm transition-colors cursor-pointer"
                                         >
                                             <Icons.Phone className="w-4 h-4 mr-2" />
                                             {__('Call Owner')}
-                                        </a>
+                                        </button>
                                     </div>
 
                                     {/* Purchase Information */}
@@ -389,7 +427,7 @@ export default function ContactDetails({ purchase, property, owner }) {
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between py-2">
                                                 <div className="flex items-center">
-                                                    <Icons.Calendar className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.Calendar className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm text-[#000] font-inter">{__('Purchase Date')}</span>
                                                 </div>
                                                 <span className="text-sm text-[#000] font-inter font-medium">
@@ -398,16 +436,16 @@ export default function ContactDetails({ purchase, property, owner }) {
                                             </div>
                                             <div className="flex items-center justify-between py-2">
                                                 <div className="flex items-center">
-                                                    <Icons.CreditCard className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.CreditCard className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm text-[#000] font-inter">{__('Amount Paid')}</span>
                                                 </div>
-                                                <span className="text-sm text-[#065033] font-inter font-bold">
+                                                <span className="text-sm text-[#1E40AF] font-inter font-bold">
                                                     {formatPrice(purchase.montant_paye)}
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between py-2">
                                                 <div className="flex items-center">
-                                                    <Icons.Hash className="w-4 h-4 text-[#6C6C6C] mr-2" />
+                                                    <Icons.Hash className="w-4 h-4 text-[#1E40AF] mr-2" />
                                                     <span className="text-sm text-[#000] font-inter">{__('Transaction ID')}</span>
                                                 </div>
                                                 <span className="text-xs text-[#6C6C6C] font-inter font-mono">
@@ -422,26 +460,26 @@ export default function ContactDetails({ purchase, property, owner }) {
                     </div>
 
                     {/* Tips Section */}
-                    <div className="mt-8 bg-[#F0F9F4] border border-[#D1F2D9] rounded-lg p-6">
-                        <h3 className="text-lg font-semibold text-[#065033] font-inter mb-4 flex items-center">
+                    <div className="mt-8 bg-[#EBF4FF] border border-[#BFDBFE] rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-[#1E40AF] font-inter mb-4 flex items-center">
                             <Icons.Lightbulb className="w-5 h-5 mr-2" />
                             {__('Tips for contacting the owner')}
                         </h3>
-                        <ul className="space-y-3 text-[#065033] font-inter">
+                        <ul className="space-y-3 text-[#1E40AF] font-inter">
                             <li className="flex items-start">
-                                <div className="w-2 h-2 bg-[#065033] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <div className="w-2 h-2 bg-[#3B82F6] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                                 {__('Introduce yourself and mention that you are a real estate agent')}
                             </li>
                             <li className="flex items-start">
-                                <div className="w-2 h-2 bg-[#065033] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <div className="w-2 h-2 bg-[#3B82F6] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                                 {__('Offer a free evaluation and personalized sales plan')}
                             </li>
                             <li className="flex items-start">
-                                <div className="w-2 h-2 bg-[#065033] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <div className="w-2 h-2 bg-[#3B82F6] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                                 {__('Highlight your local expertise and references')}
                             </li>
                             <li className="flex items-start">
-                                <div className="w-2 h-2 bg-[#065033] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <div className="w-2 h-2 bg-[#3B82F6] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                                 {__('Be professional and respectful in your communications')}
                             </li>
                         </ul>
@@ -449,7 +487,7 @@ export default function ContactDetails({ purchase, property, owner }) {
 
                     {/* Copied notification */}
                     {copiedText && (
-                        <div className="fixed bottom-4 right-4 bg-[#065033] text-white px-4 py-2 rounded-lg font-inter text-sm">
+                        <div className="fixed bottom-4 right-4 bg-[#2563eb] text-white px-4 py-2 rounded-lg font-inter text-sm">
                             {__('Copied to clipboard')}!
                         </div>
                     )}

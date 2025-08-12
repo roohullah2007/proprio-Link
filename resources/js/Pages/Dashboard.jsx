@@ -52,6 +52,7 @@ const Icons = {
 export default function Dashboard({ auth, properties = [], stats = {} }) {
     const user = auth.user;
     const { __ } = useTranslations();
+    
     const [timeframe, setTimeframe] = useState('30d');
     const [showTimeframeDropdown, setShowTimeframeDropdown] = useState(false);
     const dropdownRef = useRef(null);
@@ -168,10 +169,10 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
             border: 'border-blue-200'
         },
         green: {
-            bg: 'bg-green-500',
-            light: 'bg-green-50',
-            text: 'text-green-600',
-            border: 'border-green-200'
+            bg: 'bg-blue-500',
+            light: 'bg-blue-50',
+            text: 'text-blue-600',
+            border: 'border-blue-200'
         },
         purple: {
             bg: 'bg-purple-500',
@@ -210,7 +211,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                         <div className="relative" ref={dropdownRef}>
                             <button 
                                 onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
-                                className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#065033] border border-[#065033] rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]"
+                                className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#0F44FC] border border-[#0F44FC] rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-[#0A37D1] focus:outline-none focus:bg-[#0A37D1]"
                             >
                                 <svg 
                                     width="12" 
@@ -250,7 +251,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '7d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '7d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 7 Days')}
@@ -261,7 +262,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '30d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '30d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 30 Days')}
@@ -272,7 +273,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '90d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '90d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 90 Days')}
@@ -283,7 +284,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '1y' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '1y' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last Year')}
@@ -315,7 +316,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                             {/* Verification Status */}
                             <div>
                                 {user.est_verifie ? (
-                                    <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#065033] border border-[#065033] rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]">
+                                    <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#0F44FC] border border-[#0F44FC] rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-[#0A37D1] focus:outline-none focus:bg-[#0A37D1]">
                                         <svg className="w-4 h-4 text-white flex-none order-0 flex-grow-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                         </svg>
@@ -336,6 +337,7 @@ export default function Dashboard({ auth, properties = [], stats = {} }) {
                             </div>
                         </div>
                     </div>
+
 
                     {/* Statistics Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

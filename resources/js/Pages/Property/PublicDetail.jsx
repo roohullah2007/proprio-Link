@@ -270,9 +270,9 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                         </div>
 
                         <div className="space-y-4 mb-6">
-                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                            <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg">
                                 <h4 className="font-semibold text-[#000] font-inter mb-3 flex items-center">
-                                    <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-2" />
+                                    <Icons.CheckCircle className="w-5 h-5 text-[#0F44FC] mr-2" />
                                     {__('Benefits of an agent account:')}
                                 </h4>
                                 <ul className="text-sm text-[#000] space-y-2 font-inter">
@@ -297,7 +297,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                 onClick={() => {
                                     window.location.href = `/register?redirect=${encodeURIComponent(currentUrl)}&type=agent`;
                                 }}
-                                className="w-full bg-[#065033] hover:bg-[#054028] text-white py-3 px-4 rounded-lg font-semibold font-inter transition-colors"
+                                className="w-full bg-[#0F44FC] hover:bg-[#0A37D1] text-white py-3 px-4 rounded-lg font-semibold font-inter transition-colors"
                             >
                                 {__('Create Agent Account')}
                             </button>
@@ -318,7 +318,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                 <div className="bg-white rounded-lg max-w-md w-full p-6">
                     <div className="text-center mb-6">
-                        <div className="w-16 h-16 bg-[#065033] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div className="w-16 h-16 bg-[#0F44FC] rounded-full flex items-center justify-center mx-auto mb-4">
                             <Icons.User className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-semibold text-[#000] font-inter mb-2">{__('Buy Property Contact')}</h3>
@@ -328,9 +328,9 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                     </div>
 
                     <div className="space-y-4 mb-6">
-                        <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                        <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg">
                             <h4 className="font-semibold text-[#000] font-inter mb-3 flex items-center">
-                                <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-2" />
+                                <Icons.CheckCircle className="w-5 h-5 text-[#0F44FC] mr-2" />
                                 {__('What you get as an agent:')}
                             </h4>
                             <ul className="text-sm text-[#000] space-y-2 font-inter">
@@ -359,7 +359,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                             onClick={() => {
                                 window.location.href = `/login?redirect=${encodeURIComponent(currentUrl)}&type=agent`;
                             }}
-                            className="w-full bg-[#065033] hover:bg-[#054028] text-white py-3 px-4 rounded-lg font-semibold font-inter transition-colors"
+                            className="w-full bg-[#0F44FC] hover:bg-[#0A37D1] text-white py-3 px-4 rounded-lg font-semibold font-inter transition-colors"
                         >
                             {__('Sign In as Agent')}
                         </button>
@@ -367,7 +367,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                             onClick={() => {
                                 window.location.href = `/register?redirect=${encodeURIComponent(currentUrl)}&type=agent`;
                             }}
-                            className="w-full bg-white hover:bg-[#F5F9FA] text-[#065033] py-3 px-4 rounded-lg font-semibold font-inter transition-colors border-2 border-[#065033]"
+                            className="w-full bg-white hover:bg-[#F5F9FA] text-[#0F44FC] py-3 px-4 rounded-lg font-semibold font-inter transition-colors border-2 border-[#0F44FC]"
                         >
                             {__('Become an Agent')}
                         </button>
@@ -386,7 +386,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
         <PublicLayout>
             <Head title={property.type_propriete + " - " + property.ville + " - Propio"} />
             
-            <div className="min-h-screen bg-[#F5F9FA]">
+            <div className="min-h-screen bg-[#EBF4FF]">
                 {/* Main Content */}
                 <div className={`py-8 ${isAdmin ? 'pt-16' : ''}`}>
                 <div className="mx-auto max-w-[1336px] px-8">
@@ -446,7 +446,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
 
                                             {/* Thumbnails - Only if more than 1 image */}
                                             {property.images.length > 1 && (
-                                                <div className="p-6 bg-[#F5F9FA]">
+                                                <div className="p-6 bg-[#EBF4FF]">
                                                     <div className="grid grid-cols-6 gap-4">
                                                         {property.images.slice(0, 6).map((image, index) => (
                                                             <button
@@ -454,8 +454,8 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                                                 onClick={() => setCurrentImageIndex(index)}
                                                                 className={`relative h-20 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 border-2 ${
                                                                     index === currentImageIndex 
-                                                                        ? 'border-[#065033] ring-2 ring-[#065033] ring-opacity-20 scale-105' 
-                                                                        : 'border-[#EAEAEA] hover:border-[#065033]'
+                                                                        ? 'border-[#0F44FC] ring-2 ring-[#0F44FC] ring-opacity-20 scale-105' 
+                                                                        : 'border-[#EAEAEA] hover:border-[#0F44FC]'
                                                                 }`}
                                                             >
                                                                 <img
@@ -468,7 +468,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                                         {property.images.length > 6 && (
                                                             <button
                                                                 onClick={() => openImageModal()}
-                                                                className="h-20 bg-[#EAEAEA] rounded-lg flex items-center justify-center hover:bg-[#065033] hover:text-white transition-all duration-300 border-2 border-[#EAEAEA] hover:border-[#065033]"
+                                                                className="h-20 bg-[#EAEAEA] rounded-lg flex items-center justify-center hover:bg-[#0F44FC] hover:text-white transition-all duration-300 border-2 border-[#EAEAEA] hover:border-[#0F44FC]"
                                                             >
                                                                 <span className="text-sm font-bold font-inter">
                                                                     +{property.images.length - 6}
@@ -480,7 +480,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                             )}
                                         </>
                                     ) : (
-                                        <div className="h-96 lg:h-[500px] bg-[#F5F9FA] flex items-center justify-center">
+                                        <div className="h-96 lg:h-[500px] bg-[#EBF4FF] flex items-center justify-center">
                                             <div className="text-center">
                                                 <Icons.Home className="w-16 h-16 text-[#6C6C6C] mx-auto mb-4" />
                                                 <p className="text-[#6C6C6C] font-medium font-inter">{__('No photos available')}</p>
@@ -501,23 +501,23 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                             <div className="bg-white border border-[#EAEAEA] rounded-lg p-6">
                                 <h3 className="text-lg font-semibold text-[#000] font-inter mb-6">{__('Property Features')}</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Home className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
+                                        <Icons.Home className="w-8 h-8 text-[#0F44FC] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Type')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{propertyTypes[property.type_propriete]}</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Maximize2 className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
+                                        <Icons.Maximize2 className="w-8 h-8 text-[#0F44FC] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Surface')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{property.superficie_m2} m²</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Euro className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
+                                        <Icons.Euro className="w-8 h-8 text-[#0F44FC] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Price/m²')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{formatPrice(property.prix / property.superficie_m2)}</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.User className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
+                                        <Icons.User className="w-8 h-8 text-[#0F44FC] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Contacts')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{property.contacts_restants}/{property.contacts_souhaites}</p>
                                     </div>
@@ -557,7 +557,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
 
                                 {/* Monthly charges */}
                                 {property.charges_mensuelles && (
-                                    <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                    <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Monthly charges')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{formatPrice(property.charges_mensuelles)}</p>
                                     </div>
@@ -573,19 +573,19 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                         {/* Basic Building Info */}
                                         <div className="space-y-4">
                                             {property.annee_construction && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Year of construction')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{property.annee_construction}</p>
                                                 </div>
                                             )}
                                             {property.etat_propriete && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Property condition')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.etat_propriete)}</p>
                                                 </div>
                                             )}
                                             {property.type_chauffage && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Heating type')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.type_chauffage)}</p>
                                                 </div>
@@ -595,13 +595,13 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                         {/* Energy Performance */}
                                         <div className="space-y-4">
                                             {property.dpe_classe_energie && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Energy class (DPE)')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.dpe_classe_energie)}</p>
                                                 </div>
                                             )}
                                             {property.dpe_classe_ges && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('GHG emissions class')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.dpe_classe_ges)}</p>
                                                 </div>
@@ -615,13 +615,107 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                             {property.amenities && property.amenities.length > 0 && (
                                 <div className="bg-white border border-[#EAEAEA] rounded-lg p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-6">{__('Amenities')}</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {property.amenities.map((amenity, index) => (
-                                            <div key={index} className="flex items-center p-3 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                                <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-3" />
-                                                <span className="text-[#000] font-inter text-sm">{__(amenity)}</span>
-                                            </div>
-                                        ))}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                        {property.amenities.map((amenity, index) => {
+                                            // Amenity icon mapping - matching PropertyDetails.jsx exactly
+                                            const amenityIcons = {
+                                                // Exterior and Parking
+                                                'parking': 'Car',
+                                                'garage': 'Home',
+                                                'jardin': 'TreePine', // Trees alternative
+                                                'terrasse': 'Mountain',
+                                                'balcon': 'Building2',
+                                                'piscine': 'Waves',
+                                                'cave': 'Archive',
+                                                'grenier': 'Package',
+                                                
+                                                // Security and Comfort
+                                                'ascenseur': 'ArrowUpDown',
+                                                'elevator': 'ArrowUpDown',
+                                                'digicode': 'Key', // KeyRound alternative
+                                                'interphone': 'Phone',
+                                                'gardien': 'User',
+                                                'alarme': 'Shield',
+                                                'climatisation': 'Snowflake',
+                                                'cheminee': 'Flame',
+                                                
+                                                // Equipment
+                                                'cuisine_equipee': 'ChefHat',
+                                                'cuisine_amenagee': 'Utensils', // UtensilsCrossed alternative
+                                                'dressing': 'Shirt',
+                                                'placards': 'Package',
+                                                'double_vitrage': 'Square',
+                                                'volets_electriques': 'Blinds',
+                                                
+                                                // Accessibility and Services
+                                                'acces_handicape': 'Accessibility',
+                                                'fibre_optique': 'Wifi',
+                                                'proche_transports': 'Train',
+                                                'proche_commerces': 'ShoppingCart',
+                                                'proche_ecoles': 'GraduationCap'
+                                            };
+                                            
+                                            // Amenity text capitalization
+                                            const capitalizeAmenityText = (text) => {
+                                                if (!text) return '';
+                                                
+                                                const specialCases = {
+                                                    'parking': 'Parking',
+                                                    'balcon': 'Balcony', 
+                                                    'elevator': 'Elevator',
+                                                    'alarme': 'Alarm System',
+                                                    'cuisine_equipee': 'Equipped Kitchen',
+                                                    'double_vitrage': 'Double Glazing',
+                                                    'acces_handicape': 'Disabled Access',
+                                                    'fibre_optique': 'Fiber Optic',
+                                                    'proche_transports': 'Near Public Transport',
+                                                    'proche_commerces': 'Near Shops',
+                                                    'proche_ecoles': 'Near Schools',
+                                                    'garage': 'Garage',
+                                                    'jardin': 'Garden',
+                                                    'terrasse': 'Terrace',
+                                                    'piscine': 'Swimming Pool',
+                                                    'cave': 'Cellar',
+                                                    'grenier': 'Attic/Loft',
+                                                    'ascenseur': 'Elevator',
+                                                    'digicode': 'Digital Code',
+                                                    'interphone': 'Intercom',
+                                                    'gardien': 'Doorman/Concierge',
+                                                    'climatisation': 'Air Conditioning',
+                                                    'cheminee': 'Fireplace',
+                                                    'cuisine_amenagee': 'Fitted Kitchen',
+                                                    'dressing': 'Dressing Room',
+                                                    'placards': 'Built-in Wardrobes',
+                                                    'volets_electriques': 'Electric Shutters'
+                                                };
+                                                
+                                                if (specialCases[text]) {
+                                                    return specialCases[text];
+                                                }
+                                                
+                                                return text
+                                                    .toLowerCase()
+                                                    .replace(/_/g, ' ')
+                                                    .replace(/\b\w/g, l => l.toUpperCase());
+                                            };
+                                            
+                                            // Get capitalized text
+                                            const displayText = capitalizeAmenityText(amenity);
+                                            
+                                            return (
+                                                <div key={index} className="flex items-center p-3 bg-[#EBF4FF] border border-[#EAEAEA] rounded-lg min-h-[48px]">
+                                                    <div className="flex-shrink-0 w-5 h-5 mr-3">
+                                                        <Icons.CheckCircle 
+                                                            className="w-full h-full text-[#0F44FC]" 
+                                                            strokeWidth={1.5}
+                                                        />
+                                                    </div>
+                                                    <span className="text-[#000] font-inter text-sm font-medium leading-tight">
+                                                        {__(displayText)}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -647,14 +741,14 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                         <Icons.MapPin className="w-5 h-5 mr-2" />
                                         <span className="font-inter">{property.ville}, {property.pays}</span>
                                     </div>
-                                    <p className="text-[#000] font-medium font-inter">
-                                        {property.adresse_complete}
+                                    <p className="text-[#6C6C6C] font-inter text-sm">
+                                        {__('Full address available after purchase')}
                                     </p>
                                 </div>
 
                                 {/* Contact Information */}
                                 <div className="space-y-4">
-                                    <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                    <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg">
                                         <h4 className="font-semibold text-[#000] font-inter mb-3">
                                             {__('Purchase Contact Information')}
                                         </h4>
@@ -680,7 +774,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
 
                                     <button
                                         onClick={handleContactClick}
-                                        className="w-full bg-[#065033] hover:bg-[#054028] text-white py-4 px-6 rounded-lg font-semibold text-lg font-inter transition-all duration-200 hover:shadow-lg"
+                                        className="w-full bg-[#0F44FC] hover:bg-[#0A37D1] text-white py-4 px-6 rounded-lg font-semibold text-lg font-inter transition-all duration-200 hover:shadow-lg"
                                     >
                                         {__('Buy Contact')}
                                     </button>
@@ -698,7 +792,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                 </h3>
                                 
                                 <div className="flex items-center space-x-4">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-[#065033] to-[#054028] rounded-full flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-[#0F44FC] to-[#0A37D1] rounded-full flex items-center justify-center">
                                         <span className="text-white text-xl font-bold font-inter">
                                             {property.proprietaire?.prenom?.[0]}{property.proprietaire?.nom?.[0]}
                                         </span>
@@ -721,9 +815,9 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                 </h3>
                                 
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#0F44FC] rounded-full flex items-center justify-center mr-4">
                                                 <Icons.Calendar className="w-5 h-5 text-white" />
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Published on')}</span>
@@ -733,9 +827,9 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                         </span>
                                     </div>
                                     
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#0F44FC] rounded-full flex items-center justify-center mr-4">
                                                 <span className="text-white font-bold text-xs font-inter">#</span>
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Reference')}</span>
@@ -745,15 +839,15 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                         </span>
                                     </div>
                                     
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#0F44FC] rounded-full flex items-center justify-center mr-4">
                                                 <Icons.CheckCircle className="w-5 h-5 text-white" />
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Status')}</span>
                                         </div>
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#F0F9F4] text-[#065033] border border-[#D1F2D9] font-inter">
-                                            <div className="w-2 h-2 bg-[#065033] rounded-full mr-2"></div>
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#F0F9F4] text-[#0F44FC] border border-[#D1F2D9] font-inter">
+                                            <div className="w-2 h-2 bg-[#0F44FC] rounded-full mr-2"></div>
                                             {__('Available')}
                                         </span>
                                     </div>
@@ -771,7 +865,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                     <a
                                         key={similarProperty.id}
                                         href={"/property/" + similarProperty.id}
-                                        className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden hover:shadow-lg hover:border-[#065033] transition-all duration-300 hover:scale-[1.02]"
+                                        className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden hover:shadow-lg hover:border-[#0F44FC] transition-all duration-300 hover:scale-[1.02]"
                                     >
                                         <div className="h-48 overflow-hidden">
                                             {similarProperty.images && similarProperty.images.length > 0 ? (
@@ -787,7 +881,7 @@ export default function PublicDetail({ property, propertyTypes, similarPropertie
                                             )}
                                         </div>
                                         <div className="p-4">
-                                            <div className="text-lg font-bold text-[#065033] mb-1 font-inter">
+                                            <div className="text-lg font-bold text-[#0F44FC] mb-1 font-inter">
                                                 {formatPrice(similarProperty.prix)}
                                             </div>
                                             <div className="text-[#6C6C6C] text-sm mb-2 font-inter">

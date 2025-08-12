@@ -104,20 +104,20 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
 
     const getPropertyTypeLabel = (type) => {
         const typeMap = {
-            'APPARTEMENT': 'Apartment',
-            'MAISON': 'House',
-            'VILLA': 'Villa',
-            'STUDIO': 'Studio',
-            'TERRAIN': 'Land',
-            'COMMERCIAL': 'Commercial',
-            'BUREAU': 'Office',
+            'APPARTEMENT': __("Apartment"),
+            'MAISON': __("House"),
+            'VILLA': __("Villa"),
+            'STUDIO': __("Studio"),
+            'TERRAIN': __("Land"),
+            'COMMERCIAL': __("Commercial"),
+            'BUREAU': __("Office"),
         };
         return typeMap[type] || type;
     };
 
     return (
         <PublicLayout>
-            <Head title={__("Property Search") + " - Propio"} />
+            <Head title={__("Property Search") + " - Proprio Link"} />
             
             <div className="min-h-screen bg-[#F5F7F9]">
                 <div className="py-12 bg-[#F5F7F9] min-h-screen">
@@ -131,7 +131,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-center">
                                             {/* Search Input */}
                                             <div className="sm:col-span-2 lg:col-span-4">
-                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#1E40AF] transition-colors">
                                                     <div className="flex-none w-4 h-4">
                                                         <Icons.Search className="w-4 h-4 text-[#4E5051]" />
                                                     </div>
@@ -147,7 +147,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
 
                                             {/* City */}
                                             <div className="sm:col-span-1 lg:col-span-2">
-                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#1E40AF] transition-colors">
                                                     <input
                                                         type="text"
                                                         value={searchForm.city}
@@ -160,7 +160,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
 
                                             {/* Property Type */}
                                             <div className="sm:col-span-1 lg:col-span-2">
-                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                                                <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#1E40AF] transition-colors">
                                                     <select
                                                         value={searchForm.property_type}
                                                         onChange={(e) => handleInputChange('property_type', e.target.value)}
@@ -168,7 +168,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                                     >
                                                         <option value="">{__('All types')}</option>
                                                         {Object.entries(propertyTypes).map(([value, label]) => (
-                                                            <option key={value} value={value}>{label}</option>
+                                                            <option key={value} value={value}>{__(label)}</option>
                                                         ))}
                                                     </select>
                                                 </div>
@@ -177,21 +177,21 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                             {/* Price Range */}
                                             <div className="sm:col-span-2 lg:col-span-2">
                                                 <div className="flex space-x-2">
-                                                    <div className="flex items-center px-3 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                                                    <div className="flex items-center px-3 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#1E40AF] transition-colors">
                                                         <input
                                                             type="number"
                                                             value={searchForm.min_price}
                                                             onChange={(e) => handleInputChange('min_price', e.target.value)}
-                                                            placeholder="Min"
+                                                            placeholder={__("Min")}
                                                             className="w-full border-0 outline-none bg-transparent text-[14px] leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] capitalize focus:outline-none focus:ring-0 focus:border-0"
                                                         />
                                                     </div>
-                                                    <div className="flex items-center px-3 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                                                    <div className="flex items-center px-3 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#1E40AF] transition-colors">
                                                         <input
                                                             type="number"
                                                             value={searchForm.max_price}
                                                             onChange={(e) => handleInputChange('max_price', e.target.value)}
-                                                            placeholder="Max"
+                                                            placeholder={__("Max")}
                                                             className="w-full border-0 outline-none bg-transparent text-[14px] leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] capitalize focus:outline-none focus:ring-0 focus:border-0"
                                                         />
                                                     </div>
@@ -202,7 +202,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                             <div className="sm:col-span-2 lg:col-span-2">
                                                 <button
                                                     type="submit"
-                                                    className="w-full bg-[#065033] hover:bg-[#054028] text-white px-6 py-3 rounded-full font-medium transition-colors duration-200 flex items-center justify-center h-[39px] focus:outline-none focus:ring-0"
+                                                    className="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white px-6 py-3 rounded-full font-medium transition-colors duration-200 flex items-center justify-center h-[39px] focus:outline-none focus:ring-0"
                                                 >
                                                     <Icons.Search className="w-4 h-4 mr-2" />
                                                     {__('Search')}
@@ -241,7 +241,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                                     )}
                                                     
                                                     {/* Status Badge */}
-                                                    <div className="desktop-status-badge absolute bottom-3 left-0 bg-[#059669] text-white text-[14px] font-medium py-1 px-3 rounded-r">
+                                                    <div className="desktop-status-badge absolute bottom-3 left-0 bg-[#1E40AF] text-white text-[14px] font-medium py-1 px-3 rounded-r">
                                                         {__('For Sale')}
                                                     </div>
                                                 </div>
@@ -298,7 +298,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                                         )}
                                                         
                                                         {/* Mobile Status Badge */}
-                                                        <div className="absolute top-1 left-1 bg-[#059669] text-white text-xs font-medium py-0.5 px-2 rounded">
+                                                        <div className="absolute top-1 left-1 bg-[#1E40AF] text-white text-xs font-medium py-0.5 px-2 rounded">
                                                             {__('For Sale')}
                                                         </div>
                                                     </div>
@@ -347,7 +347,7 @@ export default function PublicSearch({ properties, propertyTypes, cities, filter
                                                 href={link.url || '#'}
                                                 className={`px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-md whitespace-nowrap ${
                                                     link.active
-                                                        ? 'bg-[#065033] text-white'
+                                                        ? 'bg-[#1E40AF] text-white'
                                                         : link.url
                                                         ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                                                         : 'bg-gray-100 text-gray-400 cursor-not-allowed'

@@ -68,7 +68,7 @@
         <h3>💡 Besoin d'aide pour optimiser votre annonce ?</h3>
         <p>Notre équipe peut vous conseiller pour améliorer l'attractivité de votre propriété :</p>
         
-        📧 Email : support@propio.com<br>
+        📧 Email : support@proprio-link.fr<br>
         📞 Téléphone : 01 23 45 67 89<br>
         📚 <a href="{{ url('/help/owner-guide') }}">Guide du propriétaire</a>
     </div>
@@ -79,6 +79,6 @@
     </div>
 
     <div class="message">
-        Merci de votre confiance et bonne vente avec Propio !
+        Merci de votre confiance et bonne vente avec Proprio Link !
     </div>
 @endsection

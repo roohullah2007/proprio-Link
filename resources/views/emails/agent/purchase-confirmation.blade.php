@@ -1,6 +1,6 @@
 @extends('emails.layout')
 
-@section('subject', 'Confirmation d\'achat - Détails du contact propriétaire')
+@section('subject', 'Reçu d\'achat - Détails du contact propriétaire')
 
 @section('content')
     <div class="greeting">
@@ -8,11 +8,11 @@
     </div>
 
     <div class="message">
-        Félicitations ! Votre achat de contact propriétaire a été confirmé avec succès.
+        Voici le reçu de votre achat de contact propriétaire. La transaction a été confirmée avec succès.
     </div>
 
     <div class="success-badge">
-        ✅ Paiement confirmé - {{ number_format($purchase->montant_paye, 2, ',', ' ') }} {{ $purchase->devise }}
+        🧾 REÇU D'ACHAT - {{ number_format($purchase->montant_paye, 2, ',', ' ') }} {{ $purchase->devise }}
     </div>
 
     <div class="property-card">
@@ -64,8 +64,12 @@
         • Soyez courtois et professionnel dans vos échanges
     </div>
 
-    <div class="message">
-        ID de transaction: {{ $purchase->stripe_payment_intent_id }}<br>
-        Date d'achat: {{ $purchase->paiement_confirme_a ? $purchase->paiement_confirme_a->format('d/m/Y à H:i') : 'N/A' }}
+    <div class="highlight-box">
+        <h3>📋 Détails de la transaction (reçu) :</h3>
+        <strong>ID de transaction :</strong> {{ $purchase->stripe_payment_intent_id }}<br>
+        <strong>Date d'achat :</strong> {{ $purchase->paiement_confirme_a ? $purchase->paiement_confirme_a->format('d/m/Y à H:i') : 'N/A' }}<br>
+        <strong>Montant payé :</strong> {{ number_format($purchase->montant_paye, 2, ',', ' ') }} {{ $purchase->devise }}<br>
+        <strong>Mode de paiement :</strong> Carte de crédit via Stripe<br>
+        <strong>Statut :</strong> ✅ Payé et confirmé
     </div>
 @endsection

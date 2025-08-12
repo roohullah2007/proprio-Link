@@ -72,7 +72,7 @@ return new class extends Migration
             ],
             [
                 'key_name' => 'smtp_from_name',
-                'value' => 'Propio',
+                'value' => 'Proprio Link',
                 'description' => 'From name for outgoing emails',
                 'category' => 'email',
                 'created_at' => now(),

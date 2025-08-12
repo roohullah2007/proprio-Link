@@ -113,9 +113,9 @@ export default function Show({ auth, property, editRequests = [] }) {
                 label: __('Pending Review')
             },
             'PUBLIE': {
-                bgColor: 'bg-[#F0F9F4]',
-                borderColor: 'border-[#D1F2D9]',
-                textColor: 'text-[#065033]',
+                bgColor: 'bg-[#EBF4FF]',
+                borderColor: 'border-[#BFDBFE]',
+                textColor: 'text-[#1E40AF]',
                 icon: Icons.CheckCircle,
                 label: __('Published')
             },
@@ -176,28 +176,28 @@ export default function Show({ auth, property, editRequests = [] }) {
                     <div className="flex items-center space-x-4 flex-none order-0 flex-grow-0">
                         <Link
                             href={route('properties.index')}
-                            className="flex items-center text-[#6C6C6C] hover:text-[#065033] font-inter text-sm font-medium transition-colors"
+                            className="flex items-center text-[#6C6C6C] hover:text-[#1E40AF] font-inter text-sm font-medium transition-colors"
                         >
                             <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                             {__('Back to Properties')}
-                        </Link>
-                        <div className="h-4 w-px bg-[#EAEAEA]"></div>
-                        <h1 className="font-inter font-medium text-[14px] leading-[19px] flex items-center text-[#000] capitalize">
+                            </Link>
+                            <div className="h-4 w-px bg-[#EAEAEA]"></div>
+                            <h1 className="font-inter font-medium text-[14px] leading-[19px] flex items-center text-[#000] capitalize">
                             {__('Property Details')}
-                        </h1>
-                    </div>
-                    
-                    {/* Right side - Action buttons */}
-                    <div className="flex items-center gap-3 h-[31px] flex-none order-1 flex-grow-0">
-                        {property.statut !== 'PUBLIE' && (
+                            </h1>
+                            </div>
+                            
+                            {/* Right side - Action buttons */}
+                            <div className="flex items-center gap-3 h-[31px] flex-none order-1 flex-grow-0">
+                            {property.statut !== 'PUBLIE' && (
                             <>
-                                <Link
-                                    href={route('properties.edit', property.id)}
-                                    className="flex justify-center items-center px-4 py-2 gap-2 bg-[#065033] border border-[#065033] rounded-lg text-white font-medium font-inter transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]"
-                                >
-                                    <Icons.Edit className="w-4 h-4" />
-                                    {__('Edit')}
-                                </Link>
+                            <Link
+                            href={route('properties.edit', property.id)}
+                            className="flex justify-center items-center px-4 py-2 gap-2 bg-[#1E40AF] border border-[#1E40AF] rounded-lg text-white font-medium font-inter transition-colors hover:bg-[#1E3A8A] focus:outline-none focus:bg-[#1E3A8A]"
+                            >
+                            <Icons.Edit className="w-4 h-4" />
+                            {__('Edit')}
+                            </Link>
                                 <button
                                     onClick={handleDelete}
                                     className="flex justify-center items-center px-4 py-2 gap-2 bg-red-600 border border-red-600 rounded-lg text-white font-medium font-inter transition-colors hover:bg-red-700 focus:outline-none focus:bg-red-700"
@@ -242,7 +242,7 @@ export default function Show({ auth, property, editRequests = [] }) {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-2xl font-bold text-[#065033] font-inter">
+                                <div className="text-2xl font-bold text-[#1E40AF] font-inter">
                                     {formatPrice(property.prix)}
                                 </div>
                             </div>
@@ -296,7 +296,7 @@ export default function Show({ auth, property, editRequests = [] }) {
                                         
                                         {/* Thumbnails - Only if more than 1 image */}
                                         {property.images.length > 1 && (
-                                            <div className="p-6 bg-[#F5F9FA]">
+                                            <div className="p-6 bg-[#EBF4FF]">
                                                 <div className="grid grid-cols-6 md:grid-cols-8 gap-3">
                                                     {property.images.slice(0, 8).map((image, index) => (
                                                         <button
@@ -304,8 +304,8 @@ export default function Show({ auth, property, editRequests = [] }) {
                                                             onClick={() => setCurrentImageIndex(index)}
                                                             className={`relative h-16 w-full rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 border-2 ${
                                                                 index === currentImageIndex 
-                                                                    ? 'border-[#065033] ring-2 ring-[#065033] ring-opacity-20 scale-105' 
-                                                                    : 'border-[#EAEAEA] hover:border-[#065033]'
+                                                                    ? 'border-[#1E40AF] ring-2 ring-[#1E40AF] ring-opacity-20 scale-105' 
+                                                                    : 'border-[#EAEAEA] hover:border-[#1E40AF]'
                                                             }`}
                                                         >
                                                             <img
@@ -327,7 +327,7 @@ export default function Show({ auth, property, editRequests = [] }) {
                                                         </button>
                                                     ))}
                                                     {property.images.length > 8 && (
-                                                        <div className="h-16 bg-[#EAEAEA] rounded-lg flex items-center justify-center hover:bg-[#065033] hover:text-white transition-all duration-300 border-2 border-[#EAEAEA] hover:border-[#065033]">
+                                                        <div className="h-16 bg-[#EAEAEA] rounded-lg flex items-center justify-center hover:bg-[#1E40AF] hover:text-white transition-all duration-300 border-2 border-[#EAEAEA] hover:border-[#1E40AF]">
                                                             <span className="text-sm font-bold font-inter">
                                                                 +{property.images.length - 8}
                                                             </span>
@@ -433,30 +433,30 @@ export default function Show({ auth, property, editRequests = [] }) {
                                     {__('Property Details')}
                                 </h3>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.Home className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.Home className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Type')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">{property.type_propriete}</span>
                                     </div>
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.Euro className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.Euro className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Price')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">{formatPrice(property.prix)}</span>
                                     </div>
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.Maximize2 className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.Maximize2 className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Surface Area')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">{property.superficie_m2} m²</span>
                                     </div>
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.TrendingUp className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.TrendingUp className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Price per m²')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">
@@ -474,36 +474,40 @@ export default function Show({ auth, property, editRequests = [] }) {
                                 
                                 {property.statut === 'PUBLIE' ? (
                                     <div className="space-y-4">
-                                        <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                        <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                             <div className="flex items-center">
-                                                <Icons.Users className="w-5 h-5 text-[#065033] mr-3" />
+                                                <Icons.Users className="w-5 h-5 text-[#1E40AF] mr-3" />
                                                 <span className="text-[#000] font-inter">{__('Desired Contacts')}</span>
                                             </div>
                                             <span className="font-medium text-[#000] font-inter">{property.contacts_souhaites}</span>
                                         </div>
-                                        <div className="flex justify-between py-3 px-4 bg-[#F0F9F4] rounded-lg border border-[#D1F2D9]">
+                                        <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#BFDBFE]">
                                             <div className="flex items-center">
-                                                <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-3" />
-                                                <span className="text-[#065033] font-inter">{__('Remaining Contacts')}</span>
+                                                <Icons.CheckCircle className="w-5 h-5 text-[#1E40AF] mr-3" />
+                                                <span className="text-[#1E40AF] font-inter">{__('Remaining Contacts')}</span>
                                             </div>
-                                            <span className="font-semibold text-[#065033] font-inter">{property.contacts_restants}</span>
+                                            <span className="font-semibold text-[#1E40AF] font-inter">{property.contacts_restants}</span>
                                         </div>
-                                        <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
-                                            <div className="flex items-center">
-                                                <Icons.TrendingUp className="w-5 h-5 text-[#065033] mr-3" />
-                                                <span className="text-[#000] font-inter">{__('Contacts Sold')}</span>
-                                            </div>
-                                            <span className="font-medium text-[#000] font-inter">{property.contacts_souhaites - property.contacts_restants}</span>
-                                        </div>
-                                        <div className="flex justify-between py-3 px-4 bg-gradient-to-r from-[#F5F9FA] to-[#F0F9F4] rounded-lg border border-[#EAEAEA]">
-                                            <div className="flex items-center">
-                                                <Icons.Euro className="w-5 h-5 text-[#065033] mr-3" />
-                                                <span className="text-[#000] font-inter font-medium">{__('Generated Revenue')}</span>
-                                            </div>
-                                            <span className="font-bold text-[#065033] font-inter">
-                                                {formatPrice((property.contacts_souhaites - property.contacts_restants) * 15)}
-                                            </span>
-                                        </div>
+                                        {auth.user.type_utilisateur === 'ADMIN' && (
+                                            <>
+                                                <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
+                                                    <div className="flex items-center">
+                                                        <Icons.TrendingUp className="w-5 h-5 text-[#1E40AF] mr-3" />
+                                                        <span className="text-[#000] font-inter">{__('Contacts Sold')}</span>
+                                                    </div>
+                                                    <span className="font-medium text-[#000] font-inter">{property.contacts_souhaites - property.contacts_restants}</span>
+                                                </div>
+                                                <div className="flex justify-between py-3 px-4 bg-gradient-to-r from-[#EBF4FF] to-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
+                                                    <div className="flex items-center">
+                                                        <Icons.Euro className="w-5 h-5 text-[#1E40AF] mr-3" />
+                                                        <span className="text-[#000] font-inter font-medium">{__('Generated Revenue')}</span>
+                                                    </div>
+                                                    <span className="font-bold text-[#1E40AF] font-inter">
+                                                        {formatPrice((property.contacts_souhaites - property.contacts_restants) * 15)}
+                                                    </span>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 ) : (
                                     <div className={`text-center py-6 ${statusConfig.bgColor} ${statusConfig.borderColor} border rounded-lg`}>
@@ -523,7 +527,7 @@ export default function Show({ auth, property, editRequests = [] }) {
                                     {__('Property Information')}
                                 </h3>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
                                             <StatusIcon className={`w-5 h-5 mr-3 ${statusConfig.textColor}`} />
                                             <span className="text-[#000] font-inter">{__('Status')}</span>
@@ -532,18 +536,18 @@ export default function Show({ auth, property, editRequests = [] }) {
                                             {statusConfig.label}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.Calendar className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.Calendar className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Created On')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">
                                             {new Date(property.created_at).toLocaleDateString('fr-FR')}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#EAEAEA]">
                                         <div className="flex items-center">
-                                            <Icons.Clock className="w-5 h-5 text-[#065033] mr-3" />
+                                            <Icons.Clock className="w-5 h-5 text-[#1E40AF] mr-3" />
                                             <span className="text-[#000] font-inter">{__('Last Updated')}</span>
                                         </div>
                                         <span className="font-medium text-[#000] font-inter">

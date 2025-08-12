@@ -2,19 +2,21 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class WelcomeEmail extends Mailable
+class WelcomeEmail extends LocalizedMailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $user;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -22,6 +24,16 @@ class WelcomeEmail extends Mailable
     public function __construct(User $user)
     {
         $this->user = $user;
+        
+        // Set locale based on user's language preference
+        // Handle the case where user might not have language set yet
+        try {
+            $this->setUserLocale($user);
+        } catch (\Exception $e) {
+            // Fallback to default locale if user locale setting fails
+            $this->locale = config('app.locale', 'fr');
+            \Log::warning('Failed to set user locale in WelcomeEmail: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -29,8 +41,14 @@ class WelcomeEmail extends Mailable
      */
     public function envelope(): Envelope
     {
+        // Ensure we have a locale set
+        if (!$this->locale) {
+            $this->locale = config('app.locale', 'fr');
+        }
+        
         return new Envelope(
-            subject: 'Bienvenue sur Propio ! | Votre compte a été créé',
+            subject: 'Bienvenue sur Proprio Link ! - Votre compte a été créé',
+            from: $this->getFromAddress()
         );
     }
 
@@ -39,8 +57,19 @@ class WelcomeEmail extends Mailable
      */
     public function content(): Content
     {
+        // Ensure we have a locale set before getting view
+        if (!$this->locale) {
+            $this->locale = config('app.locale', 'fr');
+        }
+        
+        $view = $this->getLocalizedView('emails.welcome');
+        
         return new Content(
-            view: 'emails.welcome',
+            view: $view,
+            with: [
+                'user' => $this->user,
+                'locale' => $this->locale,
+            ]
         );
     }
 

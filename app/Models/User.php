@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use App\Notifications\CustomResetPasswordNotification;
+use App\Notifications\CustomVerifyEmailNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -224,5 +226,45 @@ class User extends Authenticatable implements MustVerifyEmail
     public function contactPurchases()
     {
         return $this->hasMany(ContactPurchase::class, 'agent_id');
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPasswordNotification($token));
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        try {
+            // Generate verification URL
+            $verificationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                'verification.verify',
+                \Illuminate\Support\Carbon::now()->addMinutes(60), // 60 minutes expiry
+                [
+                    'id' => $this->getKey(),
+                    'hash' => sha1($this->getEmailForVerification()),
+                ]
+            );
+            
+            // Send email directly without queue
+            \Illuminate\Support\Facades\Mail::to($this->getEmailForVerification())
+                ->send(new \App\Mail\CustomVerifyEmailMail($this, $verificationUrl, $this->language ?? 'fr'));
+                
+            \Log::info('Verification email sent successfully to user ' . $this->id . ': ' . $this->getEmailForVerification());
+                
+        } catch (\Exception $e) {
+            \Log::error('Failed to send verification email for user ' . $this->id . ': ' . $e->getMessage());
+        }
     }
 }

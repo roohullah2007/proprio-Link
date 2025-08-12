@@ -134,7 +134,7 @@ export default function PublicLayout({ children, title }) {
                             {user ? (
                                 /* Authenticated User Menu */
                                 <div className="flex items-center space-x-4">
-                                    <LanguageSwitcher />
+                                    <LanguageSwitcher currentLocale={props.locale || 'fr'} />
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <span className="inline-flex rounded-md">
@@ -172,16 +172,16 @@ export default function PublicLayout({ children, title }) {
                             ) : (
                                 /* Guest User Buttons */
                                 <div className="flex items-center space-x-4">
-                                    <LanguageSwitcher />
+                                    <LanguageSwitcher currentLocale={props.locale || 'fr'} />
                                     <Link
                                         href={route('login')}
-                                        className="text-sm font-medium text-gray-700 hover:text-[#065033] transition-colors duration-200"
+                                        className="text-sm font-medium text-gray-700 hover:text-[#2563EB] transition-colors duration-200"
                                     >
                                         {__('Log in')}
                                     </Link>
                                     <Link
                                         href={route('register')}
-                                        className="inline-flex items-center px-4 py-2 bg-[#065033] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#054028] focus:bg-[#054028] active:bg-[#043d24] focus:outline-none focus:ring-2 focus:ring-[#065033] focus:ring-offset-2 transition ease-in-out duration-150"
+                                        className="inline-flex items-center px-4 py-2 bg-[#2563EB] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#1D4ED8] focus:bg-[#1D4ED8] active:bg-[#1E40AF] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 transition ease-in-out duration-150"
                                     >
                                         {__('Register')}
                                     </Link>
@@ -235,7 +235,7 @@ export default function PublicLayout({ children, title }) {
                                         href={item.href}
                                         className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition duration-150 ease-in-out ${
                                             item.active
-                                                ? 'border-[#065033] text-[#065033] bg-[#F0F9F4]'
+                                                ? 'border-[#2563EB] text-[#2563EB] bg-[#F0F4FF]'
                                                 : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300'
                                         }`}
                                     >

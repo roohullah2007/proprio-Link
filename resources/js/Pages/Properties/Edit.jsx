@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
 import * as Icons from 'lucide-react';
@@ -168,11 +168,109 @@ export default function Edit({ auth, property }) {
 
     const submit = (e) => {
         e.preventDefault();
+        console.log('Submit button clicked, showing confirmation modal...');
+        console.log('Current form data:', data);
         setShowUpdateConfirmation(true);
     };
 
     const confirmUpdate = () => {
-        put(route('properties.update', property.id));
+        console.log('Confirm Update button clicked!');
+        console.log('Processing state:', processing);
+        console.log('Data to submit:', data);
+        console.log('Meuble field value from data:', data.meuble, 'Type:', typeof data.meuble);
+        
+        // Prepare form data including images and removed images
+        const formData = new FormData();
+        
+        // Add all form fields
+        Object.keys(data).forEach(key => {
+            console.log(`Processing field: ${key}, value:`, data[key], 'type:', typeof data[key]);
+            if (key === 'images') {
+                // Add new images
+                if (data.images && data.images.length > 0) {
+                    data.images.forEach((image, index) => {
+                        formData.append(`images[${index}]`, image);
+                    });
+                    console.log(`Added ${data.images.length} new images`);
+                }
+            } else if (key === 'remove_images') {
+                // Add images to remove
+                if (data.remove_images && data.remove_images.length > 0) {
+                    data.remove_images.forEach((imageId, index) => {
+                        formData.append(`remove_images[${index}]`, imageId);
+                    });
+                    console.log(`Marked ${data.remove_images.length} images for removal`);
+                }
+            } else if (key === 'amenities') {
+                // Add amenities array
+                if (data.amenities && data.amenities.length > 0) {
+                    data.amenities.forEach((amenity, index) => {
+                        formData.append(`amenities[${index}]`, amenity);
+                    });
+                }
+            } else if (key === 'meuble') {
+                // Handle boolean field properly - always include it
+                const meubleValue = data[key] ? '1' : '0';
+                formData.append(key, meubleValue);
+                console.log(`Meuble field: ${data[key]} (${typeof data[key]}) -> ${meubleValue}`);
+            } else if (data[key] !== null && data[key] !== undefined && data[key] !== '') {
+                formData.append(key, data[key]);
+                console.log(`Added field ${key}:`, data[key]);
+            }
+        });
+        
+        // Always ensure meuble is included even if not in the main loop
+        if (!formData.has('meuble')) {
+            formData.append('meuble', '0');
+            console.log('Meuble field was missing, added default value: 0');
+        }
+        
+        // Add method spoofing for PUT request
+        formData.append('_method', 'PUT');
+        
+        // FORCE FIX: Ensure meuble is always sent as proper boolean string
+        // Remove any existing meuble entry and add it properly
+        formData.delete('meuble');
+        const meubleForced = (data.meuble === true || data.meuble === 'true' || data.meuble === 1 || data.meuble === '1') ? '1' : '0';
+        formData.append('meuble', meubleForced);
+        console.log(`FORCED Meuble value: ${meubleForced} (from original: ${data.meuble})`);
+        
+        console.log('Making request to:', route('properties.update', property.id));
+        console.log('FormData prepared, starting request...');
+        
+        // Debug: Log all FormData entries
+        console.log('All FormData entries:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}: ${value}`);
+        }
+        
+        // Use post with _method spoofing for file uploads
+        router.post(route('properties.update', property.id), formData, {
+            forceFormData: true,
+            onStart: () => {
+                console.log('Request started...');
+            },
+            onSuccess: (page) => {
+                console.log('Property updated successfully, redirecting...');
+                console.log('Success response:', page);
+                // The redirect will be handled by the backend
+                // The flash messages will be automatically passed to the next page
+            },
+            onError: (errors) => {
+                console.log('Update errors:', errors);
+                console.error('Full error object:', errors);
+                setShowUpdateConfirmation(false);
+                // Show errors if any
+                if (errors.message) {
+                    alert('Error: ' + errors.message);
+                } else {
+                    console.log('Validation errors detected');
+                }
+            },
+            onFinish: () => {
+                console.log('Update request finished');
+            }
+        });
     };
 
     const handleImageUpload = (e) => {

@@ -2,19 +2,21 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Property;
 
-class PropertyListedForReview extends Mailable
+class PropertyListedForReview extends LocalizedMailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $property;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -22,6 +24,19 @@ class PropertyListedForReview extends Mailable
     public function __construct(Property $property)
     {
         $this->property = $property;
+        
+        // Ensure property owner is loaded
+        if (!$property->relationLoaded('proprietaire')) {
+            $property->load('proprietaire');
+        }
+        
+        // Set locale based on property owner's language preference
+        try {
+            $this->setUserLocale($property->proprietaire);
+        } catch (\Exception $e) {
+            $this->locale = config('app.locale', 'fr');
+            \Log::warning('Failed to set user locale in PropertyListedForReview: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -29,8 +44,13 @@ class PropertyListedForReview extends Mailable
      */
     public function envelope(): Envelope
     {
+        if (!$this->locale) {
+            $this->locale = config('app.locale', 'fr');
+        }
+        
         return new Envelope(
-            subject: 'Property Listed Successfully - Under Review | Propio',
+            subject: 'Propriété publiée avec succès - En cours de révision - Proprio Link',
+            from: $this->getFromAddress()
         );
     }
 
@@ -39,8 +59,18 @@ class PropertyListedForReview extends Mailable
      */
     public function content(): Content
     {
+        if (!$this->locale) {
+            $this->locale = config('app.locale', 'fr');
+        }
+        
+        $view = $this->getLocalizedView('emails.property-owner.property-listed');
+        
         return new Content(
-            view: 'emails.property-owner.property-listed',
+            view: $view,
+            with: [
+                'property' => $this->property,
+                'locale' => $this->locale,
+            ]
         );
     }
 

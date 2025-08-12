@@ -8,12 +8,12 @@
         <title inertia>{{ config('app.name', 'Proprio Link') }}</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-        <link rel="icon" type="image/png" sizes="32x32" href="/assets/Logo.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/Logo.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/assets/Logo.png">
+        <link rel="icon" type="image/svg+xml" href="https://proprio-link.fr/wp-content/uploads/2025/06/Group-1171275021.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://proprio-link.fr/wp-content/uploads/2025/06/Group-1171275021.svg">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://proprio-link.fr/wp-content/uploads/2025/06/Group-1171275021.svg">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://proprio-link.fr/wp-content/uploads/2025/06/Group-1171275021.svg">
         <link rel="manifest" href="/site.webmanifest">
-        <meta name="theme-color" content="#065033">
+        <meta name="theme-color" content="#0F44FC">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

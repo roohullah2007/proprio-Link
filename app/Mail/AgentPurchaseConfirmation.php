@@ -2,20 +2,22 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\ContactPurchase;
 
-class AgentPurchaseConfirmation extends Mailable
+class AgentPurchaseConfirmation extends LocalizedMailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $purchase;
     public $contactData;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -24,6 +26,9 @@ class AgentPurchaseConfirmation extends Mailable
     {
         $this->purchase = $purchase;
         $this->contactData = $contactData;
+        
+        // Set locale based on agent's language preference
+        $this->setUserLocale($purchase->agent);
     }
 
     /**
@@ -32,7 +37,8 @@ class AgentPurchaseConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Purchase Confirmation - Property Contact Details | Propio',
+            subject: 'Reçu d\'achat - Détails de contact propriétaire - Proprio Link',
+            from: $this->getFromAddress()
         );
     }
 
@@ -42,7 +48,7 @@ class AgentPurchaseConfirmation extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.agent.purchase-confirmation',
+            view: $this->getLocalizedView('emails.agent.purchase-confirmation'),
         );
     }
 

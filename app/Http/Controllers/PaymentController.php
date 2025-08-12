@@ -259,22 +259,27 @@ class PaymentController extends Controller
             
             $contactPurchase->markPaymentSucceeded($contactData);
 
-            // Send purchase confirmation email with invoice
+            // Send purchase confirmation email with invoice to AGENT
             try {
-                // Temporarily disabled email sending for debugging
-                // \Mail::to($contactPurchase->agent)->send(new \App\Mail\AgentPurchaseConfirmation($contactPurchase, $contactData));
-                \Log::info('Purchase confirmation email would be sent to: ' . $contactPurchase->agent->email);
+                \Log::info('Sending purchase confirmation email to agent: ' . $contactPurchase->agent->email);
+                \Mail::to($contactPurchase->agent->email)->send(new \App\Mail\AgentPurchaseConfirmation($contactPurchase, $contactData));
+                \Log::info('✅ Purchase confirmation email sent successfully to agent: ' . $contactPurchase->agent->email);
             } catch (\Exception $e) {
-                \Log::error('Failed to send purchase confirmation email: ' . $e->getMessage());
+                \Log::error('❌ Failed to send purchase confirmation email to agent: ' . $e->getMessage());
             }
 
-            // Send notification to property owner
+            // Send admin notification to ALL ADMINS
             try {
-                // Temporarily disabled email sending for debugging
-                // \Mail::to($property->proprietaire)->send(new \App\Mail\PropertyContactPurchased($contactPurchase));
-                \Log::info('Property owner notification email would be sent to: ' . $property->proprietaire->email);
+                $adminEmails = \App\Services\AdminNotificationService::getAdminEmails();
+                \Log::info('Sending admin notification for contact purchase to: ' . implode(', ', $adminEmails));
+                
+                \App\Services\AdminNotificationService::notifyAdmins(
+                    new \App\Mail\AdminContactPurchased($contactPurchase)
+                );
+                
+                \Log::info('✅ Admin notification sent successfully for contact purchase');
             } catch (\Exception $e) {
-                \Log::error('Failed to send property owner notification email: ' . $e->getMessage());
+                \Log::error('❌ Failed to send admin notification for contact purchase: ' . $e->getMessage());
             }
 
             // Update property contact count

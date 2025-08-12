@@ -34,6 +34,32 @@ const Icons = {
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
+    ),
+    Trash: ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+    ),
+    ThumbsDown: ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 9V7a2 2 0 012-2h6a2 2 0 012 2v2m-3 6v4a2 2 0 01-2 2H9a2 2 0 01-2-2v-4m6 0V9" />
+        </svg>
+    ),
+    Eye: ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+    ),
+    MoreHorizontal: ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+        </svg>
+    ),
+    CheckCircle: ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
     )
 };
 
@@ -44,12 +70,19 @@ export default function AllProperties({ auth, properties, filters }) {
     });
     const [showFilters, setShowFilters] = useState(false);
     const filtersRef = useRef(null);
+    const [deleteModal, setDeleteModal] = useState({ show: false, property: null, reason: '' });
+    const [disapproveModal, setDisapproveModal] = useState({ show: false, property: null, reason: '' });
+    const [dropdownProperty, setDropdownProperty] = useState(null);
+    const dropdownRef = useRef(null);
 
-    // Handle click outside for filters
+    // Handle click outside for filters and dropdown
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (filtersRef.current && !filtersRef.current.contains(event.target)) {
                 setShowFilters(false);
+            }
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownProperty(null);
             }
         };
 
@@ -124,6 +157,43 @@ export default function AllProperties({ auth, properties, filters }) {
             'AUTRES': __('Other'),
         };
         return propertyTypes[type] || type;
+    };
+
+    const handleDeleteProperty = (property) => {
+        setDeleteModal({ show: true, property, reason: '' });
+    };
+
+    const confirmDelete = () => {
+        if (deleteModal.property) {
+            router.delete(route('admin.delete-property', deleteModal.property.id), {
+                data: { deletion_reason: deleteModal.reason },
+                onSuccess: () => setDeleteModal({ show: false, property: null, reason: '' }),
+                onError: () => {}
+            });
+        }
+    };
+
+
+    const handleDisapproveProperty = (property) => {
+        setDisapproveModal({ show: true, property, reason: '' });
+    };
+
+    const confirmDisapprove = () => {
+        if (disapproveModal.property && disapproveModal.reason.trim()) {
+            router.post(route('admin.disapprove-property', disapproveModal.property.id), {
+                raison_rejet: disapproveModal.reason
+            }, {
+                onSuccess: () => setDisapproveModal({ show: false, property: null, reason: '' }),
+                onError: () => {}
+            });
+        }
+    };
+
+    const handleReapproveProperty = (property) => {
+        router.post(route('admin.reapprove-property', property.id), {}, {
+            onSuccess: () => {},
+            onError: () => {}
+        });
     };
 
     return (
@@ -335,7 +405,7 @@ export default function AllProperties({ auth, properties, filters }) {
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 {__('Date')}
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-6 py-4 text-right text-sm font-medium text-[#696969] font-inter">
                                                 {__('Actions')}
                                             </th>
                                         </tr>
@@ -403,22 +473,73 @@ export default function AllProperties({ auth, properties, filters }) {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(property.created_at)}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <div className="flex space-x-2">
-                                                        {property.statut === 'en_attente' && (
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center space-x-2 justify-end">
+                                                        {(property.statut === 'en_attente' || property.statut === 'EN_ATTENTE') && (
                                                             <Link
                                                                 href={route('admin.property-review', property.id)}
-                                                                className="text-blue-600 hover:text-blue-900"
+                                                                className="inline-flex items-center px-3 py-1.5 border border-[#EAEAEA] rounded-lg text-sm text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors"
                                                             >
+                                                                <Icons.Search className="w-4 h-4 mr-1" />
                                                                 {__('Modérer')}
                                                             </Link>
                                                         )}
+                                                        
                                                         <Link
                                                             href={route('properties.show', property.id)}
-                                                            className="text-gray-600 hover:text-gray-900"
+                                                            className="inline-flex items-center px-3 py-1.5 border border-[#EAEAEA] rounded-lg text-sm text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors"
                                                         >
+                                                            <Icons.Eye className="w-4 h-4 mr-1" />
                                                             {__('Voir')}
                                                         </Link>
+                                                        
+                                                        <div className="relative" ref={dropdownProperty === property.id ? dropdownRef : null}>
+                                                            <button
+                                                                onClick={() => setDropdownProperty(dropdownProperty === property.id ? null : property.id)}
+                                                                className="inline-flex items-center px-2 py-1.5 border border-[#EAEAEA] rounded-lg text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors"
+                                                            >
+                                                                <Icons.MoreHorizontal className="w-4 h-4" />
+                                                            </button>
+                                                            
+                                                            {dropdownProperty === property.id && (
+                                                                <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-[#EAEAEA] z-50">
+                                                                    <div className="py-1">
+                                                                        {(property.statut === 'en_attente' || property.statut === 'EN_ATTENTE' || property.statut === 'publie' || property.statut === 'PUBLIE') && (
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    handleDisapproveProperty(property);
+                                                                                    setDropdownProperty(null);
+                                                                                }}
+                                                                                className="block w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-purple-50"
+                                                                            >
+                                                                                {__('Désapprouver')}
+                                                                            </button>
+                                                                        )}
+                                                                        {(property.statut === 'rejete' || property.statut === 'REJETE') && (
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    handleReapproveProperty(property);
+                                                                                    setDropdownProperty(null);
+                                                                                }}
+                                                                                className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50"
+                                                                            >
+                                                                                <Icons.CheckCircle className="w-4 h-4 inline mr-2" />
+                                                                                {__('Ré-approuver')}
+                                                                            </button>
+                                                                        )}
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                handleDeleteProperty(property);
+                                                                                setDropdownProperty(null);
+                                                                            }}
+                                                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                                                        >
+                                                                            {__('Supprimer définitivement')}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -457,6 +578,121 @@ export default function AllProperties({ auth, properties, filters }) {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Property Modal */}
+            {deleteModal.show && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+                        <div className="mt-3">
+                            <div className="flex items-center">
+                                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                                    <Icons.Trash className="h-6 w-6 text-red-600" />
+                                </div>
+                            </div>
+                            <div className="mt-3 text-center">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    {__('Supprimer la propriété')}
+                                </h3>
+                                <div className="mt-2 px-7 py-3">
+                                    <p className="text-sm text-gray-500">
+                                        {__('Êtes-vous sûr de vouloir supprimer définitivement cette propriété? Cette action ne peut pas être annulée. Le propriétaire recevra un email de notification.')}
+                                    </p>
+                                    {deleteModal.property && (
+                                        <p className="text-sm text-gray-700 mt-2 font-medium">
+                                            {translatePropertyType(deleteModal.property.type_propriete)} - {deleteModal.property.ville}
+                                        </p>
+                                    )}
+                                    <div className="mt-4">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            {__('Raison de la suppression')} ({__('optionnel')})
+                                        </label>
+                                        <textarea
+                                            value={deleteModal.reason}
+                                            onChange={(e) => setDeleteModal({...deleteModal, reason: e.target.value})}
+                                            rows={3}
+                                            className="w-full border-gray-300 rounded-md shadow-sm focus:border-[#065033] focus:ring-[#065033]"
+                                            placeholder={__('Expliquez pourquoi cette propriété est supprimée...')}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-center gap-4 px-4 py-3">
+                                    <button
+                                        onClick={() => setDeleteModal({ show: false, property: null, reason: '' })}
+                                        className="px-4 py-2 bg-gray-300 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                                    >
+                                        {__('Annuler')}
+                                    </button>
+                                    <button
+                                        onClick={confirmDelete}
+                                        className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300"
+                                    >
+                                        {__('Supprimer')}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+            {/* Disapprove Property Modal */}
+            {disapproveModal.show && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+                        <div className="mt-3">
+                            <div className="flex items-center">
+                                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-purple-100">
+                                    <Icons.ThumbsDown className="h-6 w-6 text-purple-600" />
+                                </div>
+                            </div>
+                            <div className="mt-3 text-center">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    {__('Désapprouver la propriété')}
+                                </h3>
+                                <div className="mt-2 px-7 py-3">
+                                    <p className="text-sm text-gray-500">
+                                        {__('Cette propriété sera marquée comme rejetée et le propriétaire sera notifié.')}
+                                    </p>
+                                    {disapproveModal.property && (
+                                        <p className="text-sm text-gray-700 mt-2 font-medium">
+                                            {translatePropertyType(disapproveModal.property.type_propriete)} - {disapproveModal.property.ville}
+                                        </p>
+                                    )}
+                                    <div className="mt-4">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            {__('Raison de la désapprobation')} <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={disapproveModal.reason}
+                                            onChange={(e) => setDisapproveModal({...disapproveModal, reason: e.target.value})}
+                                            rows={3}
+                                            className="w-full border-gray-300 rounded-md shadow-sm focus:border-[#065033] focus:ring-[#065033]"
+                                            placeholder={__('Expliquez pourquoi cette propriété est désapprouvée...')}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-center gap-4 px-4 py-3">
+                                    <button
+                                        onClick={() => setDisapproveModal({ show: false, property: null, reason: '' })}
+                                        className="px-4 py-2 bg-gray-300 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                                    >
+                                        {__('Annuler')}
+                                    </button>
+                                    <button
+                                        onClick={confirmDisapprove}
+                                        disabled={!disapproveModal.reason.trim()}
+                                        className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {__('Désapprouver')}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

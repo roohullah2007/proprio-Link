@@ -163,19 +163,11 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
     const statCards = [
         {
             title: __('Available Properties'),
-            value: formatNumber(properties?.length || 0),
+            value: formatNumber(stats?.available_properties || 0),
             change: '+12.5%',
             trend: 'up',
             icon: Icons.Home,
             color: 'blue'
-        },
-        {
-            title: __('Total Spent'),
-            value: formatCurrency(filteredData.totalSpent),
-            change: '+8.2%',
-            trend: 'up',
-            icon: Icons.DollarSign,
-            color: 'green'
         },
         {
             title: __('Contacts Purchased'),
@@ -207,24 +199,9 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
             description: __('Manage your account preferences'),
             icon: Icons.Settings,
             href: '/profile',
-            color: 'gray'
+            color: 'blue'
         }
     ];
-
-    // Get recent activity from filtered purchase history
-    const recentActivity = filteredData.purchases?.slice(0, 4).map(purchase => ({
-        type: 'purchase',
-        property: purchase.property?.titre || purchase.property?.adresse_complete || __('Property'),
-        amount: formatCurrency(purchase.montant_paye || 15),
-        time: new Date(purchase.created_at).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric'
-        }) + ', ' + new Date(purchase.created_at).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
-        }),
-        purchaseId: purchase.id
-    })) || [];
 
     const colorVariants = {
         blue: {
@@ -234,10 +211,10 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
             border: 'border-blue-200'
         },
         green: {
-            bg: 'bg-green-500',
-            light: 'bg-green-50',
-            text: 'text-green-600',
-            border: 'border-green-200'
+            bg: 'bg-blue-500',
+            light: 'bg-blue-50',
+            text: 'text-blue-600',
+            border: 'border-blue-200'
         },
         purple: {
             bg: 'bg-purple-500',
@@ -276,7 +253,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                         <div className="relative" ref={dropdownRef}>
                             <button 
                                 onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
-                                className="flex justify-center items-center px-[10px] py-[10px] gap-[10px] min-w-max h-[31px] bg-[#065033] border-[1.5px] border-[#065033] rounded-[20px] flex-none order-0 flex-grow-0 transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]"
+                                className="flex justify-center items-center px-[10px] py-[10px] gap-[10px] min-w-max h-[31px] bg-[#0F44FC] border-[1.5px] border-[#0F44FC] rounded-[20px] flex-none order-0 flex-grow-0 transition-colors hover:bg-[#0A37D1] focus:outline-none focus:bg-[#0A37D1]"
                             >
                                 <svg 
                                     width="15" 
@@ -316,7 +293,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '7d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '7d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 7 Days')}
@@ -327,7 +304,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '30d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '30d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 30 Days')}
@@ -338,7 +315,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '90d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '90d' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 90 Days')}
@@ -349,7 +326,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '1y' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '1y' ? 'bg-[#0F44FC] text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last Year')}
@@ -365,12 +342,12 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
             <Head title={__('Agent Dashboard')} />
 
             <div className="py-8">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
                     
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                         {statCards.map((stat, index) => (
-                            <div key={index} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+                            <div key={index} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 hover:shadow-lg transition-shadow duration-200">
   
                                 <div>
                                     <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
@@ -381,72 +358,32 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                     </div>
 
                     {/* Main Content Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-8">
                         
                         {/* Quick Actions */}
-                        <div className="lg:col-span-2">
-                            <div className="bg-white rounded-xl border border-gray-200 p-6">
-                                <div className="flex items-center justify-between mb-6">
+                        <div className="w-full">
+                            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
                                     <h2 className="text-lg font-semibold text-gray-900">{__('Quick Actions')}</h2>
                                     <span className="text-sm text-gray-500">{__('Get started')}</span>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                                     {quickActions.map((action, index) => (
                                         <Link
                                             key={index}
                                             href={action.href}
-                                            className="group flex items-center p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+                                            className="group flex items-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
                                         >
-                                            <div className={`w-10 h-10 rounded-lg ${colorVariants[action.color].light} flex items-center justify-center mr-4`}>
-                                                <action.icon className={`w-5 h-5 ${colorVariants[action.color].text}`} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-700">
-                                                    {action.title}
-                                                </h3>
-                                                <p className="text-xs text-gray-500 mt-1">{action.description}</p>
-                                            </div>
-                                            <Icons.ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Recent Activity */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white rounded-xl border border-gray-200 p-6">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-lg font-semibold text-gray-900">{__('Recent Activity')}</h2>
-                                </div>
-                                <div className="space-y-4">
-                                    {recentActivity.map((activity, index) => (
-                                        <Link
-                                            key={index}
-                                            href={activity.purchaseId ? route('agent.contact-details', activity.purchaseId) : '#'}
-                                            className="flex items-start space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200"
-                                        >
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                                activity.type === 'purchase' ? 'bg-green-100' : 'bg-blue-100'
-                                            }`}>
-                                                {activity.type === 'purchase' ? (
-                                                    <Icons.CreditCard className={`w-4 h-4 ${activity.type === 'purchase' ? 'text-green-600' : 'text-blue-600'}`} />
-                                                ) : (
-                                                    <Icons.Search className={`w-4 h-4 ${activity.type === 'purchase' ? 'text-green-600' : 'text-blue-600'}`} />
-                                                )}
+                                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${colorVariants[action.color].light} flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0`}>
+                                                <action.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colorVariants[action.color].text}`} />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-gray-900 truncate">
-                                                    {activity.type === 'purchase' ? __('Purchased contact') : __('Viewed property')}
-                                                </p>
-                                                <p className="text-sm text-gray-500 truncate">{activity.property}</p>
-                                                <div className="flex items-center justify-between mt-1">
-                                                    <span className="text-xs text-gray-400">{activity.time}</span>
-                                                    {activity.amount && (
-                                                        <span className="text-xs font-medium text-green-600">{activity.amount}</span>
-                                                    )}
-                                                </div>
+                                                <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-700 truncate">
+                                                    {action.title}
+                                                </h3>
+                                                <p className="text-xs text-gray-500 mt-1 line-clamp-2 sm:line-clamp-1">{action.description}</p>
                                             </div>
+                                            <Icons.ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 ml-2" />
                                         </Link>
                                     ))}
                                 </div>
@@ -455,32 +392,32 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                     </div>
 
                     {/* Getting Started Guide */}
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-semibold mb-2">{__('Getting Started with Propio')}</h2>
-                                <p className="text-blue-100 mb-4">
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-4 sm:p-6 text-white">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                            <div className="flex-1">
+                                <h2 className="text-lg sm:text-xl font-semibold mb-2">{__('Getting Started with Proprio Link')}</h2>
+                                <p className="text-blue-100 mb-4 text-sm sm:text-base">
                                     {__('Follow these steps to maximize your property investment potential')}
                                 </p>
                                 <div className="space-y-2">
                                     <div className="flex items-center text-sm">
-                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3">1</div>
-                                        {__('Search and filter properties by your criteria')}
+                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3 flex-shrink-0">1</div>
+                                        <span>{__('Search and filter properties by your criteria')}</span>
                                     </div>
                                     <div className="flex items-center text-sm">
-                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3">2</div>
-                                        {__('Purchase owner contacts for €15 each')}
+                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3 flex-shrink-0">2</div>
+                                        <span>{__('Purchase owner contacts for €15 each')}</span>
                                     </div>
                                     <div className="flex items-center text-sm">
-                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3">3</div>
-                                        {__('Connect directly with property owners')}
+                                        <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3 flex-shrink-0">3</div>
+                                        <span>{__('Connect directly with property owners')}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="hidden lg:block">
+                            <div className="lg:ml-8">
                                 <Link
                                     href="/agent/properties"
-                                    className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors inline-flex items-center"
+                                    className="bg-white text-blue-600 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors inline-flex items-center text-sm sm:text-base w-full lg:w-auto justify-center lg:justify-start"
                                 >
                                     {__('Start Exploring')}
                                     <Icons.ArrowRight className="w-4 h-4 ml-2" />

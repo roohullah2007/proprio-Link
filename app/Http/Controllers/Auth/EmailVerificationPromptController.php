@@ -16,6 +16,13 @@ class EmailVerificationPromptController extends Controller
     public function __invoke(Request $request): RedirectResponse|Response
     {
         if ($request->user()->hasVerifiedEmail()) {
+            // Check for post-verification redirect
+            $postVerificationRedirect = $request->session()->get('post_verification_redirect');
+            if ($postVerificationRedirect) {
+                $request->session()->forget('post_verification_redirect');
+                return redirect($postVerificationRedirect);
+            }
+            
             // Redirect to appropriate dashboard based on user type
             $user = $request->user();
             switch ($user->type_utilisateur) {
@@ -29,6 +36,10 @@ class EmailVerificationPromptController extends Controller
             }
         }
 
-        return Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
+        return Inertia::render('Auth/VerifyEmail', [
+            'status' => session('status'),
+            'message' => session('message'),
+            'canRequestCode' => true, // Enable code-based verification
+        ]);
     }
 }

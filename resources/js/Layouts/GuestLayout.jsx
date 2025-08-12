@@ -12,7 +12,7 @@ export default function GuestLayout({ children }) {
             <header className="w-full px-6 py-4">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <Link href="/" className="flex items-center">
-                        <ApplicationLogo className="h-8 w-auto text-[#065033]" />
+                        <ApplicationLogo className="h-8 w-auto text-[#2563EB]" />
                     </Link>
                     
                     <LanguageSwitcher currentLocale={currentLocale} />

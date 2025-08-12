@@ -169,7 +169,7 @@ export default function SimpleProfileImageUpload({ currentImage, onChange, error
                             )}
                         </div>
                     ) : (
-                        <div className="w-24 h-24 bg-gradient-to-br from-[#065033] to-[#0a7042] rounded-full flex items-center justify-center">
+                        <div className="w-24 h-24 bg-gradient-to-br from-[#0F44FC] to-[#0A37D1] rounded-full flex items-center justify-center">
                             <span className="text-2xl font-bold text-white font-inter">
                                 {getInitials()}
                             </span>
@@ -194,8 +194,8 @@ export default function SimpleProfileImageUpload({ currentImage, onChange, error
                     <div className="flex items-center space-x-3">
                         <label
                             htmlFor="profile_image_input"
-                            className={`inline-flex items-center px-4 py-2 bg-[#065033] border border-[#065033] rounded-lg text-white text-sm font-medium font-inter cursor-pointer transition-colors ${
-                                isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#054028]'
+                            className={`inline-flex items-center px-4 py-2 bg-[#0F44FC] border border-[#0F44FC] rounded-lg text-white text-sm font-medium font-inter cursor-pointer transition-colors ${
+                                isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0A37D1]'
                             }`}
                         >
                             {isUploading ? (
@@ -244,15 +244,15 @@ export default function SimpleProfileImageUpload({ currentImage, onChange, error
                 className={`
                     border-2 border-dashed rounded-lg p-6 text-center transition-colors
                     ${isDragging 
-                        ? 'border-[#065033] bg-green-50' 
-                        : 'border-[#EAEAEA] hover:border-[#065033] hover:bg-green-50'
+                        ? 'border-[#0F44FC] bg-blue-50' 
+                        : 'border-[#EAEAEA] hover:border-[#0F44FC] hover:bg-blue-50'
                     }
                     ${isUploading ? 'opacity-50 pointer-events-none' : ''}
                 `}
             >
                 <div className="space-y-2">
                     <svg 
-                        className={`mx-auto w-8 h-8 ${isDragging ? 'text-[#065033]' : 'text-[#6C6C6C]'}`} 
+                        className={`mx-auto w-8 h-8 ${isDragging ? 'text-[#0F44FC]' : 'text-[#6C6C6C]'}`} 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -265,7 +265,7 @@ export default function SimpleProfileImageUpload({ currentImage, onChange, error
                         />
                     </svg>
                     <div className="text-sm">
-                        <span className={`font-medium ${isDragging ? 'text-[#065033]' : 'text-[#6C6C6C]'} font-inter`}>
+                        <span className={`font-medium ${isDragging ? 'text-[#0F44FC]' : 'text-[#6C6C6C]'} font-inter`}>
                             {__("Drag and drop your image here")}
                         </span>
                         <p className="text-xs text-[#6C6C6C] font-inter mt-1">

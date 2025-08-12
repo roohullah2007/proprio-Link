@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
+import { __ } from '@/Utils/translations';
 
 export default function Toast() {
     const { props } = usePage();
@@ -10,19 +11,26 @@ export default function Toast() {
 
         // Check for flash messages
         if (props.flash?.success) {
-            newToasts.push({
-                id: Date.now(),
-                type: 'success',
-                message: props.flash.success,
-                description: props.flash.success_description,
-            });
+            // Only skip property UPDATE messages, but allow property CREATION messages
+            const isPropertyUpdateMessage = props.flash.success.includes('successfully updated') || 
+                                           props.flash.success.includes('mise à jour avec succès');
+            
+            // Allow property creation and other messages to show
+            if (!isPropertyUpdateMessage) {
+                newToasts.push({
+                    id: Date.now(),
+                    type: 'success',
+                    message: __(props.flash.success),
+                    description: props.flash.success_description ? __(props.flash.success_description) : null,
+                });
+            }
         }
 
         if (props.flash?.error) {
             newToasts.push({
                 id: Date.now() + 1,
                 type: 'error',
-                message: props.flash.error,
+                message: __(props.flash.error),
             });
         }
 
@@ -30,7 +38,15 @@ export default function Toast() {
             newToasts.push({
                 id: Date.now() + 2,
                 type: 'info',
-                message: props.flash.info,
+                message: __(props.flash.info),
+            });
+        }
+
+        if (props.flash?.warning) {
+            newToasts.push({
+                id: Date.now() + 3,
+                type: 'warning',
+                message: __(props.flash.warning),
             });
         }
 
@@ -62,6 +78,8 @@ export default function Toast() {
                             ? 'border-l-4 border-[#065033]' 
                             : toast.type === 'error'
                             ? 'border-l-4 border-red-500'
+                            : toast.type === 'warning'
+                            ? 'border-l-4 border-yellow-500'
                             : 'border-l-4 border-blue-500'
                     }`}
                     style={{
@@ -85,6 +103,13 @@ export default function Toast() {
                                         </svg>
                                     </div>
                                 )}
+                                {toast.type === 'warning' && (
+                                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                                        <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                )}
                                 {toast.type === 'info' && (
                                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                                         <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -95,9 +120,10 @@ export default function Toast() {
                             </div>
                             <div className="ml-4 w-0 flex-1">
                                 <p className="text-sm font-semibold text-[#000] font-inter leading-5">
-                                    {toast.type === 'success' && 'Success'}
-                                    {toast.type === 'error' && 'Error'}
-                                    {toast.type === 'info' && 'Information'}
+                                    {toast.type === 'success' && __("Success")}
+                                    {toast.type === 'error' && __("Error")}
+                                    {toast.type === 'warning' && __("Warning")}
+                                    {toast.type === 'info' && __("Information")}
                                 </p>
                                 <p className="text-sm text-[#6C6C6C] font-inter mt-1 leading-relaxed">
                                     {toast.message}

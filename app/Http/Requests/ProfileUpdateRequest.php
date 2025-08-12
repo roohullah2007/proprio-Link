@@ -44,6 +44,7 @@ class ProfileUpdateRequest extends FormRequest
             'numero_siret' => ['nullable', 'string', 'max:14'],
             'licence_professionnelle' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'], // 5MB max
             'profile_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif', 'max:2048'], // 2MB max for profile images
+            'language' => ['required', 'string', 'in:fr,en']
         ];
     }
 
@@ -62,6 +63,7 @@ class ProfileUpdateRequest extends FormRequest
             'numero_siret' => __('SIRET Number'),
             'licence_professionnelle' => __('Professional License'),
             'profile_image' => __('Profile Image'),
+            'language' => __('Language Preference'),
         ];
     }
 
@@ -86,6 +88,8 @@ class ProfileUpdateRequest extends FormRequest
             'profile_image.file' => __('Profile image must be a file.'),
             'profile_image.mimes' => __('Profile image must be a JPG, JPEG, PNG, or GIF file.'),
             'profile_image.max' => __('Profile image file size may not be greater than 2MB.'),
+            'language.required' => __('Language preference is required.'),
+            'language.in' => __('Please select a valid language option.'),
         ];
     }
 }

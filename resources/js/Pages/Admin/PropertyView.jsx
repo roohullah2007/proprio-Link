@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
+import PropertyImage from '@/Components/PropertyImage';
 
 const Icons = {
     ArrowLeft: ({ className }) => (
@@ -374,10 +375,11 @@ export default function AdminPropertyView({ auth, property, editRequests = [] })
                                 {property.images && property.images.length > 0 ? (
                                     <>
                                         <div className="relative h-80 lg:h-96">
-                                            <img
-                                                src={`/storage/${property.images[currentImageIndex].chemin_fichier}`}
+                                            <PropertyImage
+                                                image={property.images[currentImageIndex]}
                                                 alt={`${property.type_propriete} photo ${currentImageIndex + 1}`}
                                                 className="w-full h-full object-cover"
+                                                fallbackClassName="w-full h-full"
                                             />
                                             
                                             {property.images.length > 1 && (
@@ -413,10 +415,11 @@ export default function AdminPropertyView({ auth, property, editRequests = [] })
                                                                     : 'border-[#EAEAEA] hover:border-[#065033]'
                                                             }`}
                                                         >
-                                                            <img
-                                                                src={`/storage/${image.chemin_fichier}`}
+                                                            <PropertyImage
+                                                                image={image}
                                                                 alt={`Thumbnail ${index + 1}`}
                                                                 className="w-full h-full object-cover"
+                                                                fallbackClassName="w-full h-full"
                                                             />
                                                         </button>
                                                     ))}

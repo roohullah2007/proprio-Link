@@ -96,13 +96,23 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
 
         try {
             // Create payment intent
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                throw new Error(__('Session expired. Please refresh the page and try again.'));
+            }
+
             const response = await fetch(`/payment/properties/${property.id}/create-intent`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-CSRF-TOKEN': csrfToken.content,
                 },
             });
+
+            // Check for CSRF token error (419)
+            if (response.status === 419) {
+                throw new Error(__('Session expired. Please refresh the page and try again.'));
+            }
 
             // Check if response is JSON
             const contentType = response.headers.get('content-type');
@@ -110,6 +120,12 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
                 // Server returned HTML instead of JSON (likely an error page)
                 const htmlResponse = await response.text();
                 console.error('Server returned HTML instead of JSON:', htmlResponse.substring(0, 500));
+                
+                // Check if it's a CSRF error page
+                if (htmlResponse.includes('Page expirée') || htmlResponse.includes('expired') || response.status === 419) {
+                    throw new Error(__('Session expired. Please refresh the page and try again.'));
+                }
+                
                 throw new Error(__('Server error occurred. Please try again or contact support.'));
             }
 
@@ -145,7 +161,7 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': csrfToken.content,
                 },
                 body: JSON.stringify({
                 payment_intent_id: payment_intent_id,
@@ -153,12 +169,23 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
                 }),
                 });
 
+                // Check for CSRF token error (419)
+                if (confirmResponse.status === 419) {
+                    throw new Error(__('Session expired. Please refresh the page and try again.'));
+                }
+
                 // Check if response is JSON
             const contentType = confirmResponse.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                 // Server returned HTML instead of JSON (likely an error page)
                     const htmlResponse = await confirmResponse.text();
                 console.error('Server returned HTML instead of JSON:', htmlResponse.substring(0, 500));
+                
+                // Check if it's a CSRF error page
+                if (htmlResponse.includes('Page expirée') || htmlResponse.includes('expired') || confirmResponse.status === 419) {
+                    throw new Error(__('Session expired. Please refresh the page and try again.'));
+                }
+                
                 throw new Error(__('Server error occurred. Please try again or contact support.'));
             }
 
@@ -209,7 +236,7 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
                 <label className="block text-sm font-medium text-[#000] font-inter mb-3">
                     {__('Card Information')}
                 </label>
-                <div className="p-4 border border-[#EAEAEA] rounded-lg bg-white focus-within:border-[#065033] transition-colors">
+                <div className="p-4 border border-[#EAEAEA] rounded-lg bg-white focus-within:border-[#1E40AF] transition-colors">
                     <CardElement options={cardElementOptions} />
                 </div>
                 <p className="text-xs text-[#6C6C6C] font-inter mt-2 flex items-center">
@@ -234,10 +261,10 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
             <button
                 type="submit"
                 disabled={!stripe || isLoading}
-                className={`w-full flex justify-center items-center px-4 py-3 h-12 bg-[#065033] border border-[#065033] rounded-lg text-white font-inter font-medium text-sm transition-colors ${
+                className={`w-full flex justify-center items-center px-4 py-3 h-12 bg-[#1E40AF] border border-[#1E40AF] rounded-lg text-white font-inter font-medium text-sm transition-colors ${
                     isLoading
                         ? 'opacity-50 cursor-not-allowed'
-                        : 'hover:bg-[#054028] focus:outline-none focus:bg-[#054028]'
+                        : 'hover:bg-[#1E3A8A] focus:outline-none focus:bg-[#1E3A8A]'
                 }`}
             >
                 {isLoading ? (
@@ -327,8 +354,8 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                     <div className="mx-auto max-w-2xl px-8">
                         <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden">
                             <div className="p-8 text-center">
-                                <div className="w-16 h-16 mx-auto mb-6 bg-[#F0F9F4] border border-[#D1F2D9] rounded-full flex items-center justify-center">
-                                    <Icons.CheckCircle className="w-8 h-8 text-[#065033]" />
+                                <div className="w-16 h-16 mx-auto mb-6 bg-[#EBF4FF] border border-[#BFDBFE] rounded-full flex items-center justify-center">
+                                    <Icons.CheckCircle className="w-8 h-8 text-[#1E40AF]" />
                                 </div>
                                 <h3 className="text-xl font-semibold text-[#000] font-inter mb-3">
                                     {__('Payment confirmed successfully!')}
@@ -336,7 +363,7 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                 <p className="text-[#6C6C6C] font-inter mb-6">
                                     {__('You will be redirected to the contact information...')}
                                 </p>
-                                <div className="animate-spin w-6 h-6 border-2 border-[#065033] border-t-transparent rounded-full mx-auto"></div>
+                                <div className="animate-spin w-6 h-6 border-2 border-[#1E40AF] border-t-transparent rounded-full mx-auto"></div>
                             </div>
                         </div>
                     </div>
@@ -372,14 +399,14 @@ export default function ContactPurchase({ property, price, currency, stripePubli
             <Head title={__('Buy Contact')} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-[1200px] px-8">
+                <div className="mx-auto max-w-[1336px] px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Property Details - Left Column */}
                         <div className="lg:col-span-2 space-y-6">
                             <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-4 flex items-center">
-                                        <Icons.Home className="w-5 h-5 mr-2 text-[#065033]" />
+                                        <Icons.Home className="w-5 h-5 mr-2 text-[#1E40AF]" />
                                         {__('Property Details')}
                                     </h3>
                                     
@@ -403,28 +430,28 @@ export default function ContactPurchase({ property, price, currency, stripePubli
 
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                            <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg">
                                                 <div className="flex items-center mb-2">
                                                     <Icons.MapPin className="w-4 h-4 text-[#6C6C6C] mr-2" />
-                                                    <span className="text-sm font-medium text-[#000] font-inter">{__('Address')}</span>
+                                                    <span className="text-sm font-medium text-[#000] font-inter">{__('Location')}</span>
                                                 </div>
-                                                <p className="text-[#000] font-inter font-medium">{property.adresse_complete}</p>
-                                                <p className="text-[#6C6C6C] font-inter text-sm">{property.ville}, {property.pays}</p>
+                                                <p className="text-[#000] font-inter font-medium">{property.ville}, {property.pays}</p>
+                                                <p className="text-[#6C6C6C] font-inter text-sm">{__('Full address available after purchase')}</p>
                                             </div>
                                             
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                            <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg">
                                                 <div className="flex items-center mb-2">
                                                     <Icons.Euro className="w-4 h-4 text-[#6C6C6C] mr-2" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Price')}</span>
                                                 </div>
-                                                <p className="text-xl font-bold text-[#065033] font-inter">
+                                                <p className="text-xl font-bold text-[#1E40AF] font-inter">
                                                     {formatPrice(property.prix)}
                                                 </p>
                                             </div>
                                         </div>
                                         
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                            <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg text-center">
                                                 <div className="flex items-center justify-center mb-2">
                                                     <Icons.Home className="w-4 h-4 text-[#6C6C6C] mr-1" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Type')}</span>
@@ -432,7 +459,7 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                                 <p className="text-[#000] font-inter font-medium">{getPropertyTypeLabel(property.type_propriete)}</p>
                                             </div>
                                             
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                            <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg text-center">
                                                 <div className="flex items-center justify-center mb-2">
                                                     <Icons.Maximize2 className="w-4 h-4 text-[#6C6C6C] mr-1" />
                                                     <span className="text-sm font-medium text-[#000] font-inter">{__('Surface')}</span>
@@ -441,7 +468,7 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                             </div>
                                             
                                             {property.nombre_pieces && (
-                                                <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg text-center">
+                                                <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg text-center">
                                                     <div className="flex items-center justify-center mb-2">
                                                         <Icons.User className="w-4 h-4 text-[#6C6C6C] mr-1" />
                                                         <span className="text-sm font-medium text-[#000] font-inter">{__('Rooms')}</span>
@@ -460,12 +487,12 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                             <div className="bg-white border border-[#EAEAEA] rounded-lg overflow-hidden sticky top-8">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-4 flex items-center">
-                                        <Icons.CreditCard className="w-5 h-5 mr-2 text-[#065033]" />
+                                        <Icons.CreditCard className="w-5 h-5 mr-2 text-[#1E40AF]" />
                                         {__('Payment Information')}
                                     </h3>
 
                                     {/* Purchase Summary */}
-                                    <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg mb-6">
+                                    <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg mb-6">
                                         <div className="flex justify-between items-center mb-3">
                                             <span className="text-[#000] font-inter font-medium">{__('Property Owner Contact')}:</span>
                                             <span className="font-semibold text-[#000] font-inter">
@@ -475,7 +502,7 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                         <div className="border-t border-[#EAEAEA] pt-3">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-[#000] font-inter font-semibold">{__('Total')}:</span>
-                                                <span className="text-lg font-bold text-[#065033] font-inter">
+                                                <span className="text-lg font-bold text-[#1E40AF] font-inter">
                                                     {formatPrice(price)}
                                                 </span>
                                             </div>
@@ -483,12 +510,12 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                     </div>
 
                                     {/* What you get */}
-                                    <div className="bg-[#F0F9F4] border border-[#D1F2D9] p-4 rounded-lg mb-6">
-                                        <h4 className="font-semibold text-[#065033] font-inter mb-3 flex items-center">
+                                    <div className="bg-[#EBF4FF] border border-[#BFDBFE] p-4 rounded-lg mb-6">
+                                        <h4 className="font-semibold text-[#1E40AF] font-inter mb-3 flex items-center">
                                             <Icons.CheckCircle className="w-4 h-4 mr-2" />
                                             {__('What you will get')}:
                                         </h4>
-                                        <ul className="text-sm text-[#065033] font-inter space-y-2">
+                                        <ul className="text-sm text-[#1E40AF] font-inter space-y-2">
                                             <li className="flex items-center">
                                                 <Icons.User className="w-3 h-3 mr-2 flex-shrink-0" />
                                                 {__('Owner name and surname')}

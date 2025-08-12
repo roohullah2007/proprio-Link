@@ -2,19 +2,21 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Property;
 
-class PropertyApprovedMail extends Mailable
+class PropertyApprovedMail extends LocalizedMailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $property;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -22,6 +24,14 @@ class PropertyApprovedMail extends Mailable
     public function __construct(Property $property)
     {
         $this->property = $property;
+        
+        // Ensure property owner is loaded
+        if (!$property->relationLoaded('proprietaire')) {
+            $property->load('proprietaire');
+        }
+        
+        // Set locale based on property owner's language preference
+        $this->setUserLocale($property->proprietaire);
     }
 
     /**
@@ -30,7 +40,8 @@ class PropertyApprovedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Great News! Your Property Has Been Approved | Propio',
+            subject: $this->getLocalizedSubject('Excellente nouvelle ! Votre propriété a été approuvée - Proprio Link'),
+            from: $this->getFromAddress()
         );
     }
 
@@ -40,7 +51,12 @@ class PropertyApprovedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.property-owner.property-approved',
+            view: $this->getLocalizedView('emails.property-approved'),
+            with: [
+                'property' => $this->property,
+                'ownerName' => $this->property->proprietaire->prenom,
+                'locale' => $this->locale,
+            ]
         );
     }
 

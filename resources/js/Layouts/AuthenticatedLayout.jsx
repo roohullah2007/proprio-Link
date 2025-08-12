@@ -138,7 +138,7 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
                                                     className="w-8 h-8 rounded-full object-cover transition-transform duration-200 hover:scale-105 shadow-sm"
                                                 />
                                             ) : (
-                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-105 shadow-sm">
+                                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-105 shadow-sm">
                                                     <span className="text-sm font-bold text-white">
                                                         {user.prenom?.[0]?.toUpperCase()}{user.nom?.[0]?.toUpperCase()}
                                                     </span>
@@ -204,8 +204,8 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
                                     className="w-8 h-8 rounded-full object-cover"
                                 />
                             ) : (
-                                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                                    <span className="text-sm font-medium text-gray-600">
+                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span className="text-sm font-medium text-white">
                                         {user.prenom?.[0]?.toUpperCase()}{user.nom?.[0]?.toUpperCase()}
                                     </span>
                                 </div>
@@ -282,7 +282,7 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
             {header && (
                 <header className="bg-white shadow-sm border-b border-gray-200 mt-16">
                     <div className="w-full px-8">
-                        <div className="max-w-[1400px] mx-auto flex items-center" style={{ height: '63px' }}>
+                        <div className="max-w-[1400px] mx-auto flex items-center py-4">
                             {header}
                         </div>
                     </div>

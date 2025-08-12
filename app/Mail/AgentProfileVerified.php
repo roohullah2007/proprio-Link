@@ -2,19 +2,24 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
+use App\Models\EmailSetting;
 
 class AgentProfileVerified extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $agent;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -29,8 +34,14 @@ class AgentProfileVerified extends Mailable
      */
     public function envelope(): Envelope
     {
+        $subject = 'Votre profil agent a été vérifié ! - Proprio Link';
+            
         return new Envelope(
-            subject: 'Your Agent Profile Has Been Verified! | Propio',
+            subject: $subject,
+            from: new Address(
+                EmailSetting::get('mail_from_address', 'noreply@proprio-link.fr'),
+                EmailSetting::get('mail_from_name', 'Proprio Link')
+            )
         );
     }
 
@@ -39,8 +50,12 @@ class AgentProfileVerified extends Mailable
      */
     public function content(): Content
     {
+        $viewName = $this->agent->language === 'en' 
+            ? 'emails.agent.profile-verified-en' 
+            : 'emails.agent.profile-verified';
+            
         return new Content(
-            view: 'emails.agent.profile-verified',
+            view: $viewName,
         );
     }
 

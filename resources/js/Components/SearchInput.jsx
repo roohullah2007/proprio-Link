@@ -33,7 +33,7 @@ export default function SearchInput({
 
     return (
         <form onSubmit={handleSubmit} className={className}>
-            <div className={`flex items-center bg-white border-[1.5px] border-[#EAEAEA] rounded-full h-[35px] px-4 py-2.5 gap-2.5 ${getWidthClass()} focus-within:border-[#065033] transition-colors`}>
+            <div className={`flex items-center bg-white border-[1.5px] border-[#EAEAEA] rounded-full h-[35px] px-4 py-2.5 gap-2.5 ${getWidthClass()} focus-within:border-proprio-blue transition-colors`}>
                 {/* Search Icon */}
                 <div className="flex-none w-4 h-4">
                     <svg 

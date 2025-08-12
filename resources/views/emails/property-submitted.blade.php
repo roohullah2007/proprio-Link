@@ -66,7 +66,7 @@
 En moyenne, nos propriétaires reçoivent leur premier contact d'agent dans les 3-7 jours suivant la publication.</p>
 
 <p><strong>Que faire si je ne reçois pas de contacts ?</strong><br>
-Notre équipe peut vous aider à optimiser votre annonce. Contactez-nous à support@propio.com</p>
+Notre équipe peut vous aider à optimiser votre annonce. Contactez-nous via le site web</p>
 
 <p><strong>Puis-je modifier ma propriété après soumission ?</strong><br>
 Tant qu'elle n'est pas publiée, vous pouvez modifier toutes les informations depuis votre tableau de bord.</p>
@@ -74,7 +74,7 @@ Tant qu'elle n'est pas publiée, vous pouvez modifier toutes les informations de
 <h3>🤝 Support disponible</h3>
 <p>Notre équipe est là pour vous accompagner :</p>
 <ul>
-    <li>📧 Email : <a href="mailto:support@propio.com">support@propio.com</a></li>
+    <li>📧 Email : Contactez-nous via le site web</li>
     <li>📞 Téléphone : 01 23 45 67 89 (9h-18h, lun-ven)</li>
     <li>💬 Chat en ligne : Depuis votre tableau de bord</li>
 </ul>
@@ -83,13 +83,13 @@ Tant qu'elle n'est pas publiée, vous pouvez modifier toutes les informations de
 
 <p>
     Cordialement,<br>
-    <strong>L'équipe Propio</strong>
+    <strong>L'équipe Proprio Link</strong>
 </p>
 
 <hr style="margin: 30px 0; border: none; height: 1px; background-color: #eee;">
 
 <p style="font-size: 14px; color: #666;">
-    <strong>Propio en chiffres :</strong><br>
+    <strong>Proprio Link en chiffres :</strong><br>
     🏠 Plus de 50 000 propriétés vendues<br>
     👥 Plus de 10 000 agents professionnels actifs<br>
     ⭐ 4.8/5 de satisfaction client<br>

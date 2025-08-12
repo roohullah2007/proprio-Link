@@ -61,7 +61,7 @@ class RegisteredUserController extends Controller
             'numero_siret' => $validatedData['numero_siret'] ?? null,
             'licence_professionnelle_url' => $licenceUrl,
             'est_verifie' => false, // All users start unverified
-            'language' => $validatedData['language'] ?? app()->getLocale(),
+            'language' => $validatedData['language'] ?? 'fr', // Default to French
         ]);
 
         // Send welcome email
@@ -71,6 +71,23 @@ class RegisteredUserController extends Controller
             \Log::error('Failed to send welcome email: ' . $e->getMessage());
         }
 
+        // Send admin notification
+        try {
+            \App\Services\AdminNotificationService::notifyAdmins(
+                new \App\Mail\AdminUserRegistered($user)
+            );
+        } catch (\Exception $e) {
+            \Log::error('Failed to send admin notification for user registration: ' . $e->getMessage());
+        }
+
+        // Send email verification code automatically
+        try {
+            \App\Models\EmailVerificationCode::generateAndSend($user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
+        }
+
+        // Send email verification
         event(new Registered($user));
 
         Auth::login($user);
@@ -87,8 +104,10 @@ class RegisteredUserController extends Controller
             }
         }
 
-        // Redirect to email verification for all new users
+        // Redirect to email verification for all new users with success message
         // They'll be redirected to appropriate dashboard/payment after verification
-        return redirect()->route('verification.notice');
+        return redirect()->route('verification.notice')
+            ->with('status', 'verification-code-sent')
+            ->with('message', 'Un code de vérification a été automatiquement envoyé à votre adresse email.');
     }
 }

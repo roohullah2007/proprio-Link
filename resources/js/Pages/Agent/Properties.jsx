@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
+import PropertyImage from '@/Components/PropertyImage';
 
 export default function Properties({ properties, filters, propertyTypes }) {
     const { __ } = useTranslations();
@@ -234,7 +235,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                 type="text"
                                                 value={searchForm.search}
                                                 onChange={(e) => handleInputChange('search', e.target.value)}
-                                                placeholder={__('Search...')}
+                                                placeholder={__('Search by city, address, or owner name...')}
                                                 className="flex-1 border-0 outline-none bg-transparent text-[12px] sm:text-[14px] leading-[16px] sm:leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] capitalize focus:outline-none focus:ring-0 focus:border-0"
                                             />
                                         </div>
@@ -261,7 +262,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                 onChange={(e) => handleInputChange('type_propriete', e.target.value)}
                                                 className="w-full border-0 outline-none bg-transparent text-[12px] sm:text-[14px] leading-[16px] sm:leading-[19px] font-normal text-[#5A5A5A] capitalize appearance-none focus:outline-none focus:ring-0 focus:border-0"
                                             >
-                                                <option value="">{__('All types')}</option>
+                                                <option value="">{__('All Types')}</option>
                                                 {Object.entries(propertyTypes).map(([value, label]) => (
                                                     <option key={value} value={value}>{label}</option>
                                                 ))}
@@ -277,7 +278,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                     type="number"
                                                     value={searchForm.prix_min}
                                                     onChange={(e) => handleInputChange('prix_min', e.target.value)}
-                                                    placeholder="Min"
+                                                    placeholder={__("Min")}
                                                     className="w-full border-0 outline-none bg-transparent text-[12px] sm:text-[14px] leading-[16px] sm:leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] capitalize focus:outline-none focus:ring-0 focus:border-0"
                                                 />
                                             </div>
@@ -286,7 +287,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                     type="number"
                                                     value={searchForm.prix_max}
                                                     onChange={(e) => handleInputChange('prix_max', e.target.value)}
-                                                    placeholder="Max"
+                                                    placeholder={__("Max")}
                                                     className="w-full border-0 outline-none bg-transparent text-[12px] sm:text-[14px] leading-[16px] sm:leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] capitalize focus:outline-none focus:ring-0 focus:border-0"
                                                 />
                                             </div>
@@ -327,7 +328,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                         </span>
                                         {hasAdvancedFilters && !showAdvancedFilters && (
                                             <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                                Active
+                                                {__("Active")}
                                             </span>
                                         )}
                                     </button>
@@ -390,7 +391,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                     </div>
 
                     {/* Properties Grid - Responsive */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {properties.data.map((property) => (
                             <Link
                                 key={property.id}
@@ -402,27 +403,12 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                     <div className="desktop-card bg-white rounded-[12px] overflow-hidden shadow-sm flex flex-col p-[12px] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
                                         <div className="desktop-card-image-container relative overflow-hidden">
                                             {/* Property Image */}
-                                            {property.images && property.images.length > 0 ? (
-                                                <img
-                                                    src={`/storage/${property.images[0].chemin_fichier}`}
-                                                    alt="Property image"
-                                                    className="desktop-card-image w-full h-[138px] object-cover rounded-[8px] transition-transform duration-300 hover:scale-110"
-                                                    onError={(e) => {
-                                                        if (!e.target.dataset.fallbackAttempted) {
-                                                            e.target.dataset.fallbackAttempted = 'true';
-                                                            e.target.src = `/images/${property.images[0].chemin_fichier}`;
-                                                        } else {
-                                                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjEzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTM4IiBmaWxsPSIjZjNmNGY2Ii8+CiAgICA8cmVjdCB4PSIzNiIgeT0iMzQiIHdpZHRoPSIxMDgiIGhlaWdodD0iNzAiIGZpbGw9IiNlNWU3ZWIiLz4KICAgIDxyZWN0IHg9IjQ1IiB5PSI0MiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjI4IiBmaWxsPSIjZDFkNWRiIi8+CiAgICA8cmVjdCB4PSI5OSIgeT0iNDIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIyOCIgZmlsbD0iI2QxZDVkYiIvPgogICAgPHJlY3QgeD0iNDUiIHk9Ijc4IiB3aWR0aD0iOTAiIGhlaWdodD0iMjAiIGZpbGw9IiNkMWQ1ZGIiLz4KICAgIDx0ZXh0IHg9IjkwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2YjcyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+U2ltaWxhciBQcm9wZXJ0eTwvdGV4dD4KICA8L3N2Zz4K';
-                                                        }
-                                                    }}
-                                                />
-                                            ) : (
-                                                <img
-                                                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjEzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTM4IiBmaWxsPSIjZjNmNGY2Ii8+CiAgICA8cmVjdCB4PSIzNiIgeT0iMzQiIHdpZHRoPSIxMDgiIGhlaWdodD0iNzAiIGZpbGw9IiNlNWU3ZWIiLz4KICAgIDxyZWN0IHg9IjQ1IiB5PSI0MiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjI4IiBmaWxsPSIjZDFkNWRiIi8+CiAgICA8cmVjdCB4PSI5OSIgeT0iNDIiIHdpZHRoPSIzNiIgaGVpZ2h0PSIyOCIgZmlsbD0iI2QxZDVkYiIvPgogICAgPHJlY3QgeD0iNDUiIHk9Ijc4IiB3aWR0aD0iOTAiIGhlaWdodD0iMjAiIGZpbGw9IiNkMWQ1ZGIiLz4KICAgIDx0ZXh0IHg9IjkwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2YjcyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+U2ltaWxhciBQcm9wZXJ0eTwvdGV4dD4KICA8L3N2Zz4K"
-                                                    alt="Property image"
-                                                    className="desktop-card-image w-full h-[138px] object-cover rounded-[8px] transition-transform duration-300 hover:scale-110"
-                                                />
-                                            )}
+                                            <PropertyImage
+                                                image={property.images?.[0]}
+                                                alt="Property image"
+                                                className="desktop-card-image w-full h-[138px] object-cover rounded-[8px] transition-transform duration-300 hover:scale-110"
+                                                fallbackClassName="w-full h-[138px] rounded-[8px]"
+                                            />
                                             
                                             {/* Heart Button */}
                                             <button className="desktop-heart-button absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-200 transition-all duration-200 cursor-pointer hover:bg-gray-50 hover:scale-110">
@@ -438,7 +424,7 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                             </button>
 
                                             {/* Status Badge */}
-                                            <div className="desktop-status-badge absolute bottom-3 left-0 bg-[#059669] text-white text-[14px] font-medium py-1 px-3 rounded-r">
+                                            <div className="desktop-status-badge absolute bottom-3 left-0 bg-[#0f31c2] text-white text-[14px] font-medium py-1 px-3 rounded-r">
                                                 {property.is_purchased ? __('Purchased') : __('For Sale')}
                                             </div>
                                         </div>
@@ -469,9 +455,19 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                 <span className="font-medium">{property.superficie_m2} m²</span>
                                             </div>
                                             
-                                            <p className="desktop-address text-[11px] font-bold text-[#212121]">
-                                                {property.ville}, {property.pays}
-                                            </p>
+                                            <div className="desktop-address">
+                                                <p className="text-[11px] font-bold text-[#212121]">
+                                                    {property.ville}, {property.pays}
+                                                </p>
+                                                {!property.is_purchased && (
+                                                    <p className="text-[10px] text-[#8B4513] mt-1 flex items-center">
+                                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                        </svg>
+                                                        {__('Full address hidden')}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -482,30 +478,12 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                         <div className="flex">
                                             {/* Mobile Image - Left Side */}
                                             <div className="w-32 h-24 flex-shrink-0 relative overflow-hidden">
-                                                {property.images && property.images.length > 0 ? (
-                                                    <img
-                                                        src={`/storage/${property.images[0].chemin_fichier}`}
-                                                        alt="Property image"
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            if (!e.target.dataset.fallbackAttempted) {
-                                                                e.target.dataset.fallbackAttempted = 'true';
-                                                                e.target.src = `/images/${property.images[0].chemin_fichier}`;
-                                                            } else {
-                                                                const placeholder = document.createElement('div');
-                                                                placeholder.className = 'w-full h-full bg-gray-200 flex items-center justify-center';
-                                                                placeholder.innerHTML = '<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>';
-                                                                e.target.parentNode.replaceChild(placeholder, e.target);
-                                                            }
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                                        </svg>
-                                                    </div>
-                                                )}
+                                                <PropertyImage
+                                                    image={property.images?.[0]}
+                                                    alt="Property image"
+                                                    className="w-full h-full object-cover"
+                                                    fallbackClassName="w-full h-full"
+                                                />
                                                 
                                                 {/* Mobile Status Badge */}
                                                 <div className="absolute top-1 left-1 bg-[#059669] text-white text-xs font-medium py-0.5 px-2 rounded">
@@ -531,9 +509,19 @@ export default function Properties({ properties, filters, propertyTypes }) {
                                                     </p>
                                                 </div>
                                                 
-                                                <p className="text-xs text-[#212121] font-medium mb-2">
-                                                    {property.ville}, {property.pays}
-                                                </p>
+                                                <div className="mb-2">
+                                                    <p className="text-xs text-[#212121] font-medium">
+                                                        {property.ville}, {property.pays}
+                                                    </p>
+                                                    {!property.is_purchased && (
+                                                        <p className="text-[10px] text-[#8B4513] flex items-center mt-1">
+                                                            <svg className="w-2 h-2 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                            </svg>
+                                                            {__('Address hidden')}
+                                                        </p>
+                                                    )}
+                                                </div>
                                                 
                                                 <div className="flex flex-wrap gap-1 text-xs text-[#374151]">
                                                     {property.nombre_chambres && (

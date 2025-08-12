@@ -52,7 +52,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard'))->with('success', 'Inscription réussie ! Bienvenue sur Propio.');
+        return redirect(route('dashboard'))->with('success', 'Inscription réussie ! Bienvenue sur Proprio Link.');
     }
 
     /**
@@ -117,6 +117,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'À bientôt sur Propio !');
+        return redirect('/')->with('success', 'À bientôt sur Proprio Link !');
     }
 }

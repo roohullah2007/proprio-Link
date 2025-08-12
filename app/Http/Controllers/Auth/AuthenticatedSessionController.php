@@ -37,14 +37,33 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Check if user is an agent and there's an intended URL
         $user = Auth::user();
+        
+        // Check if email is verified
+        if (!$user->hasVerifiedEmail()) {
+            // Store intended URL for after verification
+            $intendedUrl = $request->session()->get('url.intended');
+            if ($intendedUrl) {
+                $request->session()->put('post_verification_redirect', $intendedUrl);
+            }
+            
+            // Redirect to email verification with notice
+            return redirect()->route('verification.notice')
+                ->with('status', 'email-verification-required')
+                ->with('message', 'Veuillez vérifier votre adresse email avant de continuer.');
+        }
+
+        // Check for specific user type redirects
         $intendedUrl = $request->session()->get('url.intended');
         
-        // If user is an agent and there's an intended URL that looks like a property page
+        // Admin users should go to admin dashboard
+        if ($user && $user->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        }
+        
+        // Agent users with intended URL for property pages
         if ($user && $user->type_utilisateur === 'AGENT' && $intendedUrl) {
             // Check if the intended URL is a property page
             if (preg_match('/\/property\/([a-f0-9-]+)/', $intendedUrl, $matches)) {
@@ -54,7 +73,7 @@ class AuthenticatedSessionController extends Controller
             }
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

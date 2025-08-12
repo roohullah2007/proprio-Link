@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Fix Tool - Proprio Link</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #065033;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #065033;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #065033;
+        }
+        .button {
+            background: #065033;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #054028;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Storage Fix Tool</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Image Access Issue Detected</strong><br>
+            This tool will help fix the storage symlink issue that prevents images from loading properly.
+        </div>
+
+        <div class="step">
+            <h3>Step 1: Automatic Fix (Try First)</h3>
+            <p>Click the button below to automatically create the storage symlink:</p>
+            <button class="button" onclick="fixStorageLink()">🔄 Fix Storage Link</button>
+            <div id="result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Manual Fix (If Automatic Fails)</h3>
+            <p>If the automatic fix doesn't work, run this command in your terminal:</p>
+            <div class="code">
+                php artisan storage:link
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Windows Symlink Fix</h3>
+            <p>For Windows users, you can also run the batch file we created:</p>
+            <div class="code">
+                fix_storage_symlink.bat
+            </div>
+            <p>Or the PowerShell script (run as administrator):</p>
+            <div class="code">
+                PowerShell -ExecutionPolicy Bypass -File fix_storage_symlink.ps1
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Test Storage Access</h3>
+            <button class="button" onclick="testStorageAccess()">🧪 Test Storage Access</button>
+            <div id="testResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Manual File Serving (Last Resort)</h3>
+            <p>If symlinks don't work on your system, the application has fallback routes that will serve images directly.</p>
+            <div class="success">
+                ✅ Fallback routes are already configured in your application:
+                <ul>
+                    <li><code>/storage/{path}</code> - Serves images directly</li>
+                    <li><code>/images/{path}</code> - Alternative image serving</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fixStorageLink() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div style="color: #007bff;">🔄 Fixing storage link...</div>';
+            
+            try {
+                const response = await fetch('/fix-storage-link');
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = `<div class="success">✅ ${data.message}</div>`;
+                } else {
+                    result.innerHTML = `<div class="warning">⚠️ ${data.message}<br><small>${data.error || data.suggestion || ''}</small></div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div style="color: #dc3545;">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testStorageAccess() {
+            const testResult = document.getElementById('testResult');
+            testResult.innerHTML = '<div style="color: #007bff;">🧪 Testing storage access...</div>';
+            
+            try {
+                const response = await fetch('/test-storage');
+                const data = await response.json();
+                
+                let html = '<div class="success">📊 Storage Test Results:</div>';
+                html += `<div><strong>Symlink exists:</strong> ${data.symlink_exists ? '✅ Yes' : '❌ No'}</div>`;
+                html += `<div><strong>Storage path:</strong> ${data.storage_path}</div>`;
+                html += `<div><strong>Public path:</strong> ${data.public_path}</div>`;
+                
+                if (data.symlink_target) {
+                    html += `<div><strong>Symlink target:</strong> ${data.symlink_target}</div>`;
+                }
+                
+                if (data.properties && data.properties.length > 0) {
+                    html += `<div><strong>Found ${data.properties.length} properties with images for testing</strong></div>`;
+                }
+                
+                testResult.innerHTML = html;
+            } catch (error) {
+                testResult.innerHTML = `<div style="color: #dc3545;">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-run storage access test on page load
+        window.addEventListener('load', testStorageAccess);
+    </script>
+</body>
+</html>

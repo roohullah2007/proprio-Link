@@ -1,0 +1,1 @@
+function c(){return document.documentElement.lang||"fr"}function a(n=null){const e=n||c();return{en:"en-US",fr:"fr-FR"}[e]||"fr-FR"}function l(n,e={}){if(!n)return"";const o={...{year:"numeric",month:"short",day:"numeric"},...e},r=a();return new Date(n).toLocaleDateString(r,o)}export{l as f};

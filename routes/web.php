@@ -8,6 +8,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\SettingsController;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\PropertyEditRequestController;
 use App\Models\Property;
 use App\Models\ContactPurchase;
@@ -344,7 +345,7 @@ Route::get('/storage-admin', function () {
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Storage Admin - Propio</title>
+        <title>Storage Admin - Proprio Link</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 40px; }
             .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
@@ -356,7 +357,7 @@ Route::get('/storage-admin', function () {
         </style>
     </head>
     <body>
-        <h1>Storage Admin - Propio</h1>
+        <h1>Storage Admin - Proprio Link</h1>
         
         <div class="card">
             <h3>Fix Storage Symlink</h3>
@@ -486,55 +487,7 @@ Route::middleware(['set.locale'])->group(function () {
     Route::get('/property/{property}', [PropertyController::class, 'showPublic'])->name('property.public');
 });
 
-Route::get('/dashboard', function () {
-    $user = Auth::user();
-    
-    // Check if user needs email verification first
-    if ($user && !$user->hasVerifiedEmail()) {
-        return redirect()->route('verification.notice');
-    }
-    
-    // Redirect based on user type for verified users
-    if ($user) {
-        switch ($user->type_utilisateur) {
-            case 'AGENT':
-                return redirect()->route('agent.dashboard');
-            case 'ADMIN':
-                return redirect()->route('admin.dashboard');
-            case 'PROPRIETAIRE':
-            default:
-                // Calculate stats for property owners
-                $publishedProperties = Property::where('proprietaire_id', $user->id)
-                    ->where('statut', 'PUBLIE')
-                    ->count();
-                
-                $totalRevenue = ContactPurchase::whereHas('property', function ($query) use ($user) {
-                        $query->where('proprietaire_id', $user->id);
-                    })
-                    ->sum('montant_paye') ?? 0;
-                
-                $contactsSold = ContactPurchase::whereHas('property', function ($query) use ($user) {
-                        $query->where('proprietaire_id', $user->id);
-                    })
-                    ->count();
-                
-                $propertyViews = 0; // Property views tracking not implemented yet
-                
-                $stats = [
-                    'published_properties' => $publishedProperties,
-                    'total_revenue' => $totalRevenue,
-                    'contacts_sold' => $contactsSold,
-                    'property_views' => $propertyViews,
-                ];
-                
-                return Inertia::render('Dashboard', [
-                    'stats' => $stats,
-                ]);
-        }
-    }
-    
-    return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard');
+// Note: Main dashboard route is now handled in the Route::middleware('auth')->group() section below
 
 // Language switching routes
 Route::post('/language/change', [LanguageController::class, 'change'])->name('language.change');
@@ -641,13 +594,65 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes (restricted to admin users)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Check verification for admin dashboard
-    Route::get('/dashboard', function () {
-        if (!Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
-        }
-        return app(ModerationController::class)->dashboard();
-    })->name('dashboard');
+    // Admin Dashboard
+    Route::get('/dashboard', [ModerationController::class, 'dashboard'])->name('dashboard');
+    
+    // Test route to debug dashboard data
+    Route::get('/dashboard-test', function () {
+        $controller = app(ModerationController::class);
+        
+        // Get the exact same data the dashboard method would return
+        $stats = [
+            'properties_pending' => \App\Models\Property::where('statut', 'EN_ATTENTE')->count(),
+            'total_earnings' => \App\Models\ContactPurchase::where('statut_paiement', 'succeeded')->sum('montant_paye'),
+            'total_transactions' => \App\Models\ContactPurchase::where('statut_paiement', 'succeeded')->count(),
+            'total_users' => \App\Models\User::count(),
+        ];
+        
+        return response()->json([
+            'message' => 'Dashboard test data',
+            'stats' => $stats,
+            'direct_check' => [
+                'properties_table_count' => DB::table('properties')->count(),
+                'pending_count' => DB::table('properties')->where('statut', 'EN_ATTENTE')->count(),
+                'purchases_count' => DB::table('contact_purchases')->where('statut_paiement', 'succeeded')->count(),
+                'earnings_sum' => DB::table('contact_purchases')->where('statut_paiement', 'succeeded')->sum('montant_paye'),
+            ]
+        ]);
+    })->name('dashboard-test');
+    
+    // Simple HTML test page
+    Route::get('/dashboard-html', function () {
+        $stats = [
+            'properties_pending' => \App\Models\Property::where('statut', 'EN_ATTENTE')->count(),
+            'total_earnings' => \App\Models\ContactPurchase::where('statut_paiement', 'succeeded')->sum('montant_paye'),
+            'total_transactions' => \App\Models\ContactPurchase::where('statut_paiement', 'succeeded')->count(),
+            'total_users' => \App\Models\User::count(),
+        ];
+        
+        $recentProperties = \App\Models\Property::where('statut', 'EN_ATTENTE')
+            ->with('proprietaire')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+            
+        return response("
+        <h1>Admin Dashboard Test</h1>
+        <h2>Statistics:</h2>
+        <p>Properties Pending: {$stats['properties_pending']}</p>
+        <p>Total Earnings: {$stats['total_earnings']} €</p>
+        <p>Total Transactions: {$stats['total_transactions']}</p>
+        <p>Total Users: {$stats['total_users']}</p>
+        
+        <h2>Recent Pending Properties:</h2>
+        <ul>
+        " . $recentProperties->map(function($p) {
+            return "<li>{$p->ville} ({$p->type_propriete}) - Owner: " . ($p->proprietaire ? $p->proprietaire->nom : 'NO OWNER') . "</li>";
+        })->implode('') . "
+        </ul>
+        ");
+    })->name('dashboard-html');
+    
     
     // Properties Management
     Route::get('/properties/pending', [ModerationController::class, 'pendingProperties'])->name('pending-properties');
@@ -658,6 +663,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/properties/{property}/pending', [ModerationController::class, 'pendingProperty'])->name('pending-property');
     Route::post('/properties/{property}/sold', [ModerationController::class, 'markAsSold'])->name('mark-sold');
     Route::post('/properties/bulk-approve', [ModerationController::class, 'bulkApprove'])->name('bulk-approve');
+    Route::delete('/properties/{property}/delete', [ModerationController::class, 'deleteProperty'])->name('delete-property');
+    Route::post('/properties/{property}/unapprove', [ModerationController::class, 'unapproveProperty'])->name('unapprove-property');
+    Route::post('/properties/{property}/disapprove', [ModerationController::class, 'disapproveProperty'])->name('disapprove-property');
+    Route::post('/properties/{property}/reapprove', [ModerationController::class, 'reapproveProperty'])->name('reapprove-property');
     
     // Users Management
     Route::get('/users', [UsersController::class, 'index'])->name('users');
@@ -812,5 +821,542 @@ Route::get('/admin/generate-missing-invoices', function () {
         ], 500);
     }
 })->middleware(['auth', 'admin']);
+
+// Email testing routes (only in development)
+if (app()->environment('local')) {
+    Route::get('/test-welcome-email/{email?}', function ($email = null) {
+        $email = $email ?: 'test@example.com';
+        
+        try {
+            // Create a test user
+            $testUser = new \App\Models\User([
+                'prenom' => 'Test',
+                'nom' => 'Agent',
+                'email' => $email,
+                'type_utilisateur' => 'AGENT',
+                'est_verifie' => false,
+                'created_at' => now()
+            ]);
+            
+            // Send welcome email
+            Mail::send('emails.welcome', ['user' => $testUser], function ($message) use ($email) {
+                $message->to($email)
+                        ->subject('Bienvenue sur Proprio Link ! - Test');
+            });
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Welcome email sent successfully to {$email}!",
+                'note' => 'Check your Mailtrap inbox at https://mailtrap.io',
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'note' => 'Make sure your Mailtrap credentials are correct in .env file'
+            ], 500);
+        }
+    })->name('test.welcome.email');
+
+    // Test admin notification emails
+    Route::get('/test-admin-emails/{type?}', function ($type = 'registration') {
+        try {
+            $user = \App\Models\User::first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No users found in database'
+                ]);
+            }
+
+            switch ($type) {
+                case 'registration':
+                    \App\Services\AdminNotificationService::notifyAdmins(
+                        new \App\Mail\AdminUserRegistered($user)
+                    );
+                    $message = 'Admin registration notification sent';
+                    break;
+                    
+                case 'password-reset':
+                    $resetUrl = route('password.reset', ['token' => 'test-token', 'email' => $user->email]);
+                    \App\Services\AdminNotificationService::notifyAdmins(
+                        new \App\Mail\AdminPasswordResetRequest($user, $resetUrl)
+                    );
+                    $message = 'Admin password reset notification sent';
+                    break;
+                    
+                case 'contact-purchase':
+                    $purchase = \App\Models\ContactPurchase::with(['agent', 'property.proprietaire'])->first();
+                    if (!$purchase) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'No contact purchases found in database'
+                        ]);
+                    }
+                    \App\Services\AdminNotificationService::notifyAdmins(
+                        new \App\Mail\AdminContactPurchased($purchase)
+                    );
+                    $message = 'Admin contact purchase notification sent';
+                    break;
+                    
+                case 'property-created':
+                    $property = \App\Models\Property::with('proprietaire')->first();
+                    if (!$property) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'No properties found in database'
+                        ]);
+                    }
+                    \App\Services\AdminNotificationService::notifyAdmins(
+                        new \App\Mail\AdminPropertyCreated($property)
+                    );
+                    $message = 'Admin property creation notification sent';
+                    break;
+                    
+                case 'property-approved':
+                    $property = \App\Models\Property::with('proprietaire')->where('statut', 'PUBLIE')->first();
+                    if (!$property) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'No published properties found in database'
+                        ]);
+                    }
+                    \App\Services\AdminNotificationService::notifyAdmins(
+                        new \App\Mail\AdminPropertyApproved($property)
+                    );
+                    $message = 'Admin property approval notification sent';
+                    break;
+                    
+                default:
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid type. Use: registration, password-reset, contact-purchase, property-created, property-approved'
+                    ]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'admin_emails' => \App\Services\AdminNotificationService::getAdminEmails(),
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    })->name('test.admin.emails');
+}
+
+// Admin Email Settings Routes
+Route::get('/admin/email-settings', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'index'])
+    ->name('admin.email-settings');
+
+Route::post('/admin/email-settings/smtp', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'updateSmtp'])
+    ->name('admin.email-settings.update-smtp');
+
+Route::post('/admin/email-settings/notification-emails', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'updateNotificationEmails'])
+    ->name('admin.email-settings.update-notification-emails');
+
+Route::post('/admin/email-settings/test-email', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'testEmail'])
+    ->name('admin.email-settings.test-email');
+
+Route::post('/admin/email-settings/test-admin-notification', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'testAdminNotification'])
+    ->name('admin.email-settings.test-admin-notification');
+
+Route::post('/admin/email-settings/website-url', [\App\Http\Controllers\Admin\AdminEmailSettingsController::class, 'updateWebsiteUrl'])
+    ->name('admin.email-settings.update-website-url');
+
+// Main application routes
+Route::middleware('auth')->group(function () {
+    // Dashboard route
+    Route::get('/', function () {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        
+        // Redirect based on user type
+        switch ($user->type_utilisateur) {
+            case 'AGENT':
+                return redirect()->route('agent.dashboard');
+            case 'ADMIN':
+                return redirect()->route('admin.dashboard');
+            case 'PROPRIETAIRE':
+            default:
+                return redirect()->route('dashboard');
+        }
+    })->name('home');
+    
+    // Property owner dashboard
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+        
+        \Log::info('Dashboard - Final Route Hit', [
+            'user_id' => $user->id,
+            'user_type' => $user->type_utilisateur,
+            'user_email' => $user->email,
+        ]);
+        
+        // Calculate stats for property owners
+        $publishedProperties = Property::where('proprietaire_id', $user->id)
+            ->where('statut', 'PUBLIE')
+            ->count();
+        
+        $totalRevenue = ContactPurchase::whereHas('property', function ($query) use ($user) {
+                $query->where('proprietaire_id', $user->id);
+            })
+            ->sum('montant_paye') ?? 0;
+        
+        $contactsSold = ContactPurchase::whereHas('property', function ($query) use ($user) {
+                $query->where('proprietaire_id', $user->id);
+            })
+            ->count();
+        
+        $propertyViews = Property::where('proprietaire_id', $user->id)
+            ->sum('views') ?? 0;
+        
+        $stats = [
+            'published_properties' => $publishedProperties,
+            'total_revenue' => $totalRevenue,
+            'contacts_sold' => $contactsSold,
+            'property_views' => $propertyViews,
+            'debug_user_id' => $user->id,
+            'debug_user_type' => $user->type_utilisateur,
+        ];
+        
+        \Log::info('Dashboard - Final Stats', $stats);
+        
+        return Inertia::render('Dashboard', [
+            'user' => $user,
+            'properties' => $user->properties()->latest()->take(5)->get(),
+            'stats' => $stats,
+        ]);
+    })->name('dashboard');
+    
+    // Agent dashboard
+    Route::get('/agent/dashboard', function () {
+        $user = Auth::user();
+        
+        // Get total count of available properties (published properties that are not owned by this agent)
+        $availablePropertiesCount = Property::where('statut', 'PUBLIE')
+            ->where('proprietaire_id', '!=', $user->id)
+            ->count();
+        
+        // Get a sample of available properties for display
+        $availableProperties = Property::where('statut', 'PUBLIE')
+            ->where('proprietaire_id', '!=', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
+            
+        // Get agent's purchase history and statistics
+        $purchaseHistory = $user->contactPurchases()->latest()->get();
+        $totalPurchases = $purchaseHistory->count();
+        $totalSpent = $purchaseHistory->sum('montant_paye') ?? 0;
+        
+        return Inertia::render('Agent/Dashboard', [
+            'user' => $user,
+            'properties' => $availableProperties,
+            'purchaseHistory' => $purchaseHistory,
+            'stats' => [
+                'available_properties' => $availablePropertiesCount,
+                'total_purchases' => $totalPurchases,
+                'total_spent' => $totalSpent,
+                'recent_purchases' => $purchaseHistory->take(5)->count(),
+            ],
+        ]);
+    })->name('agent.dashboard');
+});
+
+// Guest route - redirect to login
+Route::get('/', function () {
+    return redirect()->route('login');
+})->middleware('guest');
+
+// Set user language to French and test translations
+Route::get('/set-french', function () {
+    $user = Auth::user();
+    if($user) {
+        $user->language = 'fr';
+        $user->save();
+        
+        // Clear translation cache
+        \App\Http\Middleware\HandleInertiaRequests::clearTranslationCache();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User language set to French',
+            'user_language' => $user->language,
+            'app_locale' => app()->getLocale(),
+            'test_translations' => [
+                'Contact Purchased' => __('Contact Purchased'),
+                'Back to Properties' => __('Back to Properties'),
+                'You have access to complete owner information' => __('You have access to complete owner information')
+            ]
+        ]);
+    }
+    
+    return response()->json(['error' => 'Not authenticated']);
+})->middleware('auth');
+
+// Test Ethereal email configuration
+Route::get('/test-ethereal-email', function () {
+    try {
+        $testEmail = 'test@example.com'; // You can change this to any test email
+        
+        // Send a simple test email
+        Mail::raw('This is a test email from Proprio Link using Ethereal Email!', function ($message) use ($testEmail) {
+            $message->to($testEmail)
+                    ->subject('Test Email - Proprio Link');
+        });
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Test email sent successfully via Ethereal!',
+            'config' => [
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'username' => config('mail.mailers.smtp.username'),
+                'encryption' => config('mail.mailers.smtp.encryption'),
+            ],
+            'sent_to' => $testEmail,
+            'ethereal_inbox' => 'Check: https://ethereal.email/messages'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'config' => [
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'username' => config('mail.mailers.smtp.username'),
+                'encryption' => config('mail.mailers.smtp.encryption'),
+            ]
+        ], 500);
+    }
+})->middleware('auth');
+
+// Debug admin dashboard data
+Route::get('/debug-admin-dashboard-json', function () {
+    $stats = [
+        'properties_pending' => \App\Models\Property::where('statut', \App\Models\Property::STATUT_EN_ATTENTE)->count(),
+        'properties_published' => \App\Models\Property::where('statut', \App\Models\Property::STATUT_PUBLIE)->count(),
+        'properties_rejected' => \App\Models\Property::where('statut', \App\Models\Property::STATUT_REJETE)->count(),
+        'total_users' => \App\Models\User::count(),
+        'agents_unverified' => \App\Models\User::where('type_utilisateur', 'AGENT')
+                                  ->where('est_verifie', false)
+                                  ->count(),
+        
+        'total_earnings' => \App\Models\ContactPurchase::where('statut_paiement', \App\Models\ContactPurchase::STATUS_SUCCEEDED)
+            ->sum('montant_paye'),
+        'earnings_this_month' => \App\Models\ContactPurchase::where('statut_paiement', \App\Models\ContactPurchase::STATUS_SUCCEEDED)
+            ->whereMonth('paiement_confirme_a', now()->month)
+            ->whereYear('paiement_confirme_a', now()->year)
+            ->sum('montant_paye'),
+        'total_transactions' => \App\Models\ContactPurchase::where('statut_paiement', \App\Models\ContactPurchase::STATUS_SUCCEEDED)->count(),
+        'transactions_this_month' => \App\Models\ContactPurchase::where('statut_paiement', \App\Models\ContactPurchase::STATUS_SUCCEEDED)
+            ->whereMonth('paiement_confirme_a', now()->month)
+            ->whereYear('paiement_confirme_a', now()->year)
+            ->count(),
+    ];
+    
+    $recentProperties = \App\Models\Property::with(['proprietaire', 'images'])
+        ->where('statut', \App\Models\Property::STATUT_EN_ATTENTE)
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+    
+    return response()->json([
+        'stats' => $stats,
+        'recentProperties' => $recentProperties,
+        'debug_info' => [
+            'property_en_attente_constant' => \App\Models\Property::STATUT_EN_ATTENTE,
+            'contact_purchase_succeeded_constant' => \App\Models\ContactPurchase::STATUS_SUCCEEDED,
+            'actual_pending_count' => \App\Models\Property::where('statut', 'EN_ATTENTE')->count(),
+            'actual_succeeded_purchases' => \App\Models\ContactPurchase::where('statut_paiement', 'succeeded')->count(),
+        ]
+    ]);
+})->middleware(['auth', 'admin']);
+
+// Debug route to test property emails
+Route::get('/test-property-emails', function () {
+    try {
+        $property = \App\Models\Property::with('proprietaire')->first();
+        
+        if (!$property || !$property->proprietaire) {
+            return response()->json(['error' => 'No property with owner found']);
+        }
+        
+        // Test PropertyRejectedMail
+        \Mail::to($property->proprietaire->email)->send(new \App\Mail\PropertyRejectedMail($property));
+        
+        // Test PropertyDeletedMail
+        \Mail::to($property->proprietaire->email)->send(new \App\Mail\PropertyDeletedMail($property, 'Test deletion reason'));
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Test emails sent to: ' . $property->proprietaire->email,
+            'property_id' => $property->id
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Failed to send emails: ' . $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+})->middleware('auth');
+
+// =============================================================
+// ADMIN PENDING PROPERTIES DIAGNOSTIC ROUTES
+// =============================================================
+
+// Diagnostic route to check admin pending properties status
+Route::get('/admin-diagnostic', function () {
+    try {
+        $diagnostics = [
+            'database_connected' => true,
+            'total_properties' => \App\Models\Property::count(),
+            'pending_properties' => \App\Models\Property::where('statut', 'EN_ATTENTE')->count(),
+            'published_properties' => \App\Models\Property::where('statut', 'PUBLIE')->count(),
+            'rejected_properties' => \App\Models\Property::where('statut', 'REJETE')->count(),
+            'sold_properties' => \App\Models\Property::where('statut', 'VENDU')->count(),
+            'current_user' => Auth::user() ? [
+                'id' => Auth::user()->id,
+                'email' => Auth::user()->email,
+                'type' => Auth::user()->type_utilisateur,
+                'is_admin' => Auth::user()->type_utilisateur === 'ADMIN',
+            ] : 'Not authenticated',
+            'sample_properties' => \App\Models\Property::select('id', 'ville', 'statut', 'created_at', 'type_propriete')
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get(),
+            'property_status_constants' => [
+                'EN_ATTENTE' => \App\Models\Property::STATUT_EN_ATTENTE,
+                'PUBLIE' => \App\Models\Property::STATUT_PUBLIE,
+                'REJETE' => \App\Models\Property::STATUT_REJETE,
+                'VENDU' => \App\Models\Property::STATUT_VENDU,
+            ],
+        ];
+        
+        // Test the exact query from ModerationController
+        $controllerQuery = \App\Models\Property::with(['proprietaire', 'images'])
+            ->where('statut', \App\Models\Property::STATUT_EN_ATTENTE)
+            ->orderBy('created_at', 'asc');
+            
+        $diagnostics['controller_simulation'] = [
+            'query_sql' => $controllerQuery->toSql(),
+            'query_count' => $controllerQuery->count(),
+            'query_results' => $controllerQuery->limit(5)->get()->map(function($p) {
+                return [
+                    'id' => $p->id,
+                    'ville' => $p->ville,
+                    'statut' => $p->statut,
+                    'created_at' => $p->created_at->format('Y-m-d H:i:s'),
+                    'owner_exists' => $p->proprietaire ? true : false,
+                ];
+            }),
+        ];
+        
+        return response()->json($diagnostics, 200, [], JSON_PRETTY_PRINT);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Diagnostic failed',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500, [], JSON_PRETTY_PRINT);
+    }
+})->middleware(['auth'])->name('admin.diagnostic');
+
+// Route to create test pending properties
+Route::get('/create-test-pending-properties', function () {
+    try {
+        $user = Auth::user();
+        if (!$user || $user->type_utilisateur !== 'ADMIN') {
+            return response()->json(['error' => 'Must be logged in as admin'], 403);
+        }
+        
+        // Find or create a property owner
+        $proprietaire = \App\Models\User::where('type_utilisateur', 'PROPRIETAIRE')->first();
+        
+        if (!$proprietaire) {
+            $proprietaire = \App\Models\User::create([
+                'prenom' => 'Test',
+                'nom' => 'Owner',
+                'email' => 'testowner@propio.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+                'type_utilisateur' => 'PROPRIETAIRE',
+                'est_verifie' => true,
+                'language' => 'fr',
+            ]);
+        }
+        
+        // Create test pending properties
+        $testProperties = [];
+        $cities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad'];
+        $types = ['APPARTEMENT', 'MAISON', 'TERRAIN', 'COMMERCIAL', 'BUREAU'];
+        
+        for ($i = 1; $i <= 5; $i++) {
+            $city = $cities[array_rand($cities)];
+            $type = $types[array_rand($types)];
+            
+            $property = \App\Models\Property::create([
+                'proprietaire_id' => $proprietaire->id,
+                'adresse_complete' => "Block $i, Test Area, $city",
+                'pays' => 'Pakistan',
+                'ville' => $city,
+                'prix' => rand(2000000, 15000000), // 2M to 15M PKR
+                'superficie_m2' => rand(80, 300),
+                'type_propriete' => $type,
+                'description' => "Test property $i requiring admin review and approval. This property has been submitted by the owner and is awaiting moderation.",
+                'nombre_pieces' => rand(3, 6),
+                'nombre_chambres' => rand(2, 4),
+                'nombre_salles_bain' => rand(1, 3),
+                'contacts_souhaites' => 5,
+                'contacts_restants' => 5,
+                'statut' => \App\Models\Property::STATUT_EN_ATTENTE, // This is the key!
+                'created_at' => now()->subDays(rand(1, 7)), // Created in the last week
+            ]);
+            
+            $testProperties[] = [
+                'id' => $property->id,
+                'ville' => $property->ville,
+                'type_propriete' => $property->type_propriete,
+                'statut' => $property->statut,
+                'prix' => 'PKR ' . number_format($property->prix),
+                'created_at' => $property->created_at->format('Y-m-d H:i:s'),
+            ];
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Created 5 test pending properties',
+            'owner_email' => $proprietaire->email,
+            'properties' => $testProperties,
+            'next_steps' => [
+                '1. Visit /admin/dashboard to see the updated pending count',
+                '2. Visit /admin/properties/pending to review the properties',
+                '3. Test approving/rejecting properties',
+                '4. Remove this route after testing',
+            ],
+        ], 200, [], JSON_PRETTY_PRINT);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Failed to create test properties',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('create.test.pending.properties');
 
 require __DIR__.'/auth.php';

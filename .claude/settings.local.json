@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git reset:*)",
+      "Bash(php artisan:*)",
+      "Bash(icacls:*)",
+      "Bash(curl:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(npm run dev:*)",
+      "Bash(php:*)",
+      "Bash(grep:*)",
+      "Bash(del test_email.php test_password_reset.php)",
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:ethereal.email)",
+      "Bash(rd:*)"
+    ],
+    "deny": []
+  }
+}

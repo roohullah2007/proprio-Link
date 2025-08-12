@@ -21,7 +21,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: linear-gradient(135deg, #065033 0%, #087f4f 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: white;
             padding: 30px 40px;
             text-align: center;
@@ -49,20 +49,20 @@
             line-height: 1.7;
         }
         .highlight-box {
-            background-color: #f0f9f4;
-            border-left: 4px solid #065033;
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
             padding: 20px;
             margin: 25px 0;
             border-radius: 4px;
         }
         .highlight-box h3 {
-            color: #065033;
+            color: #2563eb;
             margin: 0 0 10px 0;
             font-size: 16px;
         }
         .button {
             display: inline-block;
-            background-color: #065033;
+            background-color: #2563eb;
             color: white !important;
             padding: 15px 30px;
             text-decoration: none;
@@ -72,7 +72,7 @@
             transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #054028;
+            background-color: #1d4ed8;
         }
         .footer {
             background-color: #f8f9fa;
@@ -89,7 +89,7 @@
             margin: 20px 0;
         }
         .social-links a {
-            color: #065033;
+            color: #2563eb;
             text-decoration: none;
             margin: 0 10px;
         }
@@ -138,7 +138,7 @@
         .price {
             font-size: 20px;
             font-weight: bold;
-            color: #065033;
+            color: #2563eb;
             margin: 10px 0;
         }
     </style>
@@ -160,14 +160,14 @@
             </div>
             
             <div class="social-links">
-                <a href="https://propriolink.com">Site Web</a> |
-                <a href="mailto:contact@propriolink.com">Contactez-nous</a> |
-                <a href="https://propriolink.com/help">Aide</a>
+                @php
+                    $websiteUrl = \App\Models\EmailSetting::get('website_url', 'https://proprio-link.fr');
+                @endphp
+                <a href="{{ $websiteUrl }}">{{ $websiteUrl }}</a>
             </div>
             
             <div class="contact-info">
                 Proprio Link - Plateforme immobilière professionnelle<br>
-                Email: contact@propriolink.com | Web: https://propriolink.com<br>
                 Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.
             </div>
         </div>

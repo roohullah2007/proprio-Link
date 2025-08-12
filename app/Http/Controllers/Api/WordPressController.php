@@ -134,6 +134,10 @@ class WordPressController extends Controller
                     'type' => $property->type_propriete,
                     'surface' => $property->superficie_m2,
                     'surface_formatted' => $property->superficie_m2 . ' m²',
+                    // Add bedroom and bathroom counts
+                    'bedrooms' => $property->nombre_chambres,
+                    'bathrooms' => $property->nombre_salles_bain,
+                    'rooms' => $property->nombre_pieces, // Total rooms
                     'contacts_remaining' => $property->contacts_restants,
                     'image' => $property->images->first() ? 
                         asset('storage/' . $property->images->first()->chemin_fichier) : null,
@@ -201,6 +205,10 @@ class WordPressController extends Controller
                     'type' => $property->type_propriete,
                     'surface' => $property->superficie_m2,
                     'surface_formatted' => $property->superficie_m2 . ' m²',
+                    // Add bedroom and bathroom counts
+                    'bedrooms' => $property->nombre_chambres,
+                    'bathrooms' => $property->nombre_salles_bain,
+                    'rooms' => $property->nombre_pieces, // Total rooms
                     'image' => $property->images->first() ? 
                         asset('storage/' . $property->images->first()->chemin_fichier) : null,
                     'detail_url' => $appUrl . '/property/' . $property->id, // Use configurable URL
