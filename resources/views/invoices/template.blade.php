@@ -16,13 +16,13 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid #065033;
+            border-bottom: 2px solid #2563eb;
             padding-bottom: 20px;
         }
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #065033;
+            color: #2563eb;
             margin-bottom: 10px;
         }
         .invoice-info {
@@ -42,7 +42,7 @@
         .section-title {
             font-size: 14px;
             font-weight: bold;
-            color: #065033;
+            color: #2563eb;
             margin-bottom: 10px;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
@@ -61,12 +61,12 @@
         .details-table th {
             background-color: #f5f5f5;
             font-weight: bold;
-            color: #065033;
+            color: #2563eb;
         }
         .amount {
             font-size: 18px;
             font-weight: bold;
-            color: #065033;
+            color: #2563eb;
         }
         .footer {
             margin-top: 50px;
@@ -85,7 +85,7 @@
         .thank-you {
             text-align: center;
             font-style: italic;
-            color: #065033;
+            color: #2563eb;
             margin: 30px 0;
             font-size: 14px;
         }
@@ -93,7 +93,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="logo">PROPIO</div>
+        <div class="logo">Proprio Link</div>
         <div>Plateforme de mise en relation immobilière</div>
     </div>
 
@@ -101,7 +101,6 @@
         <div class="left">
             <div class="section-title">Facturé à</div>
             <strong>{{ $invoice->agent_name }}</strong><br>
-            {{ $invoice->agent_email }}<br>
             @if(isset($invoice->billing_details['agent']['phone']))
                 Tél: {{ $invoice->billing_details['agent']['phone'] }}<br>
             @endif
@@ -159,7 +158,7 @@
         <div style="font-size: 14px; margin-bottom: 10px;">
             TVA (20%): {{ number_format($invoice->amount - ($invoice->amount / 1.2), 2, ',', ' ') }} {{ $invoice->currency }}
         </div>
-        <div style="font-size: 18px; padding: 10px; background-color: #f5f5f5; border: 2px solid #065033;">
+        <div style="font-size: 18px; padding: 10px; background-color: #f5f5f5; border: 2px solid #2563eb;">
             <strong>Total TTC: {{ number_format($invoice->amount, 2, ',', ' ') }} {{ $invoice->currency }}</strong>
         </div>
     </div>
@@ -171,7 +170,7 @@
     <div style="margin-top: 40px; font-size: 11px;">
         <div class="section-title">Conditions générales</div>
         <p>
-            Cette facture correspond à l'achat d'informations de contact d'un propriétaire via la plateforme Propio. 
+            Cette facture correspond à l'achat d'informations de contact d'un propriétaire via la plateforme Proprio Link. 
             Le paiement a été traité de manière sécurisée par Stripe. 
             Cette transaction vous donne accès aux coordonnées du propriétaire de la propriété mentionnée ci-dessus.
         </p>
@@ -183,8 +182,9 @@
     </div>
 
     <div class="footer">
-        <div>PROPIO - Plateforme de mise en relation immobilière</div>
-        <div>Email: contact@propio.com | Web: https://propio.com</div>
+        <div>Proprio Link - Plateforme de mise en relation immobilière</div>
+        <div>Web: https://proprio-link.fr</div>
+        <div>Contact: https://proprio-link.fr/contact</div>
         <div>Document généré automatiquement le {{ now()->format('d/m/Y à H:i') }}</div>
     </div>
 </body>

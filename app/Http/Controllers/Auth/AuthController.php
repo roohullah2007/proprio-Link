@@ -52,7 +52,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard'))->with('success', 'Inscription réussie ! Bienvenue sur Propio.');
+        return redirect(route('dashboard'))->with('success', 'Inscription réussie ! Bienvenue sur Proprio Link.');
     }
 
     /**
@@ -83,7 +83,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard'))->with('info', 'Inscription réussie ! Votre compte agent est en cours de vérification.');
+        return redirect(route('agent.dashboard'))->with('info', 'Inscription réussie ! Votre compte agent est en cours de vérification.');
     }
 
     /**
@@ -103,7 +103,14 @@ class AuthController extends Controller
             $message .= " Votre compte agent est en cours de vérification.";
         }
 
-        return redirect()->intended(route('dashboard'))->with('success', $message);
+        // Redirect to appropriate dashboard based on user type
+        if ($user->type_utilisateur === 'AGENT') {
+            return redirect()->intended(route('agent.dashboard'))->with('success', $message);
+        } elseif ($user->type_utilisateur === 'ADMIN') {
+            return redirect()->intended(route('admin.dashboard'))->with('success', $message);
+        } else {
+            return redirect()->intended(route('dashboard'))->with('success', $message);
+        }
     }
 
     /**
@@ -117,6 +124,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'À bientôt sur Propio !');
+        return redirect('/')->with('success', 'À bientôt sur Proprio Link !');
     }
 }

@@ -24,6 +24,7 @@ export default function AlternativeProfileForm({
             telephone: user.telephone || '',
             numero_siret: user.numero_siret || '',
             licence_professionnelle: null,
+            language: user.language || 'fr',
         });
 
     // Clear errors when data changes
@@ -104,7 +105,7 @@ export default function AlternativeProfileForm({
                             value={__("First Name")}
                             className="text-sm font-medium text-[#000] font-inter mb-2"
                         />
-                        <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                        <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                             <TextInput
                                 id="prenom"
                                 className="flex-1 border-0 outline-none bg-transparent text-[14px] leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] focus:outline-none focus:ring-0 focus:border-0"
@@ -124,7 +125,7 @@ export default function AlternativeProfileForm({
                             value={__("Last Name")}
                             className="text-sm font-medium text-[#000] font-inter mb-2"
                         />
-                        <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                        <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                             <TextInput
                                 id="nom"
                                 className="flex-1 border-0 outline-none bg-transparent text-[14px] leading-[19px] font-normal text-[#5A5A5A] placeholder-[#5A5A5A] focus:outline-none focus:ring-0 focus:border-0"
@@ -146,7 +147,7 @@ export default function AlternativeProfileForm({
                         value={__("Email Address")}
                         className="text-sm font-medium text-[#000] font-inter mb-2"
                     />
-                    <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                    <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                         <TextInput
                             id="email"
                             type="email"
@@ -168,7 +169,7 @@ export default function AlternativeProfileForm({
                         value={__("Phone Number")}
                         className="text-sm font-medium text-[#000] font-inter mb-2"
                     />
-                    <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                    <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                         <TextInput
                             id="telephone"
                             type="tel"
@@ -182,6 +183,35 @@ export default function AlternativeProfileForm({
                     <InputError className="mt-2" message={errors.telephone} />
                 </div>
 
+                {/* Language Preference field */}
+                <div>
+                    <InputLabel 
+                        htmlFor="language" 
+                        value={__("Language Preference")}
+                        className="text-sm font-medium text-[#000] font-inter mb-2"
+                    />
+                    <div className="relative">
+                        <select
+                            id="language"
+                            value={data.language}
+                            onChange={(e) => setData('language', e.target.value)}
+                            className="w-full px-4 py-2 h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus:border-[#0F44FC] focus:outline-none focus:ring-0 appearance-none text-[14px] leading-[19px] font-normal text-[#5A5A5A]"
+                        >
+                            <option value="fr">Français (French)</option>
+                            <option value="en">English</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                            <svg className="w-4 h-4 text-[#6C6C6C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="mt-1 text-xs text-[#6C6C6C] font-inter">
+                        {__("Choose your preferred language for emails and notifications")}
+                    </div>
+                    <InputError className="mt-2" message={errors.language} />
+                </div>
+
                 {/* Agent-specific fields */}
                 {user.type_utilisateur === 'AGENT' && (
                     <>
@@ -192,7 +222,7 @@ export default function AlternativeProfileForm({
                                 value={__("SIRET Number")}
                                 className="text-sm font-medium text-[#000] font-inter mb-2"
                             />
-                            <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                            <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                                 <TextInput
                                     id="numero_siret"
                                     type="text"
@@ -229,7 +259,7 @@ export default function AlternativeProfileForm({
                                             href={user.licence_professionnelle_url.startsWith('http') ? user.licence_professionnelle_url : `/storage/${user.licence_professionnelle_url}`} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="text-[#065033] hover:text-[#054028] text-sm font-medium underline"
+                                            className="text-[#0F44FC] hover:text-[#0A37D1] text-sm font-medium underline"
                                         >
                                             {__('View Current License')}
                                         </a>
@@ -238,7 +268,7 @@ export default function AlternativeProfileForm({
                             )}
                             
                             {/* File Upload */}
-                            <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                            <div className="flex items-center px-4 gap-[10px] w-full h-[39px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#0F44FC] transition-colors">
                                 <svg className="w-4 h-4 text-[#6C6C6C] flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
@@ -320,7 +350,7 @@ export default function AlternativeProfileForm({
                         <button
                             type="submit"
                             disabled={processing}
-                            className="flex justify-center items-center px-6 py-3 gap-2 bg-[#065033] border border-[#065033] rounded-lg text-white font-medium font-inter transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex justify-center items-center px-6 py-3 gap-2 bg-[#0F44FC] border border-[#0F44FC] rounded-lg text-white font-medium font-inter transition-colors hover:bg-[#0A37D1] focus:outline-none focus:bg-[#0A37D1] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {processing && (
                                 <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +369,7 @@ export default function AlternativeProfileForm({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <div className="flex items-center space-x-2 text-green-600">
+                            <div className="flex items-center space-x-2 text-blue-600">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>

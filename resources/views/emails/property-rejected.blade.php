@@ -5,7 +5,7 @@
 
 <p>Bonjour {{ $ownerName }},</p>
 
-<p>Nous vous remercions d'avoir soumis votre propriété sur Propio. Après examen, notre équipe de modération a identifié quelques points qui nécessitent des corrections avant que nous puissions publier votre annonce.</p>
+<p>Nous vous remercions d'avoir soumis votre propriété sur Proprio Link. Après examen, notre équipe de modération a identifié quelques points qui nécessitent des corrections avant que nous puissions publier votre annonce.</p>
 
 <div class="property-details">
     <h3>📍 Propriété concernée</h3>
@@ -24,7 +24,7 @@
 <p>Pour que votre propriété soit approuvée, veuillez :</p>
 
 <ol>
-    <li><strong>Connectez-vous à votre compte</strong> sur Propio</li>
+    <li><strong>Connectez-vous à votre compte</strong> sur Proprio Link</li>
     <li><strong>Accédez à votre tableau de bord</strong> et trouvez cette propriété</li>
     <li><strong>Effectuez les corrections</strong> mentionnées ci-dessus</li>
     <li><strong>Soumettez à nouveau</strong> votre propriété pour modération</li>
@@ -34,7 +34,7 @@
     ✏️ Modifier ma propriété
 </a>
 
-<h3>📋 Critères de qualité Propio</h3>
+<h3>📋 Critères de qualité Proprio Link</h3>
 <p>Pour rappel, voici les critères que nous vérifions :</p>
 <ul>
     <li><strong>Photos de qualité :</strong> Images nettes, bien éclairées, représentatives</li>
@@ -54,7 +54,7 @@
 <p>Si vous avez des questions sur les corrections à apporter ou si vous souhaitez des conseils pour optimiser votre annonce, n'hésitez pas à nous contacter :</p>
 
 <ul>
-    <li>📧 Email : <a href="mailto:support@propio.com">support@propio.com</a></li>
+    <li>📧 Email : Contactez-nous via le site web</li>
     <li>📞 Téléphone : 01 23 45 67 89 (du lundi au vendredi, 9h-18h)</li>
     <li>💬 Chat en ligne : Disponible depuis votre tableau de bord</li>
 </ul>
@@ -63,13 +63,13 @@
 
 <p>
     Cordialement,<br>
-    <strong>L'équipe de modération Propio</strong>
+    <strong>L'équipe de modération Proprio Link</strong>
 </p>
 
 <hr style="margin: 30px 0; border: none; height: 1px; background-color: #eee;">
 
 <p style="font-size: 14px; color: #666;">
-    <strong>Rappel :</strong> Propio est une plateforme qui connecte directement propriétaires et agents immobiliers. 
+    <strong>Rappel :</strong> Proprio Link est une plateforme qui connecte directement propriétaires et agents immobiliers. 
     En maintenant des standards de qualité élevés, nous assurons une meilleure expérience pour tous nos utilisateurs.
 </p>
 @endsection

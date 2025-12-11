@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import { useTranslations } from '@/Utils/translations';
+import * as LucideIcons from 'lucide-react';
 
 // Icons for the property details page
 const Icons = {
@@ -17,9 +18,9 @@ const Icons = {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
     ),
-    Maximize2: ({ className }) => (
+    Expand: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h6v6m-6 0L9 15M9 3H3v6m6 0l6-6" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
         </svg>
     ),
     Euro: ({ className }) => (
@@ -175,7 +176,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                     <div className="flex items-center space-x-4 flex-none order-0 flex-grow-0">
                         <Link
                             href={route('agent.properties')}
-                            className="flex items-center text-[#6C6C6C] hover:text-[#065033] font-inter text-sm font-medium transition-colors"
+                            className="flex items-center text-[#6C6C6C] hover:text-[#2563EB] font-inter text-sm font-medium transition-colors"
                         >
                             <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                             {__('Back to Properties')}
@@ -190,8 +191,8 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                     <div className="flex items-center gap-[14px] h-[31px] flex-none order-1 flex-grow-0">
                         <div className={`flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] rounded-full flex-none order-0 flex-grow-0 ${
                             property.is_purchased
-                                ? 'bg-[#065033] border border-[#065033]'
-                                : 'bg-[#F5F9FA] border border-[#EAEAEA]'
+                                ? 'bg-[#2563EB] border border-[#2563EB]'
+                                : 'bg-[#EBF4FF] border border-[#DBEAFE]'
                         }`}>
                             <Icons.CheckCircle className={`w-4 h-4 ${property.is_purchased ? 'text-white' : 'text-[#6C6C6C]'}`} />
                             <span className={`text-sm font-medium font-inter whitespace-nowrap ${
@@ -228,7 +229,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                                         } else {
                                                             // Create a placeholder div and replace the image
                                                             const placeholder = document.createElement('div');
-                                                            placeholder.className = 'w-full h-full bg-[#F5F9FA] flex items-center justify-center';
+                                                            placeholder.className = 'w-full h-full bg-[#EBF4FF] flex items-center justify-center';
                                                             placeholder.innerHTML = '<div class="text-center"><svg class="w-16 h-16 text-[#6C6C6C] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg><p class="text-[#6C6C6C] font-medium font-inter">No photos available</p></div>';
                                                             e.target.parentNode.replaceChild(placeholder, e.target);
                                                         }
@@ -269,14 +270,14 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                                     onClick={(e) => { e.stopPropagation(); openImageModal(); }}
                                                     className="absolute bottom-4 left-4 bg-black bg-opacity-70 hover:bg-opacity-90 text-white px-3 py-2 rounded-lg text-sm font-medium font-inter transition-all duration-200 flex items-center"
                                                 >
-                                                    <Icons.Maximize2 className="w-4 h-4 mr-2" />
+                                                    <Icons.Expand className="w-4 h-4 mr-2" />
                                                     {property.images.length} {__('photos')}
                                                 </button>
                                             </div>
 
                                             {/* Thumbnails - Only if more than 1 image */}
                                             {property.images.length > 1 && (
-                                                <div className="p-6 bg-[#F5F9FA]">
+                                                <div className="p-6 bg-[#EBF4FF]">
                                                     <div className="grid grid-cols-6 gap-4">
                                                         {property.images.slice(0, 6).map((image, index) => (
                                                             <button
@@ -284,8 +285,8 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                                                 onClick={() => setCurrentImageIndex(index)}
                                                                 className={`relative h-20 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 border-2 ${
                                                                     index === currentImageIndex 
-                                                                        ? 'border-[#065033] ring-2 ring-[#065033] ring-opacity-20 scale-105' 
-                                                                        : 'border-[#EAEAEA] hover:border-[#065033]'
+                                                                        ? 'border-[#2563EB] ring-2 ring-[#2563EB] ring-opacity-20 scale-105' 
+                                                                        : 'border-[#DBEAFE] hover:border-[#2563EB]'
                                                                 }`}
                                                             >
                                                                 <img
@@ -306,7 +307,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                                         {property.images.length > 6 && (
                                                             <button
                                                                 onClick={() => openImageModal()}
-                                                                className="h-20 bg-[#EAEAEA] rounded-lg flex items-center justify-center hover:bg-[#065033] hover:text-white transition-all duration-300 border-2 border-[#EAEAEA] hover:border-[#065033]"
+                                                                className="h-20 bg-[#DBEAFE] rounded-lg flex items-center justify-center hover:bg-[#2563EB] hover:text-white transition-all duration-300 border-2 border-[#DBEAFE] hover:border-[#2563EB]"
                                                             >
                                                                 <span className="text-sm font-bold font-inter">
                                                                     +{property.images.length - 6}
@@ -318,7 +319,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                             )}
                                         </>
                                     ) : (
-                                        <div className="h-96 lg:h-[500px] bg-[#F5F9FA] flex items-center justify-center">
+                                        <div className="h-96 lg:h-[500px] bg-[#EBF4FF] flex items-center justify-center">
                                             <div className="text-center">
                                                 <Icons.Home className="w-16 h-16 text-[#6C6C6C] mx-auto mb-4" />
                                                 <p className="text-[#6C6C6C] font-medium font-inter">{__('No photos available')}</p>
@@ -340,23 +341,23 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                             <div className="bg-white border border-[#EAEAEA] rounded-lg p-6">
                                 <h3 className="text-lg font-semibold text-[#000] font-inter mb-6">{__('Property Features')}</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Home className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
+                                        <Icons.Home className="w-8 h-8 text-[#2563EB] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Type')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{property.type_propriete}</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Maximize2 className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
+                                        <Icons.Expand className="w-8 h-8 text-[#2563EB] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Surface')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{property.superficie_m2} m²</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.Euro className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
+                                        <Icons.Euro className="w-8 h-8 text-[#2563EB] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Price/m²')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{formatPrice(property.prix / property.superficie_m2)}</p>
                                     </div>
-                                    <div className="text-center p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                        <Icons.User className="w-8 h-8 text-[#065033] mx-auto mb-2" />
+                                    <div className="text-center p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
+                                        <Icons.User className="w-8 h-8 text-[#2563EB] mx-auto mb-2" />
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Contacts')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{property.contacts_restants}/{property.contacts_souhaites}</p>
                                     </div>
@@ -396,7 +397,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
 
                                 {/* Monthly charges */}
                                 {property.charges_mensuelles && (
-                                    <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                    <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                         <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Monthly charges')}</p>
                                         <p className="font-semibold text-[#000] font-inter">{formatPrice(property.charges_mensuelles)}</p>
                                     </div>
@@ -412,19 +413,19 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                         {/* Basic Building Info */}
                                         <div className="space-y-4">
                                             {property.annee_construction && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Year of construction')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{property.annee_construction}</p>
                                                 </div>
                                             )}
                                             {property.etat_propriete && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Property condition')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.etat_propriete)}</p>
                                                 </div>
                                             )}
                                             {property.type_chauffage && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Heating type')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.type_chauffage)}</p>
                                                 </div>
@@ -434,13 +435,13 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                         {/* Energy Performance */}
                                         <div className="space-y-4">
                                             {property.dpe_classe_energie && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('Energy class (DPE)')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.dpe_classe_energie)}</p>
                                                 </div>
                                             )}
                                             {property.dpe_classe_ges && (
-                                                <div className="p-4 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
+                                                <div className="p-4 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg">
                                                     <p className="text-sm text-[#6C6C6C] mb-1 font-inter">{__('GHG emissions class')}</p>
                                                     <p className="font-semibold text-[#000] font-inter">{formatHumanText(property.dpe_classe_ges)}</p>
                                                 </div>
@@ -454,13 +455,132 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                             {property.amenities && property.amenities.length > 0 && (
                                 <div className="bg-white border border-[#EAEAEA] rounded-lg p-6">
                                     <h3 className="text-lg font-semibold text-[#000] font-inter mb-6">{__('Amenities')}</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {property.amenities.map((amenity, index) => (
-                                            <div key={index} className="flex items-center p-3 bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg">
-                                                <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-3" />
-                                                <span className="text-[#000] font-inter text-sm">{__(amenity)}</span>
-                                            </div>
-                                        ))}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                        {property.amenities.map((amenity, index) => {
+                                            // Amenity icon mapping - matching Create.jsx exactly
+                                            const amenityIcons = {
+                                                // Exterior and Parking
+                                                'parking': 'Car',
+                                                'garage': 'Home',
+                                                'jardin': 'TreePine', // Trees alternative
+                                                'terrasse': 'Mountain',
+                                                'balcon': 'Building2',
+                                                'piscine': 'Waves',
+                                                'cave': 'Archive',
+                                                'grenier': 'Package',
+                                                
+                                                // Security and Comfort
+                                                'ascenseur': 'ArrowUpDown',
+                                                'elevator': 'ArrowUpDown',
+                                                'digicode': 'Key', // KeyRound alternative
+                                                'interphone': 'Phone',
+                                                'gardien': 'User',
+                                                'alarme': 'Shield',
+                                                'climatisation': 'Snowflake',
+                                                'cheminee': 'Flame',
+                                                
+                                                // Equipment
+                                                'cuisine_equipee': 'ChefHat',
+                                                'cuisine_amenagee': 'Utensils', // UtensilsCrossed alternative
+                                                'dressing': 'Shirt',
+                                                'placards': 'Package',
+                                                'double_vitrage': 'Square',
+                                                'volets_electriques': 'Blinds',
+                                                
+                                                // Accessibility and Services
+                                                'acces_handicape': 'Accessibility',
+                                                'fibre_optique': 'Wifi',
+                                                'proche_transports': 'Train',
+                                                'proche_commerces': 'ShoppingCart',
+                                                'proche_ecoles': 'GraduationCap'
+                                            };
+                                            
+                                            // Amenity text capitalization
+                                            const capitalizeAmenityText = (text) => {
+                                                if (!text) return '';
+                                                
+                                                const specialCases = {
+                                                    'parking': 'Parking',
+                                                    'balcon': 'Balcony', 
+                                                    'elevator': 'Elevator',
+                                                    'alarme': 'Alarm System',
+                                                    'cuisine_equipee': 'Equipped Kitchen',
+                                                    'double_vitrage': 'Double Glazing',
+                                                    'acces_handicape': 'Disabled Access',
+                                                    'fibre_optique': 'Fiber Optic',
+                                                    'proche_transports': 'Near Public Transport',
+                                                    'proche_commerces': 'Near Shops',
+                                                    'proche_ecoles': 'Near Schools',
+                                                    'garage': 'Garage',
+                                                    'jardin': 'Garden',
+                                                    'terrasse': 'Terrace',
+                                                    'piscine': 'Swimming Pool',
+                                                    'cave': 'Cellar',
+                                                    'grenier': 'Attic/Loft',
+                                                    'ascenseur': 'Elevator',
+                                                    'digicode': 'Digital Code',
+                                                    'interphone': 'Intercom',
+                                                    'gardien': 'Doorman/Concierge',
+                                                    'climatisation': 'Air Conditioning',
+                                                    'cheminee': 'Fireplace',
+                                                    'cuisine_amenagee': 'Fitted Kitchen',
+                                                    'dressing': 'Dressing Room',
+                                                    'placards': 'Built-in Wardrobes',
+                                                    'volets_electriques': 'Electric Shutters'
+                                                };
+                                                
+                                                if (specialCases[text]) {
+                                                    return specialCases[text];
+                                                }
+                                                
+                                                return text
+                                                    .toLowerCase()
+                                                    .replace(/_/g, ' ')
+                                                    .replace(/\b\w/g, l => l.toUpperCase());
+                                            };
+                                            
+                                            // Get the icon component with fallbacks
+                                            const iconName = amenityIcons[amenity] || 'CheckCircle';
+                                            let IconComponent = LucideIcons[iconName];
+                                            
+                                            // Fallback system for potentially missing icons
+                                            if (!IconComponent) {
+                                                const fallbacks = {
+                                                    'TreePine': 'Tree',
+                                                    'Mountain': 'Triangle',
+                                                    'Building2': 'Building',
+                                                    'Waves': 'Droplets',
+                                                    'Key': 'Lock',
+                                                    'Flame': 'Zap',
+                                                    'ChefHat': 'Coffee',
+                                                    'Utensils': 'Coffee',
+                                                    'Shirt': 'User',
+                                                    'Blinds': 'Square',
+                                                    'Accessibility': 'User',
+                                                    'GraduationCap': 'BookOpen'
+                                                };
+                                                
+                                                const fallbackIcon = fallbacks[iconName];
+                                                IconComponent = LucideIcons[fallbackIcon] || LucideIcons.CheckCircle;
+                                            }
+                                            
+                                            // Get capitalized text
+                                            const displayText = capitalizeAmenityText(amenity);
+                                            
+                                            return (
+                                                <div key={index} className="flex items-center p-3 bg-[#EBF4FF] border border-[#DBEAFE] rounded-lg min-h-[48px]">
+                                                    <div className="flex-shrink-0 w-5 h-5 mr-3">
+                                                        <IconComponent 
+                                                            className="w-full h-full text-[#2563EB]" 
+                                                            strokeWidth={1.5}
+                                                        />
+                                                    </div>
+                                                    <span className="text-[#000] font-inter text-sm font-medium leading-tight">
+                                                        {__(displayText)}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -486,37 +606,34 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                         <Icons.MapPin className="w-5 h-5 mr-2" />
                                         <span className="font-inter">{property.ville}, {property.pays}</span>
                                     </div>
-                                    <p className="text-[#000] font-medium font-inter">
-                                        {property.adresse_complete}
-                                    </p>
                                 </div>
 
                                 {/* Contact Purchase */}
                                 <div className="space-y-4">
                                     {property.is_purchased ? (
                                         <div className="space-y-4">
-                                            <div className="bg-[#F0F9F4] border border-[#D1F2D9] p-4 rounded-lg">
+                                            <div className="bg-[#EBF8FF] border border-[#BAE6FD] p-4 rounded-lg">
                                                 <div className="flex items-center mb-2">
-                                                    <Icons.CheckCircle className="w-5 h-5 text-[#065033] mr-2" />
-                                                    <p className="font-medium text-[#065033] font-inter">
+                                                    <Icons.CheckCircle className="w-5 h-5 text-[#2563EB] mr-2" />
+                                                    <p className="font-medium text-[#2563EB] font-inter">
                                                         {__('Contact Purchased')}
                                                     </p>
                                                 </div>
-                                                <p className="text-sm text-[#065033] font-inter">
+                                                <p className="text-sm text-[#2563EB] font-inter">
                                                     {__('You have access to complete owner information')}
                                                 </p>
                                             </div>
                                             
                                             <Link
                                                 href={route('agent.purchases')}
-                                                className="w-full bg-[#065033] hover:bg-[#054028] text-white py-3 px-4 rounded-lg font-medium font-inter transition-colors text-center block"
+                                                className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 px-4 rounded-lg font-medium font-inter transition-colors text-center block"
                                             >
                                                 {__('View Contact Information')}
                                             </Link>
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
-                                            <div className="bg-[#F5F9FA] border border-[#EAEAEA] p-4 rounded-lg">
+                                            <div className="bg-[#EBF4FF] border border-[#DBEAFE] p-4 rounded-lg">
                                                 <h4 className="font-semibold text-[#000] font-inter mb-3">
                                                     {__('Purchase contact for')} {formatPrice(contactPrice)}
                                                 </h4>
@@ -542,7 +659,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
 
                                             <button
                                                 onClick={handlePurchaseContact}
-                                                className="w-full bg-[#065033] hover:bg-[#054028] text-white py-4 px-6 rounded-lg font-semibold text-lg font-inter transition-all duration-200 hover:shadow-lg"
+                                                className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 px-6 rounded-lg font-semibold text-lg font-inter transition-all duration-200 hover:shadow-lg"
                                             >
                                                 {__('Purchase Contact')}
                                             </button>
@@ -563,7 +680,7 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                 </h3>
                                 
                                 <div className="flex items-center space-x-4">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-[#065033] to-[#054028] rounded-full flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] rounded-full flex items-center justify-center">
                                         <Icons.User className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -590,9 +707,9 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                 </h3>
                                 
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#DBEAFE]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#2563EB] rounded-full flex items-center justify-center mr-4">
                                                 <Icons.Calendar className="w-5 h-5 text-white" />
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Published on')}</span>
@@ -602,9 +719,9 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                         </span>
                                     </div>
                                     
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#DBEAFE]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#2563EB] rounded-full flex items-center justify-center mr-4">
                                                 <span className="text-white font-bold text-xs font-inter">#</span>
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Reference')}</span>
@@ -614,15 +731,15 @@ export default function PropertyDetails({ property, contactPrice, currency }) {
                                         </span>
                                     </div>
                                     
-                                    <div className="flex items-center justify-between py-3 px-4 bg-[#F5F9FA] rounded-lg border border-[#EAEAEA]">
+                                    <div className="flex items-center justify-between py-3 px-4 bg-[#EBF4FF] rounded-lg border border-[#DBEAFE]">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-[#065033] rounded-full flex items-center justify-center mr-4">
+                                            <div className="w-10 h-10 bg-[#2563EB] rounded-full flex items-center justify-center mr-4">
                                                 <Icons.CheckCircle className="w-5 h-5 text-white" />
                                             </div>
                                             <span className="text-sm font-medium text-[#000] font-inter">{__('Status')}</span>
                                         </div>
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#F0F9F4] text-[#065033] border border-[#D1F2D9] font-inter">
-                                            <div className="w-2 h-2 bg-[#065033] rounded-full mr-2"></div>
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#EBF8FF] text-[#2563EB] border border-[#BAE6FD] font-inter">
+                                            <div className="w-2 h-2 bg-[#2563EB] rounded-full mr-2"></div>
                                             {__('Published')}
                                         </span>
                                     </div>

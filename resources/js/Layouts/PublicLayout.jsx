@@ -113,14 +113,14 @@ export default function PublicLayout({ children, title }) {
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-                <div className="w-full px-8">
+                <div className="w-full px-4">
                     <div className="max-w-[1400px] mx-auto flex justify-between items-center h-16">
                         {/* Left side - Logo and Navigation */}
                         <div className="flex items-center space-x-8">
                             {/* Logo */}
-                            <Link href={settings.website_url || "/"} className="flex-shrink-0">
+                            <a href="https://proprio-link.fr/" className="flex-shrink-0">
                                 <ApplicationLogo className="h-8 w-auto" />
-                            </Link>
+                            </a>
 
                             {/* Pill Navigation - Same style as agent dashboard */}
                             <PillNavigation 
@@ -134,7 +134,7 @@ export default function PublicLayout({ children, title }) {
                             {user ? (
                                 /* Authenticated User Menu */
                                 <div className="flex items-center space-x-4">
-                                    <LanguageSwitcher />
+                                    <LanguageSwitcher currentLocale={props.locale || 'fr'} />
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <span className="inline-flex rounded-md">
@@ -172,19 +172,77 @@ export default function PublicLayout({ children, title }) {
                             ) : (
                                 /* Guest User Buttons */
                                 <div className="flex items-center space-x-4">
-                                    <LanguageSwitcher />
-                                    <Link
-                                        href={route('login')}
-                                        className="text-sm font-medium text-gray-700 hover:text-[#065033] transition-colors duration-200"
+                                    <LanguageSwitcher currentLocale={props.locale || 'fr'} />
+                                    
+                                    {/* Desktop - Register button with login in dropdown */}
+                                    <div className="hidden md:flex items-center space-x-4">
+                                    <div className="relative">
+                                    <Dropdown>
+                                    <Dropdown.Trigger>
+                                    <button
+                                    type="button"
+                                    className="inline-flex items-center px-4 py-2 bg-[#2563EB] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#1D4ED8] focus:bg-[#1D4ED8] active:bg-[#1E40AF] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 transition ease-in-out duration-150"
                                     >
-                                        {__('Log in')}
-                                    </Link>
-                                    <Link
-                                        href={route('register')}
-                                        className="inline-flex items-center px-4 py-2 bg-[#065033] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#054028] focus:bg-[#054028] active:bg-[#043d24] focus:outline-none focus:ring-2 focus:ring-[#065033] focus:ring-offset-2 transition ease-in-out duration-150"
+                                    {__('Register')}
+                                    <svg
+                                    className="ms-2 -me-0.5 h-4 w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
                                     >
-                                        {__('Register')}
-                                    </Link>
+                                    <path
+                                    fillRule="evenodd"
+                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                    clipRule="evenodd"
+                                    />
+                                    </svg>
+                                    </button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content align="right" width="48">
+                                    <Dropdown.Link href={route('register')}>
+                                    {__('Register')}
+                                    </Dropdown.Link>
+                                    <Dropdown.Link href={route('login')}>
+                                    {__('Log in')}
+                                    </Dropdown.Link>
+                                    </Dropdown.Content>
+                                    </Dropdown>
+                                    </div>
+                                    </div>
+                                    
+                                    {/* Mobile - Register button with login in dropdown */}
+                                    <div className="md:hidden relative">
+                                        <Dropdown>
+                                            <Dropdown.Trigger>
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center px-3 py-2 bg-[#2563EB] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#1D4ED8] focus:bg-[#1D4ED8] active:bg-[#1E40AF] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 transition ease-in-out duration-150"
+                                                >
+                                                    {__('Register')}
+                                                    <svg
+                                                        className="ms-2 -me-0.5 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </Dropdown.Trigger>
+                                            <Dropdown.Content align="right" width="48">
+                                                <Dropdown.Link href={route('register')}>
+                                                    {__('Register')}
+                                                </Dropdown.Link>
+                                                <Dropdown.Link href={route('login')}>
+                                                    {__('Log in')}
+                                                </Dropdown.Link>
+                                            </Dropdown.Content>
+                                        </Dropdown>
+                                    </div>
                                 </div>
                             )}
 
@@ -235,7 +293,7 @@ export default function PublicLayout({ children, title }) {
                                         href={item.href}
                                         className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition duration-150 ease-in-out ${
                                             item.active
-                                                ? 'border-[#065033] text-[#065033] bg-[#F0F9F4]'
+                                                ? 'border-[#2563EB] text-[#2563EB] bg-[#F0F4FF]'
                                                 : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300'
                                         }`}
                                     >

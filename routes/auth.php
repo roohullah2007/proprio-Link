@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\EmailVerificationCodeController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -46,6 +47,15 @@ Route::middleware('auth')->group(function () {
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    // New verification code routes
+    Route::post('email/verification-code/send', [EmailVerificationCodeController::class, 'send'])
+        ->middleware('throttle:3,1') // More restrictive throttling for codes
+        ->name('verification.code.send');
+
+    Route::post('email/verification-code/verify', [EmailVerificationCodeController::class, 'verify'])
+        ->middleware('throttle:10,1') // Allow multiple attempts for verification
+        ->name('verification.code.verify');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');

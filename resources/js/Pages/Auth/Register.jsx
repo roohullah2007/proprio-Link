@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import InputError from '@/Components/InputError';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -50,10 +50,14 @@ const Icons = {
 };
 
 export default function Register({ userType }) {
-    // Check if user type is specified in URL or props
+    // Get URL parameters first
     const urlParams = new URLSearchParams(window.location.search);
-    const defaultUserType = userType || urlParams.get('type') === 'agent' ? 'AGENT' : 'PROPRIETAIRE';
+    const typeFromUrl = urlParams.get('type');
     
+    // Determine default user type
+    const defaultUserType = userType || (typeFromUrl === 'agent' ? 'AGENT' : 'PROPRIETAIRE');
+    
+    // Always call hooks in the same order
     const { data, setData, post, processing, errors, reset } = useForm({
         prenom: '',
         nom: '',
@@ -64,26 +68,35 @@ export default function Register({ userType }) {
         type_utilisateur: defaultUserType,
         numero_siret: '',
         licence_professionnelle: null,
+        language: 'fr', // Default to French
     });
 
+    // State hooks - always called in same order
     const [selectedUserType, setSelectedUserType] = useState(defaultUserType);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const isAgentRegistration = defaultUserType === 'AGENT';
+    
+    // Derived state - computed from selectedUserType
+    const isAgentRegistration = selectedUserType === 'AGENT';
+    
+    // Effect to update form data when user type changes
+    useEffect(() => {
+        setData('type_utilisateur', selectedUserType);
+        
+        // Clear agent-specific fields when switching to proprietaire
+        if (selectedUserType === 'PROPRIETAIRE') {
+            setData(prev => ({
+                ...prev,
+                type_utilisateur: selectedUserType,
+                numero_siret: '',
+                licence_professionnelle: null,
+            }));
+        }
+    }, [selectedUserType]);
 
     const handleUserTypeChange = (type) => {
         setSelectedUserType(type);
-        setData('type_utilisateur', type);
-        
-        // Clear agent-specific fields when switching to propriétaire
-        if (type === 'PROPRIETAIRE') {
-            setData({
-                ...data,
-                type_utilisateur: type,
-                numero_siret: '',
-                licence_professionnelle: null,
-            });
-        }
+        // Note: useEffect will handle updating form data
     };
 
     const submit = (e) => {

@@ -78,11 +78,11 @@
         <strong>Questions ou problèmes ?</strong><br>
         Si vous rencontrez des difficultés avec cet agent ou avez des questions, 
         contactez-nous immédiatement :<br>
-        📧 support@propio.com<br>
+        📧 Contactez-nous via le site web<br>
         📞 01 23 45 67 89
     </div>
 
     <div class="message">
-        Nous vous souhaitons une excellente vente avec Propio !
+        Nous vous souhaitons une excellente vente avec Proprio Link !
     </div>
 @endsection

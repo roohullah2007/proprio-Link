@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from '@/Utils/translations';
+import { formatDate } from '@/Utils/dateUtils';
 
 // Icons for the dashboard
 const Icons = {
@@ -74,12 +75,24 @@ const Icons = {
     ),
 };
 
-export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
+export default function Dashboard({ auth, stats = {}, recentProperties = [], debug }) {
     const user = auth.user;
     const { __ } = useTranslations();
     const [timeframe, setTimeframe] = useState('30d');
     const [showTimeframeDropdown, setShowTimeframeDropdown] = useState(false);
     const dropdownRef = useRef(null);
+    
+    // Debug logging
+    console.log('Admin Dashboard - Received props:', { auth, stats, recentProperties, debug });
+    console.log('Admin Dashboard - Stats object keys:', Object.keys(stats));
+    console.log('Admin Dashboard - Full stats object:', stats);
+    console.log('Admin Dashboard - Stats details:', {
+        properties_pending: stats.properties_pending,
+        total_earnings: stats.total_earnings,
+        total_transactions: stats.total_transactions,
+        total_users: stats.total_users
+    });
+    console.log('Admin Dashboard - Debug info:', debug);
 
     const formatNumber = (num) => {
         return new Intl.NumberFormat('fr-FR').format(num || 0);
@@ -192,10 +205,10 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
             border: 'border-blue-200'
         },
         green: {
-            bg: 'bg-green-500',
-            light: 'bg-green-50',
-            text: 'text-green-600',
-            border: 'border-green-200'
+            bg: 'bg-blue-500',
+            light: 'bg-blue-50',
+            text: 'text-blue-600',
+            border: 'border-blue-200'
         },
         purple: {
             bg: 'bg-purple-500',
@@ -280,7 +293,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '7d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '7d' ? 'bg-proprio-blue text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 7 Days')}
@@ -291,7 +304,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '30d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '30d' ? 'bg-proprio-blue text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 30 Days')}
@@ -302,7 +315,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '90d' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '90d' ? 'bg-proprio-blue text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last 90 Days')}
@@ -313,7 +326,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                                                 setShowTimeframeDropdown(false);
                                             }}
                                             className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                                                timeframe === '1y' ? 'bg-[#065033] text-white' : 'text-gray-700 hover:bg-gray-100'
+                                                timeframe === '1y' ? 'bg-proprio-blue text-white' : 'text-gray-700 hover:bg-gray-100'
                                             }`}
                                         >
                                             {__('Last Year')}
@@ -344,7 +357,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                             
                             {/* Admin Status */}
                             <div>
-                                <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#065033] border border-[#065033] rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]">
+                                <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-proprio-blue border border-proprio-blue rounded-full flex-none order-0 flex-grow-0 transition-colors hover:bg-proprio-blue-600 focus:outline-none focus:bg-proprio-blue-600">
                                     <Icons.Shield className="w-4 h-4 text-white flex-none order-0 flex-grow-0" />
                                     <span className="text-white text-sm font-medium font-inter flex-none order-1 flex-grow-0 whitespace-nowrap">
                                         {__("Administrator")}
@@ -430,7 +443,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                             </h3>
                             <Link
                                 href={route('admin.pending-properties')}
-                                className="text-sm font-medium text-[#065033] hover:text-[#054028] transition-colors"
+                                className="text-sm font-medium text-proprio-blue hover:text-proprio-blue-600 transition-colors"
                             >
                                 {__('View All')}
                             </Link>
@@ -481,12 +494,12 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [] }) {
                                                 <div className="text-right flex items-center space-x-3">
                                                     <div>
                                                         <p className="text-xs text-[#6C6C6C] font-inter">
-                                                            {new Date(property.created_at).toLocaleDateString('fr-FR')}
+                                                            {formatDate(property.created_at)}
                                                         </p>
                                                     </div>
                                                     <Link
                                                         href={route('admin.property-review', property.id)}
-                                                        className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#065033] border border-[#065033] rounded-full transition-colors hover:bg-[#054028] focus:outline-none focus:bg-[#054028]"
+                                                        className="flex justify-center items-center px-3 py-2 gap-2 min-w-max h-8 bg-proprio-blue border border-proprio-blue rounded-full transition-colors hover:bg-proprio-blue-700 focus:outline-none focus:bg-proprio-blue-700"
                                                     >
                                                         <Icons.Eye className="w-4 h-4 text-white" />
                                                         <span className="text-white text-sm font-medium font-inter whitespace-nowrap">

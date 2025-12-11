@@ -403,7 +403,10 @@ class FrancePropertiesSeeder extends Seeder
                     'proprietaire_id' => $owner->id,
                     'contacts_souhaites' => rand(3, 8),
                     'contacts_restants' => rand(2, 6),
+
                     'statut' => Property::STATUT_PUBLIE,
+
+                    'statut' => Property::STATUT_EN_ATTENTE,
                     'created_at' => now()->subDays(rand(1, 60)),
                     'updated_at' => now()->subDays(rand(0, 5)),
                 ]));

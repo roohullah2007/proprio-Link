@@ -4,6 +4,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom CSS Variables for Proprio-Link Colors */
+:root {
+    --e-global-color-620ff2b: #2563EB;
+    --proprio-primary: #2563EB;
+    --proprio-primary-hover: #1D4ED8;
+    --proprio-primary-focus: #1D4ED8;
+    --proprio-primary-active: #1E40AF;
+    --proprio-primary-light: #3B82F6;
+    --proprio-primary-dark: #1E3A8A;
+    
+    /* Light blue navigation colors */
+    --proprio-nav-bg: #F0F4FF;
+    --proprio-nav-border: #C5D0FF;
+    --proprio-nav-active: #E1E8FF;
+    --proprio-nav-hover: #FAFBFF;
+}
+
 /* Global Inter font application */
 * {
     font-family: 'Inter', sans-serif;
@@ -38,4 +55,113 @@ select option {
     padding-bottom: 0.5rem !important;
     background-color: white !important;
     color: #333 !important;
+}
+
+/* Utility classes for Proprio-Link brand colors */
+.bg-proprio-primary {
+    background-color: var(--proprio-primary) !important;
+}
+
+.text-proprio-primary {
+    color: var(--proprio-primary) !important;
+}
+
+.border-proprio-primary {
+    border-color: var(--proprio-primary) !important;
+}
+
+.hover\:bg-proprio-primary:hover {
+    background-color: var(--proprio-primary-hover) !important;
+}
+
+.focus\:ring-proprio-primary:focus {
+    --tw-ring-color: var(--proprio-primary) !important;
+}
+
+.focus\:border-proprio-primary:focus {
+    border-color: var(--proprio-primary) !important;
+}
+
+/* Button variants using CSS variables */
+.btn-proprio-primary {
+    background-color: var(--proprio-primary);
+    border-color: var(--proprio-primary);
+    color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-proprio-primary:hover {
+    background-color: var(--proprio-primary-hover);
+    border-color: var(--proprio-primary-hover);
+}
+
+.btn-proprio-primary:focus {
+    background-color: var(--proprio-primary-focus);
+    border-color: var(--proprio-primary-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 68, 252, 0.1);
+}
+
+.btn-proprio-primary:active {
+    background-color: var(--proprio-primary-active);
+    border-color: var(--proprio-primary-active);
+}
+
+/* Legacy color compatibility - automatically replace old green with new blue */
+.bg-\[\#065033\] {
+    background-color: var(--proprio-primary) !important;
+}
+
+.hover\:bg-\[\#054028\]:hover {
+    background-color: var(--proprio-primary-hover) !important;
+}
+
+.focus\:bg-\[\#054028\]:focus {
+    background-color: var(--proprio-primary-focus) !important;
+}
+
+.text-\[\#065033\] {
+    color: var(--proprio-primary) !important;
+}
+
+.hover\:text-\[\#054028\]:hover {
+    color: var(--proprio-primary-hover) !important;
+}
+
+.border-\[\#065033\] {
+    border-color: var(--proprio-primary) !important;
+}
+
+/* Navigation utility classes */
+.nav-proprio-light {
+    background-color: var(--proprio-nav-bg);
+    border-color: var(--proprio-nav-border);
+}
+
+.nav-proprio-light-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-proprio-light-item:hover {
+    background-color: var(--proprio-nav-hover);
+    border-color: var(--proprio-nav-border);
+}
+
+.nav-proprio-light-item.active {
+    background-color: white;
+    border-color: var(--proprio-nav-border);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Card backgrounds for admin/agent interfaces */
+.card-proprio-light {
+    background-color: var(--proprio-nav-bg);
+    border: 1px solid var(--proprio-nav-border);
+    transition: all 0.2s ease-in-out;
+}
+
+.card-proprio-light:hover {
+    background-color: white;
+    border-color: var(--proprio-nav-border);
+    box-shadow: 0 2px 8px 0 rgba(15, 68, 252, 0.08);
 }

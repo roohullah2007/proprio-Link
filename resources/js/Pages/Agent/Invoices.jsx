@@ -2,6 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
+import { formatDate } from '@/Utils/dateUtils';
 
 const Icons = {
     DocumentText: ({ className }) => (
@@ -41,13 +42,6 @@ export default function AgentInvoices({ auth, purchases }) {
         }).format(amount);
     };
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('fr-FR', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
     const successfulPurchases = purchases.filter(purchase => purchase.statut_paiement === 'succeeded');
     const totalSpent = successfulPurchases.reduce((sum, purchase) => sum + parseFloat(purchase.montant_paye), 0);
@@ -179,7 +173,7 @@ export default function AgentInvoices({ auth, purchases }) {
                                         {__('You haven\'t made any property contact purchases yet.')}
                                     </p>
                                     <Link
-                                        href="/properties/search"
+                                        href={route('agent.properties')}
                                         className="inline-flex items-center px-4 py-2 bg-[#065033] text-white rounded-lg hover:bg-[#054028] transition-colors font-inter"
                                     >
                                         {__('Browse Properties')}

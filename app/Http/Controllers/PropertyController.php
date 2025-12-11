@@ -106,7 +106,7 @@ class PropertyController extends Controller
             'dpe_classe_ges' => 'nullable|in:A,B,C,D,E,F,G,NON_RENSEIGNE',
             'amenities' => 'nullable|array',
             'amenities.*' => 'string|max:100',
-            'meuble' => 'boolean',
+            'meuble' => 'nullable|boolean',
             'charges_mensuelles' => 'nullable|numeric|min:0|max:99999.99',
             'informations_complementaires' => 'nullable|string|max:1000',
             'contacts_souhaites' => 'required|integer|min:1|max:20',
@@ -150,6 +150,15 @@ class PropertyController extends Controller
             \Mail::to($property->proprietaire)->send(new \App\Mail\PropertyListedForReview($property));
         } catch (\Exception $e) {
             \Log::error('Failed to send property listing email: ' . $e->getMessage());
+        }
+
+        // Send admin notification
+        try {
+            \App\Services\AdminNotificationService::notifyAdmins(
+                new \App\Mail\AdminPropertyCreated($property->load('proprietaire'))
+            );
+        } catch (\Exception $e) {
+            \Log::error('Failed to send admin notification for property creation: ' . $e->getMessage());
         }
 
         // Get current locale for success message
@@ -239,11 +248,6 @@ class PropertyController extends Controller
             abort(403);
         }
 
-        // Only allow updates if property is not published
-        if ($property->statut === Property::STATUT_PUBLIE) {
-            return back()->with('error', __('Impossible de modifier une propriété déjà publiée.'));
-        }
-
         $validated = $request->validate([
             'adresse_complete' => 'required|string|max:500',
             'pays' => 'required|string|max:100',
@@ -263,7 +267,7 @@ class PropertyController extends Controller
             'dpe_classe_ges' => 'nullable|in:A,B,C,D,E,F,G,NON_RENSEIGNE',
             'amenities' => 'nullable|array',
             'amenities.*' => 'string|max:100',
-            'meuble' => 'boolean',
+            'meuble' => 'nullable|boolean',
             'charges_mensuelles' => 'nullable|numeric|min:0|max:99999.99',
             'informations_complementaires' => 'nullable|string|max:1000',
             'contacts_souhaites' => 'required|integer|min:1|max:20',
@@ -271,6 +275,23 @@ class PropertyController extends Controller
             'remove_images' => 'nullable|array',
             'remove_images.*' => 'string', // UUIDs of images to remove
         ]);
+
+        // Check if there are pending edit requests for this property
+        $pendingEditRequests = $property->editRequests()
+            ->where('status', \App\Models\PropertyEditRequest::STATUS_PENDING)
+            ->get();
+
+        // For published properties, show a warning but allow the update
+        $isPublished = $property->statut === Property::STATUT_PUBLIE;
+        
+        if ($isPublished) {
+            // Log the edit for admin review if needed
+            \Log::info('Published property edited by owner', [
+                'property_id' => $property->id,
+                'owner_id' => Auth::id(),
+                'changes' => $validated
+            ]);
+        }
 
         // Update property basic data
         $property->update([
@@ -317,6 +338,33 @@ class PropertyController extends Controller
             $this->uploadPropertyImages($property, $request->file('images'), $existingImagesCount);
         }
 
+        // Send admin notification if there were pending edit requests
+        if ($pendingEditRequests->count() > 0) {
+            try {
+                // Reload property with fresh data and relationships
+                $property->load(['proprietaire', 'images']);
+                
+                \App\Services\AdminNotificationService::notifyAdmins(
+                    new \App\Mail\AdminPropertyResubmitted($property, $pendingEditRequests)
+                );
+                
+                // Mark edit requests as acknowledged (owner has responded)
+                $pendingEditRequests->each(function ($request) {
+                    $request->markAsAcknowledged();
+                });
+                
+                \Log::info('Admin notified of property resubmission after edit request', [
+                    'property_id' => $property->id,
+                    'edit_requests_count' => $pendingEditRequests->count()
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send admin notification for property resubmission: ' . $e->getMessage(), [
+                    'property_id' => $property->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
         // Get current locale for success message
         $locale = app()->getLocale();
         
@@ -327,13 +375,21 @@ class PropertyController extends Controller
             $translations = json_decode(file_get_contents($translationsPath), true) ?? [];
         }
         
-        // Get translated messages
+        // Get translated messages based on whether property was published
         if ($locale === 'en') {
             $message = $translations['Property successfully updated!'] ?? 'Property successfully updated!';
-            $description = $translations['Your property changes have been saved successfully.'] ?? 'Your property changes have been saved successfully.';
+            if ($isPublished) {
+                $description = $translations['Your published property has been updated. Changes are live immediately.'] ?? 'Your published property has been updated. Changes are live immediately.';
+            } else {
+                $description = $translations['Your property changes have been saved successfully.'] ?? 'Your property changes have been saved successfully.';
+            }
         } else {
             $message = $translations['Property successfully updated!'] ?? 'Propriété mise à jour avec succès!';
-            $description = $translations['Your property changes have been saved successfully.'] ?? 'Les modifications de votre propriété ont été enregistrées avec succès.';
+            if ($isPublished) {
+                $description = $translations['Your published property has been updated. Changes are live immediately.'] ?? 'Votre propriété publiée a été mise à jour. Les modifications sont actives immédiatement.';
+            } else {
+                $description = $translations['Your property changes have been saved successfully.'] ?? 'Les modifications de votre propriété ont été enregistrées avec succès.';
+            }
         }
 
         return redirect()->route('properties.index')
@@ -351,15 +407,71 @@ class PropertyController extends Controller
             abort(403);
         }
 
+        // Check if property has contact purchases
+        $contactPurchases = $property->contactPurchases()->count();
+        
+        if ($contactPurchases > 0) {
+            \Log::warning('Property with contact purchases deleted', [
+                'property_id' => $property->id,
+                'owner_id' => Auth::id(),
+                'contact_purchases_count' => $contactPurchases,
+                'property_status' => $property->statut
+            ]);
+        }
+
         // Delete associated images from storage
         foreach ($property->images as $image) {
             Storage::disk('public')->delete($image->chemin_fichier);
         }
 
-        $property->delete();
+        // Get property info for success message
+        $isPublished = $property->statut === Property::STATUT_PUBLIE;
+        
+        try {
+            // Delete the property - cascade delete should handle contact_purchases and invoices
+            $property->delete();
+            
+            \Log::info('Property deleted successfully', [
+                'property_id' => $property->id,
+                'owner_id' => Auth::id(),
+                'had_contact_purchases' => $contactPurchases > 0,
+                'contact_purchases_count' => $contactPurchases
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete property', [
+                'property_id' => $property->id,
+                'owner_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'contact_purchases_count' => $contactPurchases
+            ]);
+            
+            return back()->withErrors([
+                'delete' => __('Unable to delete property. Please contact support if this problem persists.')
+            ]);
+        }
+
+        // Get current locale for success message
+        $locale = app()->getLocale();
+        $translationsPath = lang_path($locale . '.json');
+        $translations = [];
+        if (file_exists($translationsPath)) {
+            $translations = json_decode(file_get_contents($translationsPath), true) ?? [];
+        }
+        
+        // Success message based on property status
+        if ($locale === 'en') {
+            $message = $isPublished && $contactPurchases > 0 
+                ? ($translations['Published property and associated contacts deleted successfully.'] ?? 'Published property and associated contacts deleted successfully.')
+                : ($translations['Property deleted successfully.'] ?? 'Property deleted successfully.');
+        } else {
+            $message = $isPublished && $contactPurchases > 0
+                ? ($translations['Published property and associated contacts deleted successfully.'] ?? 'Propriété publiée et contacts associés supprimés avec succès.')
+                : ($translations['Property deleted successfully.'] ?? 'Propriété supprimée avec succès.');
+        }
 
         return redirect()->route('properties.index')
-            ->with('success', __('Propriété supprimée avec succès.'));
+            ->with('success', $message);
     }
 
     /**
@@ -451,6 +563,11 @@ class PropertyController extends Controller
         // Only show published properties with remaining contacts, unless user is admin
         if (!$isAdmin && ($property->statut !== Property::STATUT_PUBLIE || $property->contacts_restants <= 0)) {
             abort(404);
+        }
+
+        // Increment view count (only for non-admin users to avoid inflating stats)
+        if (!$isAdmin) {
+            $property->increment('views');
         }
 
         // Load relationships

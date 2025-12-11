@@ -1,9 +1,20 @@
-import { useState } from 'react';
-import { router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { router, usePage } from '@inertiajs/react';
 
-export default function LanguageSwitcher({ currentLocale = 'fr', className = '' }) {
+export default function LanguageSwitcher({ currentLocale, className = '' }) {
+    const { props } = usePage();
     const [isOpen, setIsOpen] = useState(false);
     const [isChanging, setIsChanging] = useState(false);
+    
+    // Get current locale from props or page props, fallback to 'fr'
+    const actualLocale = currentLocale || props.locale || 'fr';
+    
+    // Debug logging
+    useEffect(() => {
+        console.log('LanguageSwitcher - Current locale:', actualLocale);
+        console.log('LanguageSwitcher - Props locale:', props.locale);
+        console.log('LanguageSwitcher - Passed locale:', currentLocale);
+    }, [actualLocale, props.locale, currentLocale]);
 
     const languages = [
         {
@@ -30,10 +41,11 @@ export default function LanguageSwitcher({ currentLocale = 'fr', className = '' 
         }
     ];
 
-    const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
+    const currentLanguage = languages.find(lang => lang.code === actualLocale) || languages[0];
 
     const handleLanguageChange = (langCode) => {
-        if (isChanging || currentLocale === langCode) {
+        if (isChanging || actualLocale === langCode) {
+            console.log('Language change blocked:', { isChanging, currentLocale: actualLocale, targetLocale: langCode });
             return;
         }
         
@@ -73,7 +85,7 @@ export default function LanguageSwitcher({ currentLocale = 'fr', className = '' 
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={isChanging}
-                className={`flex items-center justify-center w-[35px] h-[35px] bg-[#F5F7F8] border-[1.5px] border-[#E5E5E5] rounded-full p-2 hover:bg-[#EAEEF0] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#065033] focus:ring-opacity-50 ${
+                className={`flex items-center justify-center w-[35px] h-[35px] bg-[#F5F7F8] border-[1.5px] border-[#E5E5E5] rounded-full p-2 hover:bg-[#EAEEF0] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-opacity-50 ${
                     isChanging ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 title={`Current language: ${currentLanguage.name}`}
@@ -102,9 +114,9 @@ export default function LanguageSwitcher({ currentLocale = 'fr', className = '' 
                             <button
                                 key={language.code}
                                 onClick={() => handleLanguageChange(language.code)}
-                                disabled={currentLocale === language.code || isChanging}
+                                disabled={actualLocale === language.code || isChanging}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left hover:bg-gray-50 transition-colors duration-150 disabled:cursor-not-allowed ${
-                                    currentLocale === language.code 
+                                    actualLocale === language.code 
                                         ? 'bg-blue-50 text-blue-700' 
                                         : 'text-gray-700 hover:bg-gray-50'
                                 }`}
@@ -113,7 +125,7 @@ export default function LanguageSwitcher({ currentLocale = 'fr', className = '' 
                                     {language.flag}
                                 </div>
                                 <span className="font-medium flex-1">{language.name}</span>
-                                {currentLocale === language.code && (
+                                {actualLocale === language.code && (
                                     <div className="flex-none">
                                         <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

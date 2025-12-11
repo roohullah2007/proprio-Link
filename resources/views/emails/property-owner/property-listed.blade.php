@@ -8,7 +8,7 @@
     </div>
 
     <div class="message">
-        Nous vous remercions d'avoir choisi Propio pour la mise en ligne de votre propriété.
+        Nous vous remercions d'avoir choisi Proprio Link pour la mise en ligne de votre propriété.
     </div>
 
     <div class="warning-badge">

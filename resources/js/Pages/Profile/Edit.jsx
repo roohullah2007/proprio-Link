@@ -126,7 +126,7 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
                                         className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-20 h-20 bg-gradient-to-br from-[#065033] to-[#0a7042] rounded-full flex items-center justify-center">
+                                    <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
                                         <span className="text-2xl font-bold text-white font-inter">
                                             {user.prenom?.[0]?.toUpperCase()}{user.nom?.[0]?.toUpperCase()}
                                         </span>
@@ -180,7 +180,7 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
 
                                     {/* Verification Status */}
                                     {user.est_verifie ? (
-                                        <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#065033] border border-[#065033] rounded-full">
+                                        <div className="flex justify-center items-center px-[12px] py-[6px] gap-[8px] min-w-max h-[32px] bg-[#0F44FC] border border-[#0F44FC] rounded-full">
                                             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>

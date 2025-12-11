@@ -34,5 +34,16 @@ class CustomResetPasswordNotification extends BaseResetPassword
         return (new MailMessage)
             ->subject(__('Reset Password'))
             ->view('emails.empty', ['message' => 'Password reset email sent via custom mailer.']);
+
+        // Log email sending attempt
+        \Log::info('Sending password reset email to: ' . $notifiable->getEmailForPasswordReset());
+
+        // Send using Laravel's mail system directly through MailMessage
+        return (new MailMessage)
+            ->subject('Réinitialisation de votre mot de passe - Proprio Link')
+            ->view('emails.auth.reset-password', [
+                'user' => $notifiable,
+                'resetUrl' => $resetUrl,
+            ]);
     }
 }

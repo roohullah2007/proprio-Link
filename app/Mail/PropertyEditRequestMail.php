@@ -4,18 +4,23 @@ namespace App\Mail;
 
 use App\Models\Property;
 use App\Models\PropertyEditRequest;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\EmailSetting;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class PropertyEditRequestMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public Property $property;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
     public PropertyEditRequest $editRequest;
 
     /**
@@ -32,10 +37,14 @@ class PropertyEditRequestMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $subject = 'Demande de modification pour votre propriété - ' . $this->property->adresse_complete;
+            
         return new Envelope(
-            subject: __('Edit Request for Your Property - :address', [
-                'address' => $this->property->adresse_complete
-            ]),
+            subject: $subject,
+            from: new Address(
+                EmailSetting::get('mail_from_address', 'noreply@proprio-link.fr'),
+                EmailSetting::get('mail_from_name', 'Proprio Link')
+            )
         );
     }
 
@@ -44,12 +53,17 @@ class PropertyEditRequestMail extends Mailable
      */
     public function content(): Content
     {
+        $user = $this->property->proprietaire;
+        $viewName = $user->language === 'en' 
+            ? 'emails.property-edit-request-en' 
+            : 'emails.property-edit-request';
+            
         return new Content(
-            markdown: 'emails.property-edit-request',
+            view: $viewName,
             with: [
                 'property' => $this->property,
                 'editRequest' => $this->editRequest,
-                'propertyUrl' => route('properties.show', $this->property->id),
+                'propertyUrl' => route('properties.edit', $this->property->id),
             ],
         );
     }

@@ -72,6 +72,7 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
                 { href: '/admin/properties/all', label: __('Properties'), active: route().current('admin.pending-properties') || route().current('admin.all-properties') || route().current('admin.property-review') },
                 { href: '/admin/users', label: __('Users'), active: route().current('admin.users') || route().current('admin.users.show') },
                 { href: '/admin/invoices', label: __('Invoices'), active: route().current('admin.invoices.index') },
+                { href: '/admin/pricing', label: __('Pricing'), active: route().current('admin.pricing.*') },
                 { href: '/admin/settings', label: __('Settings'), active: route().current('admin.settings') }
             ];
         }
@@ -88,14 +89,14 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-                <div className="w-full px-8">
+                <div className="w-full px-4 sm:px-8">
                     <div className="max-w-[1400px] mx-auto flex justify-between items-center h-16">
                         {/* Left side - Logo and Navigation */}
                         <div className="flex items-center space-x-8">
                             {/* Logo */}
-                            <Link href="/" className="flex-shrink-0">
+                            <a href="https://proprio-link.fr/" className="flex-shrink-0">
                                 <ApplicationLogo className="h-8 w-auto" />
-                            </Link>
+                            </a>
 
                             {/* Navigation - Conditional based on usePillNavigation prop or user type */}
                             {shouldUsePillNavigation() ? (
@@ -138,7 +139,7 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
                                                     className="w-8 h-8 rounded-full object-cover transition-transform duration-200 hover:scale-105 shadow-sm"
                                                 />
                                             ) : (
-                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-105 shadow-sm">
+                                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-105 shadow-sm">
                                                     <span className="text-sm font-bold text-white">
                                                         {user.prenom?.[0]?.toUpperCase()}{user.nom?.[0]?.toUpperCase()}
                                                     </span>
@@ -204,8 +205,8 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
                                     className="w-8 h-8 rounded-full object-cover"
                                 />
                             ) : (
-                                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                                    <span className="text-sm font-medium text-gray-600">
+                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span className="text-sm font-medium text-white">
                                         {user.prenom?.[0]?.toUpperCase()}{user.nom?.[0]?.toUpperCase()}
                                     </span>
                                 </div>
@@ -281,8 +282,8 @@ export default function AuthenticatedLayout({ header, children, usePillNavigatio
             {/* Page Header */}
             {header && (
                 <header className="bg-white shadow-sm border-b border-gray-200 mt-16">
-                    <div className="w-full px-8">
-                        <div className="max-w-[1400px] mx-auto flex items-center" style={{ height: '63px' }}>
+                    <div className="w-full px-4 sm:px-8">
+                        <div className="max-w-[1400px] mx-auto flex items-center py-4">
                             {header}
                         </div>
                     </div>

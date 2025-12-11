@@ -40,8 +40,8 @@ export default function ForgotPassword({ status }) {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <div className="mx-auto w-16 h-16 bg-[#065033]/10 rounded-full flex items-center justify-center mb-4">
-                    <Icons.Key className="w-8 h-8 text-[#065033]" />
+                <div className="mx-auto w-16 h-16 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-4">
+                    <Icons.Key className="w-8 h-8 text-[#2563EB]" />
                 </div>
                 <h1 className="text-2xl font-semibold text-[#000] font-inter mb-2">
                     {__("Forgot your password?")}
@@ -71,7 +71,7 @@ export default function ForgotPassword({ status }) {
             <form onSubmit={submit} className="space-y-6">
                 {/* Email Field */}
                 <div>
-                    <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                    <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#2563EB] transition-colors">
                         <div className="flex-none w-4 h-4">
                             <Icons.Mail className="w-4 h-4 text-[#4E5051]" />
                         </div>
@@ -94,7 +94,7 @@ export default function ForgotPassword({ status }) {
                     <button
                         type="submit"
                         disabled={processing}
-                        className="w-full flex justify-center items-center px-4 py-3 h-[35px] bg-[#065033] border border-[#065033] rounded-[100px] text-white font-inter font-medium text-[14px] hover:bg-[#054028] focus:outline-none focus:bg-[#054028] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full flex justify-center items-center px-4 py-3 h-[35px] bg-[#2563EB] border border-[#2563EB] rounded-[100px] text-white font-inter font-medium text-[14px] hover:bg-[#1D4ED8] focus:outline-none focus:bg-[#1D4ED8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         {processing ? __("Sending...") : __("Email Password Reset Link")}
                     </button>
@@ -104,7 +104,7 @@ export default function ForgotPassword({ status }) {
                 <div className="text-center">
                     <Link
                         href={route('login')}
-                        className="inline-flex items-center text-sm text-[#065033] hover:text-[#054028] font-medium font-inter"
+                        className="inline-flex items-center text-sm text-[#2563EB] hover:text-[#1D4ED8] font-medium font-inter"
                     >
                         <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                         {__("Back to login")}

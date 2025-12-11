@@ -22,12 +22,29 @@ class AgentController extends Controller
     {
         try {
             // Get available properties for the agent
+            $agentId = Auth::id();
             $properties = Property::where('statut', 'PUBLIE')
-                ->where('contacts_restants', '>', 0)
-                ->whereDoesntHave('contactPurchases', function ($query) {
-                    $query->where('agent_id', Auth::id());
+                ->where('proprietaire_id', '!=', $agentId)
+                ->whereDoesntHave('contactPurchases', function ($query) use ($agentId) {
+                    $query->where('agent_id', $agentId)
+                          ->where('statut_paiement', ContactPurchase::STATUS_SUCCEEDED);
                 })
                 ->get();
+            
+            // Apply address masking to dashboard properties
+            $properties->transform(function ($property) use ($agentId) {
+                $addressInfo = $property->getAddressDisplayInfo($agentId);
+                $property->display_address = $addressInfo['display_address'];
+                $property->full_address_available = $addressInfo['full_address_available'];
+                $property->is_purchased = $addressInfo['full_address_available'];
+                
+                // Mask address for display
+                if (!$property->is_purchased) {
+                    $property->adresse_complete = $property->getMaskedAddress();
+                }
+                
+                return $property;
+            });
 
             // Get purchase history for recent activity
             $purchaseHistory = ContactPurchase::with(['property'])
@@ -35,6 +52,16 @@ class AgentController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get();
+            
+            // Apply address masking to purchase history properties
+            $purchaseHistory->each(function ($purchase) use ($agentId) {
+                if ($purchase->property) {
+                    $addressInfo = $purchase->property->getAddressDisplayInfo($agentId);
+                    $purchase->property->display_address = $addressInfo['display_address'];
+                    $purchase->property->full_address_available = $addressInfo['full_address_available'];
+                    $purchase->property->is_purchased = true; // Always true for purchase history
+                }
+            });
 
             // Calculate stats
             $totalSpent = ContactPurchase::where('agent_id', Auth::id())
@@ -49,7 +76,7 @@ class AgentController extends Controller
 
             // Calculate meaningful statistics for agent dashboard
             $totalAvailableProperties = Property::where('statut', 'PUBLIE')
-                ->where('contacts_restants', '>', 0)
+                ->where('proprietaire_id', '!=', $agentId)
                 ->count();
 
             // Agent's specific performance metrics
@@ -58,7 +85,7 @@ class AgentController extends Controller
                 'conversion_efficiency' => $totalPurchases > 0 ? round(($purchasesThisMonth / max($totalPurchases, 1)) * 100, 1) : 0,
                 'average_monthly_spending' => $totalPurchases > 0 ? round($totalSpent / max($totalPurchases, 1), 2) : 0,
                 'active_properties_in_area' => Property::where('statut', 'PUBLIE')
-                    ->where('contacts_restants', '>', 0)
+                    ->where('proprietaire_id', '!=', $agentId)
                     ->distinct('ville')
                     ->count('ville'),
             ];
@@ -108,9 +135,10 @@ class AgentController extends Controller
      */
     public function properties(Request $request)
     {
+        $agentId = Auth::id();
         $query = Property::with(['images', 'proprietaire'])
             ->where('statut', 'PUBLIE')
-            ->where('contacts_restants', '>', 0);
+            ->where('proprietaire_id', '!=', $agentId);
 
         // Apply filters
         if ($request->filled('search')) {
@@ -161,13 +189,26 @@ class AgentController extends Controller
 
         $properties = $query->paginate(12)->withQueryString();
 
-        // Add purchased status for each property
-        $purchasedPropertyIds = ContactPurchase::where('agent_id', Auth::id())
+        // Add purchased status and address masking for each property
+        $agentId = Auth::id();
+        $purchasedPropertyIds = ContactPurchase::where('agent_id', $agentId)
+            ->where('statut_paiement', ContactPurchase::STATUS_SUCCEEDED)
             ->pluck('property_id')
             ->toArray();
 
-        $properties->getCollection()->transform(function ($property) use ($purchasedPropertyIds) {
+        $properties->getCollection()->transform(function ($property) use ($purchasedPropertyIds, $agentId) {
             $property->is_purchased = in_array($property->id, $purchasedPropertyIds);
+            
+            // Add address display information
+            $addressInfo = $property->getAddressDisplayInfo($agentId);
+            $property->display_address = $addressInfo['display_address'];
+            $property->full_address_available = $addressInfo['full_address_available'];
+            
+            // Replace the original address field with masked version for frontend
+            if (!$property->is_purchased) {
+                $property->adresse_complete = $property->getMaskedAddress();
+            }
+            
             return $property;
         });
 
@@ -194,13 +235,29 @@ class AgentController extends Controller
             return redirect()->route('agent.properties')->with('error', __('Cette propriété n\'est pas disponible.'));
         }
 
+        $agentId = Auth::id();
+        
+        // Increment view count for property (agents viewing properties)
+        $property->increment('views');
+        
         // Check if agent already purchased this contact
-        $hasPurchased = ContactPurchase::where('agent_id', Auth::id())
+        $hasPurchased = ContactPurchase::where('agent_id', $agentId)
             ->where('property_id', $property->id)
+            ->where('statut_paiement', ContactPurchase::STATUS_SUCCEEDED)
             ->exists();
 
         $property->load(['images', 'proprietaire']);
         $property->is_purchased = $hasPurchased;
+        
+        // Add address display information
+        $addressInfo = $property->getAddressDisplayInfo($agentId);
+        $property->display_address = $addressInfo['display_address'];
+        $property->full_address_available = $addressInfo['full_address_available'];
+        
+        // Mask the address if not purchased
+        if (!$hasPurchased) {
+            $property->adresse_complete = $property->getMaskedAddress();
+        }
 
         return Inertia::render('Agent/PropertyDetails', [
             'property' => $property,
@@ -255,7 +312,7 @@ class AgentController extends Controller
         }
 
         $suggestions = Property::where('statut', 'PUBLIE')
-            ->where('contacts_restants', '>', 0)
+            ->where('proprietaire_id', '!=', Auth::id())
             ->where(function ($q) use ($query) {
                 $q->where('ville', 'like', "%{$query}%")
                   ->orWhere('pays', 'like', "%{$query}%")

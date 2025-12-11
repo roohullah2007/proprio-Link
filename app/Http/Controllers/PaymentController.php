@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactPurchase;
 use App\Models\Property;
 use App\Models\User;
+use App\Services\LeadPricingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,9 +19,12 @@ use Illuminate\Support\Str;
 class PaymentController extends Controller
 {
     private StripeClient $stripe;
+    private LeadPricingService $pricingService;
 
-    public function __construct()
+    public function __construct(LeadPricingService $pricingService)
     {
+        $this->pricingService = $pricingService;
+
         // Initialize Stripe with database settings
         $stripeSecret = $this->getStripeSecretKey();
         if ($stripeSecret) {
@@ -110,11 +114,15 @@ class PaymentController extends Controller
         // Get Stripe settings from database
         $stripeSettings = $this->getStripeSettings();
 
+        // Calculate dynamic price based on property location and value
+        $pricing = $this->pricingService->calculatePrice($property);
+
         return Inertia::render('Payment/ContactPurchase', [
             'property' => $property->load(['images', 'proprietaire']),
-            'price' => $stripeSettings['contact_price'],
+            'price' => $pricing['final_price'],
             'currency' => $stripeSettings['currency'],
             'stripePublishableKey' => $stripeSettings['publishable_key'],
+            'pricingDetails' => $pricing,
         ]);
     }
 
@@ -145,31 +153,40 @@ class PaymentController extends Controller
 
             // Get Stripe settings from database
             $stripeSettings = $this->getStripeSettings();
-            
+
             // Check if Stripe is configured
             if (empty($stripeSettings['secret_key'])) {
                 return response()->json(['error' => __('Payment system not configured.')], 500);
             }
 
+            // Calculate dynamic price based on property location and value
+            $pricing = $this->pricingService->calculatePrice($property);
+            $finalPrice = $pricing['final_price'];
+
             // Reinitialize Stripe client with current settings (in case they were updated)
             $this->stripe = new StripeClient($stripeSettings['secret_key']);
 
-            // Create payment intent
+            // Create payment intent with dynamic pricing
             $paymentIntent = $this->stripe->paymentIntents->create([
-                'amount' => (int)($stripeSettings['contact_price'] * 100), // Convert to cents
+                'amount' => (int)($finalPrice * 100), // Convert to cents
                 'currency' => $stripeSettings['currency'],
                 'metadata' => [
                     'agent_id' => Auth::id(),
                     'property_id' => $property->id,
                     'agent_email' => Auth::user()->email,
                     'property_address' => $property->adresse_complete,
+                    'pricing_tier' => $pricing['tier_key'],
+                    'is_major_city' => $pricing['is_major_city'] ? 'yes' : 'no',
+                    'base_price' => $pricing['base_price'],
+                    'final_price' => $finalPrice,
                 ],
-                'description' => "Contact purchase for property: {$property->adresse_complete}",
+                'description' => "Contact purchase for property: {$property->adresse_complete} (Tier: {$pricing['tier_name']})",
             ]);
 
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
                 'payment_intent_id' => $paymentIntent->id,
+                'pricing' => $pricing,
             ]);
 
         } catch (ApiErrorException $e) {
@@ -259,22 +276,27 @@ class PaymentController extends Controller
             
             $contactPurchase->markPaymentSucceeded($contactData);
 
-            // Send purchase confirmation email with invoice
+            // Send purchase confirmation email with invoice to AGENT
             try {
-                // Temporarily disabled email sending for debugging
-                // \Mail::to($contactPurchase->agent)->send(new \App\Mail\AgentPurchaseConfirmation($contactPurchase, $contactData));
-                \Log::info('Purchase confirmation email would be sent to: ' . $contactPurchase->agent->email);
+                \Log::info('Sending purchase confirmation email to agent: ' . $contactPurchase->agent->email);
+                \Mail::to($contactPurchase->agent->email)->send(new \App\Mail\AgentPurchaseConfirmation($contactPurchase, $contactData));
+                \Log::info('✅ Purchase confirmation email sent successfully to agent: ' . $contactPurchase->agent->email);
             } catch (\Exception $e) {
-                \Log::error('Failed to send purchase confirmation email: ' . $e->getMessage());
+                \Log::error('❌ Failed to send purchase confirmation email to agent: ' . $e->getMessage());
             }
 
-            // Send notification to property owner
+            // Send admin notification to ALL ADMINS
             try {
-                // Temporarily disabled email sending for debugging
-                // \Mail::to($property->proprietaire)->send(new \App\Mail\PropertyContactPurchased($contactPurchase));
-                \Log::info('Property owner notification email would be sent to: ' . $property->proprietaire->email);
+                $adminEmails = \App\Services\AdminNotificationService::getAdminEmails();
+                \Log::info('Sending admin notification for contact purchase to: ' . implode(', ', $adminEmails));
+                
+                \App\Services\AdminNotificationService::notifyAdmins(
+                    new \App\Mail\AdminContactPurchased($contactPurchase)
+                );
+                
+                \Log::info('✅ Admin notification sent successfully for contact purchase');
             } catch (\Exception $e) {
-                \Log::error('Failed to send property owner notification email: ' . $e->getMessage());
+                \Log::error('❌ Failed to send admin notification for contact purchase: ' . $e->getMessage());
             }
 
             // Update property contact count

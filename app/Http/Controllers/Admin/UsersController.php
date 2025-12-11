@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Property;
 use App\Models\ContactPurchase;
+use App\Mail\UserAccountSuspendedMail;
+use App\Mail\UserVerificationRevokedMail;
+use App\Mail\UserAccountDeletedMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class UsersController extends Controller
@@ -117,8 +121,18 @@ class UsersController extends Controller
                 \Log::error('Failed to send agent verification email: ' . $e->getMessage());
             }
         }
+        
+        // Send revocation email when verification is removed
+        if ($wasVerified && !$request->verified) {
+            try {
+                $reason = $request->input('reason', 'Vérification révoquée par l\'administration');
+                Mail::to($user)->send(new UserVerificationRevokedMail($user, $reason));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send verification revocation email: ' . $e->getMessage());
+            }
+        }
 
-        $message = $request->verified ? 'Agent verified successfully' : 'Agent verification revoked';
+        $message = $request->verified ? 'Agent verified successfully' : 'Agent verification revoked and notification sent';
         
         return redirect()->back()->with('success', $message);
     }
@@ -126,7 +140,8 @@ class UsersController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'action' => 'required|in:activate,suspend,delete'
+            'action' => 'required|in:activate,suspend,delete',
+            'reason' => 'nullable|string|max:500'
         ]);
 
         $user = User::findOrFail($id);
@@ -135,18 +150,43 @@ class UsersController extends Controller
             case 'suspend':
                 // You would implement a suspended field in your users table
                 $user->update(['is_suspended' => true]);
-                $message = 'User suspended successfully';
+                
+                // Send suspension email
+                try {
+                    $reason = $request->reason ?? 'Violation des conditions d\'utilisation';
+                    Mail::to($user)->send(new UserAccountSuspendedMail($user, $reason));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send suspension email: ' . $e->getMessage());
+                }
+                
+                $message = 'User suspended successfully and notification sent';
                 break;
                 
             case 'activate':
                 $user->update(['is_suspended' => false]);
-                $message = 'User activated successfully';
+                
+                // Send activation email
+                try {
+                    \Mail::to($user)->send(new \App\Mail\UserActivatedMail($user));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send activation email: ' . $e->getMessage());
+                }
+                
+                $message = 'User activated successfully and notification sent';
                 break;
                 
             case 'delete':
+                // Send deletion notification before deleting
+                try {
+                    $reason = $request->reason ?? 'Compte supprimé par l\'administration';
+                    Mail::to($user)->send(new UserAccountDeletedMail($user, $reason));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send account deletion email: ' . $e->getMessage());
+                }
+                
                 // Soft delete or hard delete based on your requirements
                 $user->delete();
-                $message = 'User deleted successfully';
+                $message = 'User deleted successfully and notification sent';
                 return redirect()->route('admin.users')->with('success', $message);
         }
 

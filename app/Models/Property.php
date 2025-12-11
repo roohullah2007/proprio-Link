@@ -51,6 +51,7 @@ class Property extends Model
         'contacts_restants',
         'statut',
         'raison_rejet',
+        'views',
     ];
 
     /**
@@ -71,6 +72,7 @@ class Property extends Model
             'annee_construction' => 'integer',
             'contacts_souhaites' => 'integer',
             'contacts_restants' => 'integer',
+            'views' => 'integer',
             'amenities' => 'array',
             'meuble' => 'boolean',
         ];
@@ -272,5 +274,81 @@ class Property extends Model
         if ($this->contacts_restants > 0) {
             $this->decrement('contacts_restants');
         }
+    }
+
+    // =====================================================
+    // Address Masking Methods
+    // =====================================================
+
+    /**
+     * Get masked address for non-purchased contacts
+     * Shows only city and country, hides specific address details
+     */
+    public function getMaskedAddress(): string
+    {
+        return $this->ville . ', ' . $this->pays;
+    }
+
+    /**
+     * Get full address for purchased contacts
+     */
+    public function getFullAddress(): string
+    {
+        return $this->adresse_complete;
+    }
+
+    /**
+     * Get display address based on purchase status
+     * 
+     * @param int|null $agentId The agent ID to check purchase status for
+     * @return string
+     */
+    public function getDisplayAddress(?int $agentId = null): string
+    {
+        // If no agent ID provided, show masked address
+        if (!$agentId) {
+            return $this->getMaskedAddress();
+        }
+
+        // Check if this agent has purchased the contact
+        $hasPurchased = $this->contactPurchases()
+            ->where('agent_id', $agentId)
+            ->where('statut_paiement', ContactPurchase::STATUS_SUCCEEDED)
+            ->exists();
+
+        return $hasPurchased ? $this->getFullAddress() : $this->getMaskedAddress();
+    }
+
+    /**
+     * Check if an agent has purchased this property's contact
+     * 
+     * @param int $agentId
+     * @return bool
+     */
+    public function isContactPurchasedBy(int $agentId): bool
+    {
+        return $this->contactPurchases()
+            ->where('agent_id', $agentId)
+            ->where('statut_paiement', ContactPurchase::STATUS_SUCCEEDED)
+            ->exists();
+    }
+
+    /**
+     * Get address display info for frontend
+     * 
+     * @param int|null $agentId
+     * @return array
+     */
+    public function getAddressDisplayInfo(?int $agentId = null): array
+    {
+        $hasPurchased = $agentId ? $this->isContactPurchasedBy($agentId) : false;
+        
+        return [
+            'display_address' => $this->getDisplayAddress($agentId),
+            'full_address_available' => $hasPurchased,
+            'city' => $this->ville,
+            'country' => $this->pays,
+            'full_address' => $hasPurchased ? $this->adresse_complete : null,
+        ];
     }
 }

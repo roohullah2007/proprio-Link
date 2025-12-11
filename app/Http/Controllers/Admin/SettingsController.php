@@ -29,7 +29,8 @@ class SettingsController extends Controller
             'payment_currency' => 'required|string|in:EUR,USD,GBP',
             'platform_name' => 'required|string|max:255',
             'platform_url' => 'required|url|max:255',
-            'admin_email' => 'required|email|max:255',
+            'admin_notification_emails' => 'required|array|min:1',
+            'admin_notification_emails.*' => 'required|email|max:255',
             'default_language' => 'required|string|in:fr,en',
             'max_file_size' => 'required|integer|min:1|max:100',
             'allowed_image_types' => 'required|array',
@@ -130,9 +131,9 @@ class SettingsController extends Controller
             ]);
 
             // Send test email
-            \Mail::raw('This is a test email from Propio SMTP configuration.', function ($message) use ($request) {
+            \Mail::raw('This is a test email from Proprio Link SMTP configuration.', function ($message) use ($request) {
                 $message->to($request->test_email)
-                        ->subject('Propio SMTP Test Email');
+                        ->subject('Proprio Link SMTP Test Email');
             });
 
             // Restore original configuration
@@ -161,9 +162,9 @@ class SettingsController extends Controller
             'stripe_webhook_secret' => '',
             'contact_purchase_price' => 15.00,
             'payment_currency' => 'EUR',
-            'platform_name' => 'Propio',
+            'platform_name' => 'Proprio Link',
             'platform_url' => config('app.url'),
-            'admin_email' => 'admin@propio.com',
+            'admin_notification_emails' => ['admin@proprio-link.fr'],
             'default_language' => 'fr',
             'max_file_size' => 10,
             'allowed_image_types' => ['jpg', 'jpeg', 'png', 'webp'],
@@ -183,7 +184,7 @@ class SettingsController extends Controller
             'smtp_password' => '',
             'smtp_encryption' => 'tls',
             'smtp_from_address' => '',
-            'smtp_from_name' => 'Propio',
+            'smtp_from_name' => 'Proprio Link',
         ];
 
         $settings = [];
@@ -205,7 +206,7 @@ class SettingsController extends Controller
                     }
                     
                     // Parse JSON arrays
-                    if (in_array($key, ['allowed_image_types', 'website_menu_links'])) {
+                    if (in_array($key, ['allowed_image_types', 'website_menu_links', 'admin_notification_emails'])) {
                         $value = json_decode($value, true) ?: $defaultValue;
                     } elseif (in_array($key, ['smtp_enabled'])) {
                         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);

@@ -87,9 +87,9 @@ export default function Create({ auth }) {
             items: [
                 { value: 'parking', label: __('Parking'), icon: 'Car' },
                 { value: 'garage', label: __('Garage'), icon: 'Home' },
-                { value: 'jardin', label: __('Garden'), icon: 'Trees' },
+                { value: 'jardin', label: __('Garden'), icon: 'TreePine' },
                 { value: 'terrasse', label: __('Terrace'), icon: 'Mountain' },
-                { value: 'balcon', label: __('Balcony'), icon: 'Building' },
+                { value: 'balcon', label: __('Balcony'), icon: 'Building2' },
                 { value: 'piscine', label: __('Swimming Pool'), icon: 'Waves' },
                 { value: 'cave', label: __('Cellar'), icon: 'Archive' },
                 { value: 'grenier', label: __('Attic/Loft'), icon: 'Package' },
@@ -100,7 +100,7 @@ export default function Create({ auth }) {
             category: __('Security and Comfort'),
             items: [
                 { value: 'ascenseur', label: __('Elevator'), icon: 'ArrowUpDown' },
-                { value: 'digicode', label: __('Digital Code'), icon: 'KeyRound' },
+                { value: 'digicode', label: __('Digital Code'), icon: 'Key' },
                 { value: 'interphone', label: __('Intercom'), icon: 'Phone' },
                 { value: 'gardien', label: __('Doorman/Concierge'), icon: 'User' },
                 { value: 'alarme', label: __('Alarm System'), icon: 'Shield' },
@@ -113,9 +113,9 @@ export default function Create({ auth }) {
             category: __('Equipment'),
             items: [
                 { value: 'cuisine_equipee', label: __('Equipped Kitchen'), icon: 'ChefHat' },
-                { value: 'cuisine_amenagee', label: __('Fitted Kitchen'), icon: 'UtensilsCrossed' },
+                { value: 'cuisine_amenagee', label: __('Fitted Kitchen'), icon: 'Utensils' },
                 { value: 'dressing', label: __('Dressing Room'), icon: 'Shirt' },
-                { value: 'placards', label: __('Built-in Wardrobes'), icon: 'Cabinet' },
+                { value: 'placards', label: __('Built-in Wardrobes'), icon: 'Package' },
                 { value: 'double_vitrage', label: __('Double Glazing'), icon: 'Square' },
                 { value: 'volets_electriques', label: __('Electric Shutters'), icon: 'Blinds' },
             ]
@@ -235,11 +235,12 @@ export default function Create({ auth }) {
 
     const renderStepIndicator = () => (
         <div className="mb-8">
-            <div className="flex items-center justify-center">
+            {/* Step Circles with Connecting Lines */}
+            <div className="flex items-center justify-center px-4">
                 {[1, 2, 3, 4, 5, 6].map((step) => (
                     <React.Fragment key={step}>
                         <div className={`
-                            flex items-center justify-center w-10 h-10 rounded-full border-2 text-sm font-semibold font-inter
+                            flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 text-xs sm:text-sm font-semibold font-inter flex-shrink-0
                             ${currentStep >= step 
                                 ? 'bg-[#065033] border-[#065033] text-white' 
                                 : 'bg-white border-[#EAEAEA] text-[#6C6C6C]'
@@ -249,31 +250,45 @@ export default function Create({ auth }) {
                         </div>
                         {step < 6 && (
                             <div className={`
-                                flex-1 h-1 mx-4 
+                                flex-1 h-0.5 sm:h-1 mx-1 sm:mx-4 
                                 ${currentStep > step ? 'bg-[#065033]' : 'bg-[#EAEAEA]'}
                             `} />
                         )}
                     </React.Fragment>
                 ))}
             </div>
-            <div className="flex justify-between mt-4 text-xs sm:text-sm">
-                <span className={`font-inter ${currentStep >= 1 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+            
+            {/* Step Labels - Hidden on very small screens, visible on mobile and up */}
+            <div className="hidden xs:flex justify-between mt-3 sm:mt-4 px-4">
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 1 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Location')}
                 </span>
-                <span className={`font-inter ${currentStep >= 2 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 2 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Information')}
                 </span>
-                <span className={`font-inter ${currentStep >= 3 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 3 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Details')}
                 </span>
-                <span className={`font-inter ${currentStep >= 4 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 4 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Contact')}
                 </span>
-                <span className={`font-inter ${currentStep >= 5 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 5 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Photos')}
                 </span>
-                <span className={`font-inter ${currentStep >= 6 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
+                <span className={`font-inter text-xs sm:text-sm text-center flex-1 ${currentStep >= 6 ? 'text-[#065033] font-semibold' : 'text-[#6C6C6C]'}`}>
                     {__('Review')}
+                </span>
+            </div>
+            
+            {/* Current Step Label - Visible only on very small screens */}
+            <div className="xs:hidden mt-3 text-center">
+                <span className="font-inter text-sm font-semibold text-[#065033]">
+                    {currentStep === 1 && __('Step 1: Location')}
+                    {currentStep === 2 && __('Step 2: Information')}
+                    {currentStep === 3 && __('Step 3: Details')}
+                    {currentStep === 4 && __('Step 4: Contact')}
+                    {currentStep === 5 && __('Step 5: Photos')}
+                    {currentStep === 6 && __('Step 6: Review')}
                 </span>
             </div>
         </div>
@@ -658,14 +673,35 @@ export default function Create({ auth }) {
                             <h5 className="text-sm font-semibold text-black font-inter mb-3 border-b border-[#EAEAEA] pb-1">
                                 {category.category}
                             </h5>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                 {category.items.map((amenity) => {
-                                    const IconComponent = Icons[amenity.icon] || Icons.Home;
+                                    let IconComponent = Icons[amenity.icon];
+                                    
+                                    // Fallback system for potentially missing icons
+                                    if (!IconComponent) {
+                                        const fallbacks = {
+                                            'TreePine': 'Tree',
+                                            'Mountain': 'Triangle',
+                                            'Building2': 'Building',
+                                            'Waves': 'Droplets',
+                                            'Key': 'Lock',
+                                            'Flame': 'Zap',
+                                            'ChefHat': 'Coffee',
+                                            'Utensils': 'Coffee',
+                                            'Shirt': 'User',
+                                            'Blinds': 'Square',
+                                            'Accessibility': 'User',
+                                            'GraduationCap': 'BookOpen'
+                                        };
+                                        
+                                        const fallbackIcon = fallbacks[amenity.icon];
+                                        IconComponent = Icons[fallbackIcon] || Icons.Home;
+                                    }
                                     return (
                                         <label
                                             key={amenity.value}
                                             className={`
-                                                flex items-center p-3 border rounded-lg cursor-pointer transition-all font-inter
+                                                flex items-center p-3 border rounded-lg cursor-pointer transition-all font-inter min-h-[48px]
                                                 ${data.amenities.includes(amenity.value)
                                                     ? 'border-[#065033] bg-[#F5F9FA] text-[#065033]'
                                                     : 'border-[#EAEAEA] hover:border-[#CEE8DE] hover:bg-[#F5F9FA]'
@@ -678,8 +714,13 @@ export default function Create({ auth }) {
                                                 onChange={() => handleAmenityToggle(amenity.value)}
                                                 className="sr-only"
                                             />
-                                            <IconComponent className="w-5 h-5 mr-2 flex-shrink-0" />
-                                            <span className="text-sm font-medium">{amenity.label}</span>
+                                            <div className="flex-shrink-0 w-5 h-5 mr-3">
+                                                <IconComponent 
+                                                    className="w-full h-full" 
+                                                    strokeWidth={1.5}
+                                                />
+                                            </div>
+                                            <span className="text-sm font-medium leading-tight">{amenity.label}</span>
                                         </label>
                                     );
                                 })}
@@ -1207,7 +1248,7 @@ export default function Create({ auth }) {
                                 {__('Submit a property')}
                             </h2>
                             <p className="mt-2 text-[#6C6C6C] font-inter">
-                                {__('Fill in the information about your property to publish it on Propio')}
+                                {__('Fill in the information about your property to publish it on Proprio Link')}
                             </p>
                         </div>
 

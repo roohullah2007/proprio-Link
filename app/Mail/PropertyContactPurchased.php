@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -12,9 +10,14 @@ use App\Models\ContactPurchase;
 
 class PropertyContactPurchased extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $purchase;
+    
+    /**
+     * Prevent email from being queued
+     */
+    public $tries = null;
 
     /**
      * Create a new message instance.
@@ -30,7 +33,7 @@ class PropertyContactPurchased extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Un agent s\'intéresse à votre propriété ! | Propio',
+            subject: 'Un agent s\'intéresse à votre propriété ! | Proprio Link',
         );
     }
 

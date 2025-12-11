@@ -60,8 +60,8 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
 
             {/* Header */}
             <div className="text-center mb-8">
-                <div className="mx-auto w-16 h-16 bg-[#065033]/10 rounded-full flex items-center justify-center mb-4">
-                    <Icons.User className="w-8 h-8 text-[#065033]" />
+                <div className="mx-auto w-16 h-16 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-4">
+                    <Icons.User className="w-8 h-8 text-[#2563EB]" />
                 </div>
                 <h1 className="text-2xl font-semibold text-[#000] font-inter mb-2">
                     {isAgentLogin ? __("Agent Login") : __("Login to your account")}
@@ -70,8 +70,8 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                     {isAgentLogin ? __("Access your agent dashboard") : __("Access your Proprio Link personal space")}
                 </p>
                 {isAgentLogin && (
-                    <div className="mt-3 p-3 bg-[#F0F9F4] border border-[#D1F2D9] rounded-lg">
-                        <p className="text-sm text-[#065033] font-inter">
+                    <div className="mt-3 p-3 bg-[#F0F4FF] border border-[#C5D0FF] rounded-lg">
+                        <p className="text-sm text-[#2563EB] font-inter">
                             {__("Login with your agent account to purchase property contacts")}
                         </p>
                     </div>
@@ -89,7 +89,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
             <form onSubmit={submit} className="space-y-4">
                 {/* Email Field */}
                 <div>
-                    <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                    <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#2563EB] transition-colors">
                         <div className="flex-none w-4 h-4">
                             <Icons.Mail className="w-4 h-4 text-[#4E5051]" />
                         </div>
@@ -109,7 +109,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                 {/* Password Field */}
                 <div>
                     <div className="relative">
-                        <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#065033] transition-colors">
+                        <div className="flex items-center px-4 gap-[10px] w-full h-[35px] bg-white border-[1.5px] border-[#EAEAEA] rounded-[100px] focus-within:border-[#2563EB] transition-colors">
                             <div className="flex-none w-4 h-4">
                                 <Icons.Lock className="w-4 h-4 text-[#4E5051]" />
                             </div>
@@ -141,7 +141,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
-                            className="rounded border-gray-300 text-[#065033] focus:ring-[#065033]"
+                            className="rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB]"
                         />
                         <span className="ml-2 text-sm text-gray-600 font-inter">
                             {__("Remember me")}
@@ -151,7 +151,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-sm text-[#065033] hover:text-[#054028] font-medium font-inter"
+                            className="text-sm text-[#2563EB] hover:text-[#1D4ED8] font-medium font-inter"
                         >
                             {__("Forgot your password?")}
                         </Link>
@@ -163,7 +163,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                     <button
                         type="submit"
                         disabled={processing}
-                        className="w-full flex justify-center items-center px-4 py-3 h-[35px] bg-[#065033] border border-[#065033] rounded-[100px] text-white font-inter font-medium text-[14px] hover:bg-[#054028] focus:outline-none focus:bg-[#054028] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full flex justify-center items-center px-4 py-3 h-[35px] bg-[#2563EB] border border-[#2563EB] rounded-[100px] text-white font-inter font-medium text-[14px] hover:bg-[#1D4ED8] focus:outline-none focus:bg-[#1D4ED8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         {processing ? __("Logging in...") : __("Login")}
                     </button>
@@ -175,7 +175,7 @@ export default function Login({ status, canResetPassword, intendedUrl, userType 
                         {isAgentLogin ? __("Not an agent yet?") : __("Not registered yet?")} {' '}
                         <Link
                             href={isAgentLogin ? route('register') + '?type=agent' : route('register')}
-                            className="text-[#065033] hover:text-[#054028] font-medium"
+                            className="text-[#2563EB] hover:text-[#1D4ED8] font-medium"
                         >
                             {isAgentLogin ? __("Become an Agent") : __("Register")}
                         </Link>

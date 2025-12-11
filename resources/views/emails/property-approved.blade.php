@@ -7,7 +7,7 @@
     <strong>Excellente nouvelle !</strong> Votre propriété a été approuvée et est maintenant visible en ligne.
 </div>
 
-<p>Nous avons le plaisir de vous annoncer que votre propriété a passé avec succès notre processus de modération et est désormais publiée sur la plateforme Propio.</p>
+<p>Nous avons le plaisir de vous annoncer que votre propriété a passé avec succès notre processus de modération et est désormais publiée sur la plateforme Proprio Link.</p>
 
 <div class="property-details">
     <h3>📍 Détails de votre propriété</h3>
@@ -51,7 +51,7 @@
 
 <p>
     Cordialement,<br>
-    <strong>L'équipe Propio</strong>
+    <strong>L'équipe Proprio Link</strong>
 </p>
 
 <hr style="margin: 30px 0; border: none; height: 1px; background-color: #eee;">
@@ -59,7 +59,7 @@
 <p style="font-size: 14px; color: #666;">
     <strong>Besoin d'aide ?</strong><br>
     Notre équipe support est disponible pour répondre à toutes vos questions :<br>
-    📧 <a href="mailto:support@propio.com">support@propio.com</a><br>
+    📧 Contactez-nous via le site web<br>
     📞 01 23 45 67 89 (du lundi au vendredi, 9h-18h)
 </p>
 @endsection
