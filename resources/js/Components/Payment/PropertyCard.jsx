@@ -1,27 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MapPin, Home, Users, Euro } from 'lucide-react';
 import PrimaryButton from '../PrimaryButton';
 import SecondaryButton from '../SecondaryButton';
 import PaymentModal from './PaymentModal';
-import { 
-    formatCurrency, 
-    translatePropertyType, 
+import {
+    formatCurrency,
+    translatePropertyType,
     translatePropertyStatus,
     formatContactsRemaining,
     __
 } from '@/Utils/translations';
 
-const PropertyCard = ({ 
-    property, 
-    userType = null, 
+const PropertyCard = ({
+    property,
+    userType = null,
     showContactButton = false,
     onFavoriteToggle = null,
-    isFavorite = false 
+    isFavorite = false
 }) => {
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [purchaseStatus, setPurchaseStatus] = useState(null);
+    const [contactPrice, setContactPrice] = useState(null);
+    const [priceLoading, setPriceLoading] = useState(false);
+
+    // Fetch dynamic price when component mounts (for agents with contact button)
+    useEffect(() => {
+        if (showContactButton && userType === 'AGENT' && property?.id) {
+            fetchContactPrice();
+        }
+    }, [property?.id, showContactButton, userType]);
+
+    // Fetch the dynamic contact price for this property
+    const fetchContactPrice = async () => {
+        setPriceLoading(true);
+        try {
+            const response = await fetch(`/api/properties/${property.id}/price`);
+            const result = await response.json();
+            if (result.success) {
+                setContactPrice(result.price);
+            }
+        } catch (error) {
+            console.error('Error fetching contact price:', error);
+            setContactPrice(15); // Fallback to default
+        } finally {
+            setPriceLoading(false);
+        }
+    };
 
     // Check if user can purchase contact
     const checkPurchaseEligibility = async () => {
@@ -105,7 +131,9 @@ const PropertyCard = ({
     const getContactButtonText = () => {
         if (loading) return __('Vérification...');
         if (property.contacts_restants <= 0) return __('Plus de contacts');
-        return __('Accéder aux contacts') + ' (15€)';
+        if (priceLoading) return __('Accéder aux contacts') + ' (...)';
+        const displayPrice = contactPrice !== null ? contactPrice : 15;
+        return __('Accéder aux contacts') + ` (${displayPrice}€)`;
     };
 
     const isContactButtonDisabled = () => {

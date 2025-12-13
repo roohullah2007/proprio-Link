@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git branch:*)",
       "Bash(git stash pop:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(php artisan:*)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useTranslations } from '@/Utils/translations';
@@ -9,6 +9,41 @@ export default function Create({ auth }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedImages, setSelectedImages] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
+    const [pricingCities, setPricingCities] = useState([]);
+    const [defaultPrice, setDefaultPrice] = useState(15);
+    const [citySearchTerm, setCitySearchTerm] = useState('');
+    const [showCityDropdown, setShowCityDropdown] = useState(false);
+
+    // Fetch pricing cities on component mount
+    useEffect(() => {
+        fetchPricingCities();
+    }, []);
+
+    const fetchPricingCities = async () => {
+        try {
+            const response = await fetch('/api/pricing/cities');
+            const result = await response.json();
+            if (result.success) {
+                setPricingCities(result.cities);
+                setDefaultPrice(result.default_price);
+            }
+        } catch (error) {
+            console.error('Error fetching pricing cities:', error);
+        }
+    };
+
+    // Get the price for a selected city
+    const getCityPrice = (cityName) => {
+        const city = pricingCities.find(
+            c => c.city_name.toLowerCase() === cityName.toLowerCase()
+        );
+        return city ? city.base_price : defaultPrice;
+    };
+
+    // Filter cities based on search term
+    const filteredCities = pricingCities.filter(city =>
+        city.city_name.toLowerCase().includes(citySearchTerm.toLowerCase())
+    );
 
     const { data, setData, post, processing, errors, progress } = useForm({
         // Basic Info
@@ -346,17 +381,107 @@ export default function Create({ auth }) {
                     )}
                 </div>
 
-                <div>
+                <div className="relative">
                     <label className="block text-sm font-medium text-[#6C6C6C] font-inter mb-2">
                         {__('City')} *
                     </label>
-                    <input
-                        type="text"
-                        value={data.ville}
-                        onChange={(e) => setData('ville', e.target.value)}
-                        className="w-full border border-[#EAEAEA] rounded-lg px-3 py-2 font-inter focus:outline-none focus:ring-2 focus:ring-[#065033] focus:border-[#065033]"
-                        placeholder={__('Example: Paris')}
-                    />
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={data.ville}
+                            onChange={(e) => {
+                                setData('ville', e.target.value);
+                                setCitySearchTerm(e.target.value);
+                                setShowCityDropdown(true);
+                            }}
+                            onFocus={() => {
+                                setCitySearchTerm(data.ville || '');
+                                setShowCityDropdown(true);
+                            }}
+                            onBlur={() => {
+                                // Delay hiding dropdown to allow click events
+                                setTimeout(() => setShowCityDropdown(false), 200);
+                            }}
+                            className="w-full border border-[#EAEAEA] rounded-lg px-3 py-2 font-inter focus:outline-none focus:ring-2 focus:ring-[#065033] focus:border-[#065033]"
+                            placeholder={__('Select or type a city')}
+                            autoComplete="off"
+                        />
+                        <Icons.ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6C6C6C] pointer-events-none" />
+                    </div>
+
+                    {/* City Dropdown */}
+                    {showCityDropdown && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-[#EAEAEA] rounded-lg shadow-lg max-h-60 overflow-auto">
+                            {/* Major cities from pricing table */}
+                            {filteredCities.length > 0 && (
+                                <>
+                                    <div className="px-3 py-2 text-xs font-semibold text-[#6C6C6C] bg-[#F5F9FA] border-b border-[#EAEAEA]">
+                                        {__('Major Cities')} ({__('Special Pricing')})
+                                    </div>
+                                    {filteredCities.map((city) => (
+                                        <button
+                                            key={city.id}
+                                            type="button"
+                                            onClick={() => {
+                                                setData('ville', city.city_name);
+                                                setCitySearchTerm('');
+                                                setShowCityDropdown(false);
+                                            }}
+                                            className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex justify-between items-center"
+                                        >
+                                            <span className="flex items-center">
+                                                <Icons.MapPin className="w-4 h-4 mr-2 text-[#065033]" />
+                                                {city.city_name}
+                                            </span>
+                                            <span className="text-xs text-[#065033] font-medium bg-[#CEE8DE] px-2 py-0.5 rounded">
+                                                {city.base_price}€
+                                            </span>
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+
+                            {/* Allow custom city entry */}
+                            {citySearchTerm && !filteredCities.some(c => c.city_name.toLowerCase() === citySearchTerm.toLowerCase()) && (
+                                <>
+                                    <div className="px-3 py-2 text-xs font-semibold text-[#6C6C6C] bg-[#F5F9FA] border-t border-b border-[#EAEAEA]">
+                                        {__('Other Cities')} ({defaultPrice}€)
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setData('ville', citySearchTerm);
+                                            setShowCityDropdown(false);
+                                        }}
+                                        className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex justify-between items-center"
+                                    >
+                                        <span className="flex items-center">
+                                            <Icons.MapPin className="w-4 h-4 mr-2 text-[#6C6C6C]" />
+                                            {__('Use')}: "{citySearchTerm}"
+                                        </span>
+                                        <span className="text-xs text-[#6C6C6C] font-medium bg-[#EAEAEA] px-2 py-0.5 rounded">
+                                            {defaultPrice}€
+                                        </span>
+                                    </button>
+                                </>
+                            )}
+
+                            {/* No results message */}
+                            {filteredCities.length === 0 && !citySearchTerm && (
+                                <div className="px-3 py-4 text-center text-sm text-[#6C6C6C] font-inter">
+                                    {__('Type to search for a city')}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Price indicator for selected city */}
+                    {data.ville && (
+                        <p className="mt-1 text-xs text-[#6C6C6C] font-inter">
+                            {__('Contact price for this city')}: <span className="font-semibold text-[#065033]">{getCityPrice(data.ville)}€</span>
+                        </p>
+                    )}
+
                     {errors.ville && (
                         <p className="mt-1 text-sm text-red-600 font-inter">{errors.ville}</p>
                     )}

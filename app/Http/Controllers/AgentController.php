@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use App\Models\ContactPurchase;
+use App\Services\LeadPricingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AgentController extends Controller
 {
-    public function __construct()
+    protected LeadPricingService $pricingService;
+
+    public function __construct(LeadPricingService $pricingService)
     {
-        // Middleware is handled by routes in Laravel 12
+        $this->pricingService = $pricingService;
     }
 
     /**
@@ -259,10 +262,14 @@ class AgentController extends Controller
             $property->adresse_complete = $property->getMaskedAddress();
         }
 
+        // Calculate dynamic price based on property location and value
+        $pricing = $this->pricingService->calculatePrice($property);
+
         return Inertia::render('Agent/PropertyDetails', [
             'property' => $property,
-            'contactPrice' => config('services.stripe.contact_price'),
-            'currency' => config('services.stripe.currency'),
+            'contactPrice' => $pricing['final_price'],
+            'currency' => 'eur',
+            'pricingDetails' => $pricing,
         ]);
     }
 

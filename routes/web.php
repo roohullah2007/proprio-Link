@@ -566,7 +566,34 @@ Route::middleware('auth')->group(function () {
         Route::get('/purchases', [PaymentController::class, 'purchaseHistory'])->name('purchases');
         Route::get('/purchases/{purchase}/contact', [PaymentController::class, 'showContactDetails'])->name('contact-details');
     });
-    
+
+    // API route for fetching property price dynamically
+    Route::get('/api/properties/{property}/price', function (App\Models\Property $property) {
+        $pricingService = app(App\Services\LeadPricingService::class);
+        $pricing = $pricingService->calculatePrice($property);
+        return response()->json([
+            'success' => true,
+            'price' => $pricing['final_price'],
+            'formatted_price' => $pricing['final_price'] . ' €',
+            'pricing_details' => $pricing,
+        ]);
+    })->name('api.property.price');
+
+    // API route for fetching available cities with pricing
+    Route::get('/api/pricing/cities', function () {
+        $pricingCities = App\Models\PricingCity::where('is_active', true)
+            ->orderBy('city_name')
+            ->get(['id', 'city_name', 'country', 'base_price', 'is_major_city']);
+
+        $defaultPrice = App\Models\PricingSetting::getDefaultNonMajorCityPrice();
+
+        return response()->json([
+            'success' => true,
+            'cities' => $pricingCities,
+            'default_price' => $defaultPrice,
+        ]);
+    })->name('api.pricing.cities');
+
     // Invoice routes
     Route::get('/invoices/{purchase}/generate', [App\Http\Controllers\InvoiceController::class, 'generate'])
         ->name('invoices.generate');
