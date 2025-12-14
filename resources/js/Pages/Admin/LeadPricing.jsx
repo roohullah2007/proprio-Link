@@ -256,11 +256,11 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
             <Head title={__("Lead Pricing") + " - Propio"} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-[1400px] px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div className="mx-auto max-w-[1400px] px-2 sm:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-8">
                         {/* Sidebar Navigation */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white border border-[#EAEAEA] rounded-2xl p-6">
+                            <div className="bg-white border border-[#EAEAEA] rounded-2xl p-2 sm:p-6">
                                 <nav className="space-y-2">
                                     {tabs.map((tab) => {
                                         const IconComponent = tab.icon;
@@ -285,11 +285,11 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
 
                         {/* Main Content */}
                         <div className="lg:col-span-4">
-                            <div className="bg-white border border-[#EAEAEA] rounded-2xl p-8 shadow-sm">
+                            <div className="bg-white border border-[#EAEAEA] rounded-2xl p-2 sm:p-8 shadow-sm">
                                 {/* Cities Tab */}
                                 {activeTab === 'cities' && (
                                     <div className="space-y-6">
-                                        <div className="flex justify-between items-center border-b border-[#EAEAEA] pb-4">
+                                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-[#EAEAEA] pb-4">
                                             <div>
                                                 <h3 className="text-lg font-semibold text-[#696969] font-inter mb-2">
                                                     {__('City Pricing Configuration')}
@@ -298,16 +298,16 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
                                                     {__('Configure base prices for specific cities. Cities not listed will use the default price.')}
                                                 </p>
                                             </div>
-                                            <div className="flex gap-3">
+                                            <div className="flex flex-col xs:flex-row gap-3">
                                                 <button
                                                     onClick={handleAddDefaultCities}
-                                                    className="flex items-center px-4 py-2 text-sm bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors"
+                                                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#F5F9FA] border border-[#EAEAEA] rounded-lg text-[#6C6C6C] hover:text-[#065033] hover:border-[#065033] transition-colors"
                                                 >
                                                     {__('Add Default Cities')}
                                                 </button>
                                                 <button
                                                     onClick={openAddCityModal}
-                                                    className="flex items-center px-4 py-2 text-sm bg-[#065033] text-white rounded-lg hover:bg-[#054028] transition-colors"
+                                                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#065033] text-white rounded-lg hover:bg-[#054028] transition-colors"
                                                 >
                                                     <Icons.Plus className="w-4 h-4 mr-2" />
                                                     {__('Add City')}
@@ -327,16 +327,16 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div className="overflow-x-auto">
-                                                <table className="w-full">
+                                            <div className="overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
+                                                <table className="w-full min-w-[600px]">
                                                     <thead>
                                                         <tr className="border-b border-[#EAEAEA]">
-                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969]">{__('City')}</th>
-                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969]">{__('Country')}</th>
-                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969]">{__('Base Price')}</th>
-                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969]">{__('Type')}</th>
-                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969]">{__('Status')}</th>
-                                                            <th className="text-right py-3 px-4 text-sm font-medium text-[#696969]">{__('Actions')}</th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('City')}</th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('Country')}</th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('Base Price')}</th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('Type')}</th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('Status')}</th>
+                                                            <th className="text-right py-3 px-4 text-sm font-medium text-[#696969] whitespace-nowrap">{__('Actions')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -645,16 +645,16 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
                                             </p>
                                         </div>
 
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm">
+                                        <div className="overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
+                                            <table className="w-full text-sm min-w-[800px]">
                                                 <thead>
                                                     <tr className="border-b border-[#EAEAEA] bg-[#F5F9FA]">
-                                                        <th className="text-left py-3 px-4 font-medium text-[#696969]">{__('City')}</th>
-                                                        <th className="text-left py-3 px-4 font-medium text-[#696969]">{__('Base')}</th>
+                                                        <th className="text-left py-3 px-4 font-medium text-[#696969] whitespace-nowrap">{__('City')}</th>
+                                                        <th className="text-left py-3 px-4 font-medium text-[#696969] whitespace-nowrap">{__('Base')}</th>
                                                         {pricingMatrix.tiers.map((tier) => (
-                                                            <th key={tier.key} className="text-left py-3 px-4 font-medium text-[#696969]">
-                                                                <div>{tier.name}</div>
-                                                                <div className="text-xs font-normal">{tier.value_range}</div>
+                                                            <th key={tier.key} className="text-left py-3 px-4 font-medium text-[#696969] whitespace-nowrap">
+                                                                <span>{tier.name}</span>
+                                                                <span className="text-xs font-normal ml-1">({tier.value_range})</span>
                                                             </th>
                                                         ))}
                                                     </tr>
@@ -662,17 +662,17 @@ export default function LeadPricing({ auth, cities, tiers, settings, pricingMatr
                                                 <tbody>
                                                     {pricingMatrix.matrix.map((row, index) => (
                                                         <tr key={index} className="border-b border-[#EAEAEA] hover:bg-[#F5F9FA]">
-                                                            <td className="py-3 px-4">
+                                                            <td className="py-3 px-4 whitespace-nowrap">
                                                                 <div className="font-medium text-[#000]">{row.city}</div>
                                                                 {row.is_major && (
                                                                     <span className="text-xs text-blue-600">{__('Major City')}</span>
                                                                 )}
                                                             </td>
-                                                            <td className="py-3 px-4 text-[#065033] font-medium">
+                                                            <td className="py-3 px-4 text-[#065033] font-medium whitespace-nowrap">
                                                                 {formatPrice(row.base_price)}
                                                             </td>
                                                             {pricingMatrix.tiers.map((tier) => (
-                                                                <td key={tier.key} className="py-3 px-4 text-[#065033] font-medium">
+                                                                <td key={tier.key} className="py-3 px-4 text-[#065033] font-medium whitespace-nowrap">
                                                                     {formatPrice(row.tiers[tier.key])}
                                                                 </td>
                                                             ))}

@@ -342,7 +342,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [], deb
             <Head title={__("Admin Dashboard") + " - Propio"} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-[1400px] px-8">
+                <div className="mx-auto max-w-[1400px] px-2 sm:px-8">
                     {/* Welcome Message */}
                     <div className="bg-white border border-[#EAEAEA] rounded-lg p-4 mb-8">
                         <div className="flex items-center justify-between">
@@ -394,7 +394,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [], deb
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="bg-white border border-[#EAEAEA] rounded-2xl p-8 shadow-sm mb-8">
+                    <div className="bg-white border border-[#EAEAEA] rounded-2xl p-2 sm:p-8 shadow-sm mb-8">
                         <h3 className="text-lg font-semibold text-[#696969] font-inter mb-6">
                             {__("Admin Actions")}
                         </h3>
@@ -436,7 +436,7 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [], deb
                     </div>
 
                     {/* Recent Properties */}
-                    <div className="bg-white border border-[#EAEAEA] rounded-2xl p-8 shadow-sm">
+                    <div className="bg-white border border-[#EAEAEA] rounded-2xl p-2 sm:p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-semibold text-[#696969] font-inter">
                                 {__('Recent Properties Pending Review')}
@@ -464,50 +464,46 @@ export default function Dashboard({ auth, stats = {}, recentProperties = [], deb
                         ) : (
                             <div className="space-y-4">
                                 {recentProperties.map((property) => (
-                                    <div key={property.id} className="flex items-center space-x-4 p-4 border border-[#EAEAEA] rounded-lg hover:border-[#CEE8DE] transition-colors">
-                                        <div className="flex-shrink-0">
-                                            {property.images && property.images.length > 0 ? (
-                                                <img
-                                                    className="h-16 w-16 rounded-lg object-cover"
-                                                    src={`/storage/${property.images[0].chemin_fichier}`}
-                                                    alt={property.type_propriete}
-                                                />
-                                            ) : (
-                                                <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center">
-                                                    <Icons.Home className="w-6 h-6 text-gray-400" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-sm font-medium text-[#000] font-inter truncate">
-                                                        {property.type_propriete} - {property.ville}
-                                                    </p>
-                                                    <p className="text-sm text-[#6C6C6C] font-inter truncate">
-                                                        {property.proprietaire.prenom} {property.proprietaire.nom}
-                                                    </p>
-                                                    <p className="text-sm text-[#6C6C6C] font-inter">
-                                                        {formatNumber(property.prix)} € • {property.superficie_m2} m²
-                                                    </p>
-                                                </div>
-                                                <div className="text-right flex items-center space-x-3">
-                                                    <div>
-                                                        <p className="text-xs text-[#6C6C6C] font-inter">
-                                                            {formatDate(property.created_at)}
-                                                        </p>
+                                    <div key={property.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-[#EAEAEA] rounded-lg hover:border-[#CEE8DE] transition-colors">
+                                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                                            <div className="flex-shrink-0">
+                                                {property.images && property.images.length > 0 ? (
+                                                    <img
+                                                        className="h-16 w-16 rounded-lg object-cover"
+                                                        src={`/storage/${property.images[0].chemin_fichier}`}
+                                                        alt={property.type_propriete}
+                                                    />
+                                                ) : (
+                                                    <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center">
+                                                        <Icons.Home className="w-6 h-6 text-gray-400" />
                                                     </div>
-                                                    <Link
-                                                        href={route('admin.property-review', property.id)}
-                                                        className="flex justify-center items-center px-3 py-2 gap-2 min-w-max h-8 bg-proprio-blue border border-proprio-blue rounded-full transition-colors hover:bg-proprio-blue-700 focus:outline-none focus:bg-proprio-blue-700"
-                                                    >
-                                                        <Icons.Eye className="w-4 h-4 text-white" />
-                                                        <span className="text-white text-sm font-medium font-inter whitespace-nowrap">
-                                                            {__('Review')}
-                                                        </span>
-                                                    </Link>
-                                                </div>
+                                                )}
                                             </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-sm font-medium text-[#000] font-inter truncate">
+                                                    {property.type_propriete} - {property.ville}
+                                                </p>
+                                                <p className="text-sm text-[#6C6C6C] font-inter truncate">
+                                                    {property.proprietaire.prenom} {property.proprietaire.nom}
+                                                </p>
+                                                <p className="text-sm text-[#6C6C6C] font-inter">
+                                                    {formatNumber(property.prix)} € • {property.superficie_m2} m²
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                                            <p className="text-xs text-[#6C6C6C] font-inter">
+                                                {formatDate(property.created_at)}
+                                            </p>
+                                            <Link
+                                                href={route('admin.property-review', property.id)}
+                                                className="flex justify-center items-center px-3 py-2 gap-2 h-8 bg-proprio-blue border border-proprio-blue rounded-full transition-colors hover:bg-proprio-blue-700 focus:outline-none focus:bg-proprio-blue-700"
+                                            >
+                                                <Icons.Eye className="w-4 h-4 text-white" />
+                                                <span className="text-white text-sm font-medium font-inter whitespace-nowrap">
+                                                    {__('Review')}
+                                                </span>
+                                            </Link>
                                         </div>
                                     </div>
                                 ))}
