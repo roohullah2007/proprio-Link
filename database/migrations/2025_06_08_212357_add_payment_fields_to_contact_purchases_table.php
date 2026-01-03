@@ -12,16 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contact_purchases', function (Blueprint $table) {
-            $table->string('statut_paiement')->default('pending')->after('devise');
-            $table->text('donnees_contact')->nullable()->after('statut_paiement');
-            $table->timestamp('paiement_confirme_a')->nullable()->after('donnees_contact');
-            
-            // Add indexes for performance
-            $table->index('statut_paiement');
-            
-            // Add unique constraint to prevent duplicate purchases
-            $table->unique(['agent_id', 'property_id'], 'unique_agent_property_purchase');
+            if (!Schema::hasColumn('contact_purchases', 'statut_paiement')) {
+                $table->string('statut_paiement')->default('pending')->after('devise');
+            }
+            if (!Schema::hasColumn('contact_purchases', 'donnees_contact')) {
+                $table->text('donnees_contact')->nullable()->after('statut_paiement');
+            }
+            if (!Schema::hasColumn('contact_purchases', 'paiement_confirme_a')) {
+                $table->timestamp('paiement_confirme_a')->nullable()->after('donnees_contact');
+            }
         });
+
+        // Add indexes safely (ignore if already exist)
+        try {
+            Schema::table('contact_purchases', function (Blueprint $table) {
+                $table->index('statut_paiement');
+            });
+        } catch (\Exception $e) {
+            // Index already exists
+        }
+
+        try {
+            Schema::table('contact_purchases', function (Blueprint $table) {
+                $table->unique(['agent_id', 'property_id'], 'unique_agent_property_purchase');
+            });
+        } catch (\Exception $e) {
+            // Unique constraint already exists
+        }
     }
 
     /**
@@ -29,10 +46,25 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contact_purchases', function (Blueprint $table) {
-            $table->dropIndex(['statut_paiement']);
-            $table->dropUnique('unique_agent_property_purchase');
-            $table->dropColumn(['statut_paiement', 'donnees_contact', 'paiement_confirme_a']);
-        });
+        try {
+            Schema::table('contact_purchases', function (Blueprint $table) {
+                $table->dropIndex(['statut_paiement']);
+            });
+        } catch (\Exception $e) {}
+
+        try {
+            Schema::table('contact_purchases', function (Blueprint $table) {
+                $table->dropUnique('unique_agent_property_purchase');
+            });
+        } catch (\Exception $e) {}
+
+        $columns = ['statut_paiement', 'donnees_contact', 'paiement_confirme_a'];
+        foreach ($columns as $column) {
+            if (Schema::hasColumn('contact_purchases', $column)) {
+                Schema::table('contact_purchases', function (Blueprint $table) use ($column) {
+                    $table->dropColumn($column);
+                });
+            }
+        }
     }
 };

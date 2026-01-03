@@ -416,7 +416,7 @@ export default function Create({ auth }) {
                             {filteredCities.length > 0 && (
                                 <>
                                     <div className="px-3 py-2 text-xs font-semibold text-[#6C6C6C] bg-[#F5F9FA] border-b border-[#EAEAEA]">
-                                        {__('Major Cities')} ({__('Special Pricing')})
+                                        {__('Major Cities')}
                                     </div>
                                     {filteredCities.map((city) => (
                                         <button
@@ -427,15 +427,10 @@ export default function Create({ auth }) {
                                                 setCitySearchTerm('');
                                                 setShowCityDropdown(false);
                                             }}
-                                            className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex justify-between items-center"
+                                            className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex items-center"
                                         >
-                                            <span className="flex items-center">
-                                                <Icons.MapPin className="w-4 h-4 mr-2 text-[#065033]" />
-                                                {city.city_name}
-                                            </span>
-                                            <span className="text-xs text-[#065033] font-medium bg-[#CEE8DE] px-2 py-0.5 rounded">
-                                                {city.base_price}€
-                                            </span>
+                                            <Icons.MapPin className="w-4 h-4 mr-2 text-[#065033]" />
+                                            {city.city_name}
                                         </button>
                                     ))}
                                 </>
@@ -445,7 +440,7 @@ export default function Create({ auth }) {
                             {citySearchTerm && !filteredCities.some(c => c.city_name.toLowerCase() === citySearchTerm.toLowerCase()) && (
                                 <>
                                     <div className="px-3 py-2 text-xs font-semibold text-[#6C6C6C] bg-[#F5F9FA] border-t border-b border-[#EAEAEA]">
-                                        {__('Other Cities')} ({defaultPrice}€)
+                                        {__('Other Cities')}
                                     </div>
                                     <button
                                         type="button"
@@ -453,15 +448,10 @@ export default function Create({ auth }) {
                                             setData('ville', citySearchTerm);
                                             setShowCityDropdown(false);
                                         }}
-                                        className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex justify-between items-center"
+                                        className="w-full px-3 py-2 text-left hover:bg-[#F5F9FA] font-inter text-sm flex items-center"
                                     >
-                                        <span className="flex items-center">
-                                            <Icons.MapPin className="w-4 h-4 mr-2 text-[#6C6C6C]" />
-                                            {__('Use')}: "{citySearchTerm}"
-                                        </span>
-                                        <span className="text-xs text-[#6C6C6C] font-medium bg-[#EAEAEA] px-2 py-0.5 rounded">
-                                            {defaultPrice}€
-                                        </span>
+                                        <Icons.MapPin className="w-4 h-4 mr-2 text-[#6C6C6C]" />
+                                        {__('Use')}: "{citySearchTerm}"
                                     </button>
                                 </>
                             )}
@@ -473,13 +463,6 @@ export default function Create({ auth }) {
                                 </div>
                             )}
                         </div>
-                    )}
-
-                    {/* Price indicator for selected city */}
-                    {data.ville && (
-                        <p className="mt-1 text-xs text-[#6C6C6C] font-inter">
-                            {__('Contact price for this city')}: <span className="font-semibold text-[#065033]">{getCityPrice(data.ville)}€</span>
-                        </p>
                     )}
 
                     {errors.ville && (

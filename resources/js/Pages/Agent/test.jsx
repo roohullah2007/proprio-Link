@@ -386,7 +386,7 @@ export default function TestDashboard({ stats }) {
                                     </div>
                                     <div className="flex items-center text-sm">
                                         <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3">2</div>
-                                        Purchase owner contacts from €15 to €50
+                                        Purchase owner contacts to get their information
                                     </div>
                                     <div className="flex items-center text-sm">
                                         <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3">3</div>

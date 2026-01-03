@@ -406,7 +406,7 @@ export default function Dashboard({ auth, properties = [], purchaseHistory = [],
                                     </div>
                                     <div className="flex items-center text-sm">
                                         <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3 flex-shrink-0">2</div>
-                                        <span>{__('Purchase owner contacts from €15 to €50')}</span>
+                                        <span>{__('Purchase owner contacts to get their information')}</span>
                                     </div>
                                     <div className="flex items-center text-sm">
                                         <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-medium mr-3 flex-shrink-0">3</div>
