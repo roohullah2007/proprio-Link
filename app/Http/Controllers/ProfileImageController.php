@@ -40,8 +40,15 @@ class ProfileImageController extends Controller
             // Create a unique filename
             $fileName = 'profile_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             
-            // Ensure the directory exists
+            // Ensure the directory exists - use absolute path for Hostinger
+            // On Hostinger, public_html is separate from Laravel root
             $profileImagesPath = public_path('uploads/profile-images');
+
+            // Fallback for Hostinger: if public_path doesn't point to public_html
+            if (app()->environment('production') && !str_contains($profileImagesPath, 'public_html')) {
+                $profileImagesPath = base_path('../public_html/uploads/profile-images');
+            }
+
             if (!file_exists($profileImagesPath)) {
                 mkdir($profileImagesPath, 0755, true);
             }
@@ -52,7 +59,7 @@ class ProfileImageController extends Controller
             if ($file->move($profileImagesPath, $fileName)) {
                 // Delete old profile image if it exists
                 if ($user->profile_image) {
-                    $oldImagePath = public_path('uploads/profile-images/' . basename($user->profile_image));
+                    $oldImagePath = $profileImagesPath . '/' . basename($user->profile_image);
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }
