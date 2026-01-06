@@ -18,7 +18,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Fix public path for Hostinger (public_html is separate from Laravel root)
+        if (app()->environment('production')) {
+            $this->app->bind('path.public', function() {
+                return realpath(base_path('../public_html'));
+            });
+        }
     }
 
     /**
