@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Exclude profile update from CSRF verification (fixes file upload issues)
+        $middleware->validateCsrfTokens(except: [
+            'profile',
+            'profile/*',
+        ]);
+
         // Register all middleware aliases in one call
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
