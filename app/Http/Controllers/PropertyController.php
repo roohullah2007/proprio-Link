@@ -323,10 +323,25 @@ class PropertyController extends Controller
             $imagesToRemove = PropertyImage::where('property_id', $property->id)
                 ->whereIn('id', $request->remove_images)
                 ->get();
-            
+
             foreach ($imagesToRemove as $image) {
                 // Delete file from storage
                 Storage::disk('public')->delete($image->chemin_fichier);
+
+                // FALLBACK: Also delete from public directory if it exists
+                $publicPath = public_path('storage/' . $image->chemin_fichier);
+                if (file_exists($publicPath)) {
+                    unlink($publicPath);
+                }
+
+                // Fallback for Hostinger: if public_path doesn't point to public_html
+                if (app()->environment('production') && !str_contains($publicPath, 'public_html')) {
+                    $hostingerPath = base_path('../public_html/storage/' . $image->chemin_fichier);
+                    if (file_exists($hostingerPath)) {
+                        unlink($hostingerPath);
+                    }
+                }
+
                 // Delete database record
                 $image->delete();
             }
@@ -422,6 +437,20 @@ class PropertyController extends Controller
         // Delete associated images from storage
         foreach ($property->images as $image) {
             Storage::disk('public')->delete($image->chemin_fichier);
+
+            // FALLBACK: Also delete from public directory if it exists
+            $publicPath = public_path('storage/' . $image->chemin_fichier);
+            if (file_exists($publicPath)) {
+                unlink($publicPath);
+            }
+
+            // Fallback for Hostinger: if public_path doesn't point to public_html
+            if (app()->environment('production') && !str_contains($publicPath, 'public_html')) {
+                $hostingerPath = base_path('../public_html/storage/' . $image->chemin_fichier);
+                if (file_exists($hostingerPath)) {
+                    unlink($hostingerPath);
+                }
+            }
         }
 
         // Get property info for success message
@@ -485,15 +514,23 @@ class PropertyController extends Controller
 
             // FALLBACK: Also copy to public directory if symlink doesn't work
             $sourcePath = storage_path('app/public/' . $path);
-            $publicPath = public_path('storage/' . $path);
-            $publicDir = dirname($publicPath);
-            
+
+            // Determine the correct public path (Hostinger has separate public_html folder)
+            $publicStoragePath = public_path('storage/' . $path);
+
+            // Fallback for Hostinger: if public_path doesn't point to public_html
+            if (app()->environment('production') && !str_contains($publicStoragePath, 'public_html')) {
+                $publicStoragePath = base_path('../public_html/storage/' . $path);
+            }
+
+            $publicDir = dirname($publicStoragePath);
+
             if (!file_exists($publicDir)) {
                 mkdir($publicDir, 0755, true);
             }
-            
-            if (file_exists($sourcePath) && !file_exists($publicPath)) {
-                copy($sourcePath, $publicPath);
+
+            if (file_exists($sourcePath) && !file_exists($publicStoragePath)) {
+                copy($sourcePath, $publicStoragePath);
             }
 
             PropertyImage::create([
@@ -532,20 +569,28 @@ class PropertyController extends Controller
     public function deleteImage(PropertyImage $image)
     {
         $property = $image->property;
-        
+
         if ($property->proprietaire_id !== Auth::id()) {
             abort(403);
         }
 
         // Delete file from storage
         Storage::disk('public')->delete($image->chemin_fichier);
-        
+
         // FALLBACK: Also delete from public directory if it exists
         $publicPath = public_path('storage/' . $image->chemin_fichier);
         if (file_exists($publicPath)) {
             unlink($publicPath);
         }
-        
+
+        // Fallback for Hostinger: if public_path doesn't point to public_html
+        if (app()->environment('production') && !str_contains($publicPath, 'public_html')) {
+            $hostingerPath = base_path('../public_html/storage/' . $image->chemin_fichier);
+            if (file_exists($hostingerPath)) {
+                unlink($hostingerPath);
+            }
+        }
+
         // Delete database record
         $image->delete();
 

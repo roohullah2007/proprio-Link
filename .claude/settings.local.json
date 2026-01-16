@@ -4,7 +4,11 @@
       "Bash(git branch:*)",
       "Bash(git stash pop:*)",
       "Bash(git rebase:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(php -l:*)"
     ]
   }
 }
