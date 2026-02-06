@@ -275,7 +275,7 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
                 ) : (
                     <>
                         <Icons.CreditCard className="w-4 h-4 mr-2" />
-                        {__('Buy Contact for')} {formatPrice(price)}
+                        {__('Pay')} {formatPrice(price)}
                     </>
                 )}
             </button>
@@ -283,7 +283,7 @@ const PaymentForm = ({ property, price, currency, onSuccess, onError }) => {
     );
 };
 // Main component
-export default function ContactPurchase({ property, price, currency, stripePublishableKey, pricingDetails }) {
+export default function ContactPurchase({ property, price, priceTTC, vatRate, taxAmount, currency, stripePublishableKey, pricingDetails }) {
     const { __ } = useTranslations();
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -493,16 +493,9 @@ export default function ContactPurchase({ property, price, currency, stripePubli
 
                                     {/* Purchase Summary */}
                                     <div className="bg-[#EBF4FF] border border-[#EAEAEA] p-4 rounded-lg mb-6">
-                                        <div className="flex justify-between items-center mb-3">
-                                            <span className="text-[#000] font-inter font-medium">{__('Property Owner Contact')}:</span>
-                                            <span className="font-semibold text-[#000] font-inter">
-                                                {formatPrice(price)}
-                                            </span>
-                                        </div>
-
                                         {/* Pricing Breakdown */}
                                         {pricingDetails && (
-                                            <div className="border-t border-[#EAEAEA] pt-3 mb-3">
+                                            <div className="mb-3">
                                                 <p className="text-xs text-[#6C6C6C] font-inter mb-2 font-medium">{__('Pricing Breakdown')}:</p>
                                                 <div className="space-y-1 text-xs text-[#6C6C6C] font-inter">
                                                     <div className="flex justify-between">
@@ -530,12 +523,27 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                             </div>
                                         )}
 
-                                        <div className="border-t border-[#EAEAEA] pt-3">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[#000] font-inter font-semibold">{__('Total')}:</span>
-                                                <span className="text-lg font-bold text-[#1E40AF] font-inter">
+                                        {/* HT / TVA / TTC Breakdown */}
+                                        <div className="border-t border-[#EAEAEA] pt-3 space-y-2">
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-[#6C6C6C] font-inter">{__('Price excl. tax')} (HT)</span>
+                                                <span className="text-[#000] font-inter font-medium">
                                                     {formatPrice(price)}
                                                 </span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-[#6C6C6C] font-inter">{__('VAT')} ({vatRate}%)</span>
+                                                <span className="text-[#000] font-inter font-medium">
+                                                    {formatPrice(taxAmount)}
+                                                </span>
+                                            </div>
+                                            <div className="border-t border-[#EAEAEA] pt-2">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[#000] font-inter font-semibold">{__('Total incl. tax')} (TTC)</span>
+                                                    <span className="text-lg font-bold text-[#1E40AF] font-inter">
+                                                        {formatPrice(priceTTC)}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -585,7 +593,7 @@ export default function ContactPurchase({ property, price, currency, stripePubli
                                         <Elements stripe={stripePromise}>
                                             <PaymentForm
                                                 property={property}
-                                                price={price}
+                                                price={priceTTC}
                                                 currency={currency}
                                                 onSuccess={handlePaymentSuccess}
                                                 onError={handlePaymentError}

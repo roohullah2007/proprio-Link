@@ -87,6 +87,7 @@ export default function Settings({ auth, settings }) {
         stripe_secret_key: settings.stripe_secret_key || '',
         stripe_webhook_secret: settings.stripe_webhook_secret || '',
         contact_purchase_price: settings.contact_purchase_price || 15.00,
+        vat_rate: settings.vat_rate ?? 20.00,
         payment_currency: settings.payment_currency || 'EUR',
         
         // Platform Settings
@@ -427,6 +428,32 @@ export default function Settings({ auth, settings }) {
                                                     </div>
                                                     {errors.contact_purchase_price && (
                                                         <p className="text-red-500 text-sm mt-1">{errors.contact_purchase_price}</p>
+                                                    )}
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-[#696969] font-inter mb-2">
+                                                        {__('VAT Rate')} (%)
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            min="0"
+                                                            max="100"
+                                                            value={data.vat_rate}
+                                                            onChange={(e) => setData('vat_rate', parseFloat(e.target.value))}
+                                                            className="w-full px-4 py-3 border border-[#EAEAEA] rounded-lg text-[#000] font-inter focus:outline-none focus:border-[#065033] focus:ring-1 focus:ring-[#065033]"
+                                                        />
+                                                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6C6C6C] font-inter">
+                                                            %
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-[#6C6C6C] mt-1 font-inter">
+                                                        {__('VAT rate applied to all contact purchases. Set to 0 to disable VAT.')}
+                                                    </p>
+                                                    {errors.vat_rate && (
+                                                        <p className="text-red-500 text-sm mt-1">{errors.vat_rate}</p>
                                                     )}
                                                 </div>
 

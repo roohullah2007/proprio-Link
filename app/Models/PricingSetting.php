@@ -15,6 +15,7 @@ class PricingSetting extends Model
     const DEFAULT_NON_MAJOR_CITY_PRICE = 'default_non_major_city_price';
     const DEFAULT_MAJOR_CITY_PRICE = 'default_major_city_price';
     const PRICING_ENABLED = 'pricing_enabled';
+    const VAT_RATE = 'vat_rate';
 
     /**
      * The attributes that are mass assignable.
@@ -85,6 +86,27 @@ class PricingSetting extends Model
     public static function getDefaultMajorCityPrice(): float
     {
         return self::getNumericValue(self::DEFAULT_MAJOR_CITY_PRICE, 25.00);
+    }
+
+    /**
+     * Get VAT rate (percentage, e.g. 20 for 20%)
+     * Reads from admin_settings table where the admin UI saves it.
+     */
+    public static function getVatRate(): float
+    {
+        try {
+            $value = \DB::table('admin_settings')
+                ->where('key_name', 'vat_rate')
+                ->value('value');
+
+            if ($value !== null && is_numeric($value)) {
+                return (float) $value;
+            }
+        } catch (\Exception $e) {
+            // Fall through to default
+        }
+
+        return 20.00;
     }
 
     /**

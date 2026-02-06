@@ -119,7 +119,10 @@ class PaymentController extends Controller
 
         return Inertia::render('Payment/ContactPurchase', [
             'property' => $property->load(['images', 'proprietaire']),
-            'price' => $pricing['final_price'],
+            'price' => $pricing['price_ht'],
+            'priceTTC' => $pricing['price_ttc'],
+            'vatRate' => $pricing['vat_rate'],
+            'taxAmount' => $pricing['tax_amount'],
             'currency' => $stripeSettings['currency'],
             'stripePublishableKey' => $stripeSettings['publishable_key'],
             'pricingDetails' => $pricing,
@@ -161,14 +164,14 @@ class PaymentController extends Controller
 
             // Calculate dynamic price based on property location and value
             $pricing = $this->pricingService->calculatePrice($property);
-            $finalPrice = $pricing['final_price'];
+            $priceTTC = $pricing['price_ttc'];
 
             // Reinitialize Stripe client with current settings (in case they were updated)
             $this->stripe = new StripeClient($stripeSettings['secret_key']);
 
-            // Create payment intent with dynamic pricing
+            // Create payment intent with TTC amount (price + VAT)
             $paymentIntent = $this->stripe->paymentIntents->create([
-                'amount' => (int)($finalPrice * 100), // Convert to cents
+                'amount' => (int)($priceTTC * 100), // Convert TTC to cents
                 'currency' => $stripeSettings['currency'],
                 'metadata' => [
                     'agent_id' => Auth::id(),
@@ -178,9 +181,12 @@ class PaymentController extends Controller
                     'pricing_tier' => $pricing['tier_key'],
                     'is_major_city' => $pricing['is_major_city'] ? 'yes' : 'no',
                     'base_price' => $pricing['base_price'],
-                    'final_price' => $finalPrice,
+                    'price_ht' => $pricing['price_ht'],
+                    'vat_rate' => $pricing['vat_rate'],
+                    'tax_amount' => $pricing['tax_amount'],
+                    'price_ttc' => $priceTTC,
                 ],
-                'description' => "Contact purchase for property: {$property->adresse_complete} (Tier: {$pricing['tier_name']})",
+                'description' => "Contact purchase for property: {$property->adresse_complete} (Tier: {$pricing['tier_name']}, HT: {$pricing['price_ht']}€ + TVA {$pricing['vat_rate']}%)",
             ]);
 
             return response()->json([
@@ -255,13 +261,21 @@ class PaymentController extends Controller
             // Get property with owner
             $property = Property::with('proprietaire')->findOrFail($request->property_id);
 
+            // Extract tax data from Stripe metadata
+            $vatRate = (float) ($metadata['vat_rate'] ?? 20);
+            $priceHT = (float) ($metadata['price_ht'] ?? 0);
+            $taxAmount = (float) ($metadata['tax_amount'] ?? 0);
+
             // Create contact purchase record
             $contactPurchase = ContactPurchase::create([
                 'id' => Str::uuid(),
                 'agent_id' => Auth::id(),
                 'property_id' => $request->property_id,
                 'stripe_payment_intent_id' => $request->payment_intent_id,
-                'montant_paye' => $paymentIntent->amount / 100, // Convert from cents
+                'montant_paye' => $paymentIntent->amount / 100, // TTC amount from Stripe (cents)
+                'montant_ht' => $priceHT,
+                'taux_tva' => $vatRate,
+                'montant_tva' => $taxAmount,
                 'devise' => $paymentIntent->currency,
                 'statut_paiement' => ContactPurchase::STATUS_PENDING, // Start as pending
             ]);

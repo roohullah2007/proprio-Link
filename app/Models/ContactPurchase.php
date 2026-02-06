@@ -31,6 +31,9 @@ class ContactPurchase extends Model
         'property_id',
         'stripe_payment_intent_id',
         'montant_paye',
+        'montant_ht',
+        'taux_tva',
+        'montant_tva',
         'devise',
         'statut_paiement',
         'donnees_contact',
@@ -46,6 +49,9 @@ class ContactPurchase extends Model
     {
         return [
             'montant_paye' => 'decimal:2',
+            'montant_ht' => 'decimal:2',
+            'taux_tva' => 'decimal:2',
+            'montant_tva' => 'decimal:2',
             'donnees_contact' => 'array',
             'paiement_confirme_a' => 'datetime',
         ];
@@ -176,10 +182,13 @@ class ContactPurchase extends Model
                 'contact_purchase_id' => $this->id,
                 'agent_name' => $this->agent->prenom . ' ' . $this->agent->nom,
                 'agent_email' => $this->agent->email,
-                'property_reference' => $this->property ? 
-                    $this->property->type_propriete . ' - ' . $this->property->ville : 
+                'property_reference' => $this->property ?
+                    $this->property->type_propriete . ' - ' . $this->property->ville :
                     'Property Reference',
                 'amount' => $this->montant_paye,
+                'amount_ht' => $this->montant_ht,
+                'tax_rate' => $this->taux_tva,
+                'tax_amount' => $this->montant_tva,
                 'currency' => $this->devise,
                 'billing_details' => [
                     'agent' => [

@@ -1121,5 +1121,11 @@
     "Standard": "Standard",
     "Mid-Range": "Mid-Range",
     "High-Value": "High-Value",
-    "Prestige": "Prestige"
+    "Prestige": "Prestige",
+    "Price excl. tax": "Price excl. tax",
+    "VAT": "VAT",
+    "Total incl. tax": "Total incl. tax",
+    "VAT Rate": "VAT Rate",
+    "VAT rate applied to all contact purchases. Set to 0 to disable VAT.": "VAT rate applied to all contact purchases. Set to 0 to disable VAT.",
+    "Pay": "Pay"
 }

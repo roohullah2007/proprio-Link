@@ -41,10 +41,13 @@ class InvoiceController extends Controller
             'contact_purchase_id' => $purchase->id,
             'agent_name' => $purchase->agent->prenom . ' ' . $purchase->agent->nom,
             'agent_email' => $purchase->agent->email,
-            'property_reference' => $purchase->property ? 
-                $purchase->property->type_propriete . ' - ' . $purchase->property->ville : 
+            'property_reference' => $purchase->property ?
+                $purchase->property->type_propriete . ' - ' . $purchase->property->ville :
                 'Property Reference',
             'amount' => $purchase->montant_paye,
+            'amount_ht' => $purchase->montant_ht,
+            'tax_rate' => $purchase->taux_tva,
+            'tax_amount' => $purchase->montant_tva,
             'currency' => $purchase->devise,
             'billing_details' => [
                 'agent' => [

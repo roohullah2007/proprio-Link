@@ -80,8 +80,14 @@ class LeadPricingService
             $isFlatRate = false;
         }
 
+        // Calculate VAT
+        $vatRate = PricingSetting::getVatRate();
+        $priceHT = round($finalPrice, 2);
+        $taxAmount = round($priceHT * ($vatRate / 100), 2);
+        $priceTTC = round($priceHT + $taxAmount, 2);
+
         return [
-            'final_price' => round($finalPrice, 2),
+            'final_price' => $priceHT,
             'base_price' => round($basePrice, 2),
             'tier_name' => $tierName,
             'tier_key' => $tierKey,
@@ -92,6 +98,10 @@ class LeadPricingService
             'city_name' => $cityName,
             'property_value' => $propertyValue,
             'currency' => 'EUR',
+            'price_ht' => $priceHT,
+            'vat_rate' => $vatRate,
+            'tax_amount' => $taxAmount,
+            'price_ttc' => $priceTTC,
         ];
     }
 
@@ -101,6 +111,9 @@ class LeadPricingService
     private function getStaticPricing(): array
     {
         $defaultPrice = PricingSetting::getDefaultNonMajorCityPrice();
+        $vatRate = PricingSetting::getVatRate();
+        $taxAmount = round($defaultPrice * ($vatRate / 100), 2);
+        $priceTTC = round($defaultPrice + $taxAmount, 2);
 
         return [
             'final_price' => $defaultPrice,
@@ -114,6 +127,10 @@ class LeadPricingService
             'city_name' => '',
             'property_value' => 0,
             'currency' => 'EUR',
+            'price_ht' => $defaultPrice,
+            'vat_rate' => $vatRate,
+            'tax_amount' => $taxAmount,
+            'price_ttc' => $priceTTC,
         ];
     }
 

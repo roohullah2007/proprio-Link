@@ -32,6 +32,9 @@ class Invoice extends Model
         'agent_email',
         'property_reference',
         'amount',
+        'amount_ht',
+        'tax_rate',
+        'tax_amount',
         'currency',
         'billing_details',
         'pdf_path',
@@ -47,6 +50,9 @@ class Invoice extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'amount_ht' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
             'billing_details' => 'array',
             'issued_at' => 'datetime',
         ];

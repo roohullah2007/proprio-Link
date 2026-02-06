@@ -122,14 +122,22 @@
         Mode de paiement: Carte bancaire (Stripe)
     </div>
 
+    @php
+        $amountHT = $invoice->amount_ht ?? $invoice->amount;
+        $taxRate = $invoice->tax_rate ?? 20;
+        $taxAmount = $invoice->tax_amount ?? round($amountHT * ($taxRate / 100), 2);
+        $amountTTC = $invoice->amount ?? round($amountHT + $taxAmount, 2);
+        $cur = strtoupper($invoice->currency ?? 'EUR');
+    @endphp
+
     <table class="details-table">
         <thead>
             <tr>
                 <th>Description</th>
                 <th>Propriété</th>
                 <th>Quantité</th>
-                <th>Prix unitaire</th>
-                <th>Total</th>
+                <th>Prix unitaire HT</th>
+                <th>Total HT</th>
             </tr>
         </thead>
         <tbody>
@@ -145,21 +153,21 @@
                     @endif
                 </td>
                 <td>1</td>
-                <td class="amount">{{ number_format($invoice->amount, 2, ',', ' ') }} {{ $invoice->currency }}</td>
-                <td class="amount">{{ number_format($invoice->amount, 2, ',', ' ') }} {{ $invoice->currency }}</td>
+                <td class="amount">{{ number_format($amountHT, 2, ',', ' ') }} {{ $cur }}</td>
+                <td class="amount">{{ number_format($amountHT, 2, ',', ' ') }} {{ $cur }}</td>
             </tr>
         </tbody>
     </table>
 
     <div style="text-align: right; margin-bottom: 30px;">
         <div style="font-size: 16px; margin-bottom: 10px;">
-            <strong>Sous-total HT: {{ number_format($invoice->amount / 1.2, 2, ',', ' ') }} {{ $invoice->currency }}</strong>
+            <strong>Sous-total HT: {{ number_format($amountHT, 2, ',', ' ') }} {{ $cur }}</strong>
         </div>
         <div style="font-size: 14px; margin-bottom: 10px;">
-            TVA (20%): {{ number_format($invoice->amount - ($invoice->amount / 1.2), 2, ',', ' ') }} {{ $invoice->currency }}
+            TVA ({{ number_format($taxRate, 0) }}%): {{ number_format($taxAmount, 2, ',', ' ') }} {{ $cur }}
         </div>
         <div style="font-size: 18px; padding: 10px; background-color: #f5f5f5; border: 2px solid #2563eb;">
-            <strong>Total TTC: {{ number_format($invoice->amount, 2, ',', ' ') }} {{ $invoice->currency }}</strong>
+            <strong>Total TTC: {{ number_format($amountTTC, 2, ',', ' ') }} {{ $cur }}</strong>
         </div>
     </div>
 
