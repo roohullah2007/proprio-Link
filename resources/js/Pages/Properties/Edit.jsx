@@ -126,13 +126,6 @@ export default function Edit({ auth, property }) {
 
     const countries = [
         { value: 'France', label: __('France') },
-        { value: 'Belgique', label: __('Belgique') },
-        { value: 'Suisse', label: __('Suisse') },
-        { value: 'Luxembourg', label: __('Luxembourg') },
-        { value: 'Canada', label: __('Canada') },
-        { value: 'Maroc', label: __('Maroc') },
-        { value: 'Tunisie', label: __('Tunisie') },
-        { value: 'Algérie', label: __('Algérie') },
     ];
 
     const nextStep = () => {

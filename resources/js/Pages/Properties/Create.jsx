@@ -106,13 +106,6 @@ export default function Create({ auth }) {
 
     const countries = [
         { value: 'France', label: __('France') },
-        { value: 'Belgique', label: __('Belgium') },
-        { value: 'Suisse', label: __('Switzerland') },
-        { value: 'Luxembourg', label: __('Luxembourg') },
-        { value: 'Canada', label: __('Canada') },
-        { value: 'Maroc', label: __('Morocco') },
-        { value: 'Tunisie', label: __('Tunisia') },
-        { value: 'Algérie', label: __('Algeria') },
     ];
 
     const availableAmenities = [

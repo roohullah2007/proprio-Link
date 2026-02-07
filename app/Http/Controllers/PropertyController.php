@@ -293,6 +293,12 @@ class PropertyController extends Controller
             ]);
         }
 
+        // Calculate contacts_restants adjustment when contacts_souhaites changes
+        $oldContactsSouhaites = $property->contacts_souhaites;
+        $newContactsSouhaites = $validated['contacts_souhaites'];
+        $contactsDiff = $newContactsSouhaites - $oldContactsSouhaites;
+        $newContactsRestants = max(0, $property->contacts_restants + $contactsDiff);
+
         // Update property basic data
         $property->update([
             'adresse_complete' => $validated['adresse_complete'],
@@ -315,7 +321,8 @@ class PropertyController extends Controller
             'meuble' => $validated['meuble'] ?? false,
             'charges_mensuelles' => $validated['charges_mensuelles'] ?? null,
             'informations_complementaires' => $validated['informations_complementaires'] ?? null,
-            'contacts_souhaites' => $validated['contacts_souhaites'],
+            'contacts_souhaites' => $newContactsSouhaites,
+            'contacts_restants' => $newContactsRestants,
         ]);
 
         // Handle image removals
