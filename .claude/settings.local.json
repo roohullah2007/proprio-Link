@@ -8,7 +8,11 @@
       "Bash(npm run build:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(php -l:*)"
+      "Bash(php -l:*)",
+      "Bash(npx vite build)",
+      "Bash(php:*)",
+      "Bash(del \"E:\\\\Proprio-Link\\\\webapp\\\\laravel-react-app\\\\create_admin.php\")",
+      "Bash(git status:*)"
     ]
   }
 }
